@@ -9,6 +9,7 @@
 #include <GuiComboBox.au3>
 #include <Math.au3>
 #include <GuiToolTip.au3>
+#include <GuiListView.au3>
 
 ; Fuzzy match rom filenames to artwork from RF Generation
 
@@ -37,8 +38,57 @@ Local $app_name = "Seans Scraper"
 ;Local $download_path = "D:\dwn\Nintendo_Game_Boy"
 ;Local $emulator_folder_name = "pcengine"
 ;Local $download_path = "D:\dwn\NEC_PC_Engine_TurboGrafx-16"
-Local $emulator_folder_name = "atari2600"
-Local $download_path = "D:\dwn\Atari_2600"
+;Local $emulator_folder_name = "atari2600"
+;Local $download_path = "D:\dwn\Atari_2600"
+
+Global $download_path = "D:\dwn"
+
+Global $download_path_dict = ObjCreate("Scripting.Dictionary")
+$download_path_dict.Add("3DO", "3DO")
+$download_path_dict.Add("Amstrad CPC 464", "")
+$download_path_dict.Add("Apple II / Apple III", "")
+$download_path_dict.Add("Atari 2600", "")
+$download_path_dict.Add("Atari 5200", "")
+$download_path_dict.Add("Atari 7800", "")
+$download_path_dict.Add("Atari 8-bit Family", "")
+$download_path_dict.Add("Atari Jaguar", "")
+$download_path_dict.Add("Atari Lynx", "Atari_Lynx")
+$download_path_dict.Add("Atari ST / TT / Falcon", "")
+$download_path_dict.Add("Bandai WonderSwan", "Bandai_WonderSwan")
+$download_path_dict.Add("Bandai WonderSwan Color / SwanCrystal", "Bandai_WonderSwan_Color_SwanCrystal")
+$download_path_dict.Add("Coleco / CBS ColecoVision", "")
+$download_path_dict.Add("Commodore 64 / 128", "")
+$download_path_dict.Add("Commodore Amiga", "")
+$download_path_dict.Add("Dragon 32 / 64", "")
+$download_path_dict.Add("GCE Vectrex / Bandai Kousokusen", "")
+$download_path_dict.Add("LaserDisc", "")
+$download_path_dict.Add("Magnavox Odyssey^2 / VideoPac", "")
+$download_path_dict.Add("Mattel Intellivision", "")
+$download_path_dict.Add("NEC PC Engine / TurboGrafx-16", "NEC_PC_Engine_TurboGrafx")
+$download_path_dict.Add("Nintendo 64", "Nintendo_64")
+$download_path_dict.Add("Nintendo DS", "")
+$download_path_dict.Add("Nintendo Famicom Disk System", "")
+$download_path_dict.Add("Nintendo Game & Watch", "")
+$download_path_dict.Add("Nintendo Game Boy", "Nintendo_Game_Boy")
+$download_path_dict.Add("Nintendo Game Boy Advance", "")
+$download_path_dict.Add("Nintendo Game Boy Color", "Nintendo_Game_Boy_Color")
+$download_path_dict.Add("Nintendo GameCube", "")
+$download_path_dict.Add("Nintendo NES / Famicom", "")
+$download_path_dict.Add("Nintendo SNES / Super Famicom", "Nintendo_SNES_Super_Famicom")
+$download_path_dict.Add("Sega 32X", "")
+$download_path_dict.Add("Sega CD / Mega CD", "")
+$download_path_dict.Add("Sega Dreamcast", "")
+$download_path_dict.Add("Sega Game Gear", "Sega_Game_Gear")
+$download_path_dict.Add("Sega Genesis / Mega Drive", "")
+$download_path_dict.Add("Sega Saturn", "")
+$download_path_dict.Add("Sega SG-1000 / SC-3000", "")
+$download_path_dict.Add("SNK Neo Geo Pocket", "SNK_Neo_Geo_Pocket")
+$download_path_dict.Add("SNK Neo Geo Pocket Color", "SNK_Neo_Geo_Pocket_Color")
+$download_path_dict.Add("Sony PlayStation", "")
+$download_path_dict.Add("Sony PlayStation 2", "")
+$download_path_dict.Add("Sony PSP", "")
+
+
 
 
 Local $ImageMagick_path = "C:\Program Files\ImageMagick-7.0.11-Q16-HDRI"
@@ -48,8 +98,8 @@ Local $sDrive2 = "", $sDir2 = "", $sFileName2 = "", $sExtension2 = ""
 Local $alphanumeric_arr[36] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 ;Local $alphanumeric_arr[13] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C"]
 Local $iStyle = BitOR($TVS_EDITLABELS, $TVS_HASBUTTONS, $TVS_HASLINES, $TVS_LINESATROOT, $TVS_DISABLEDRAGDROP, $TVS_SHOWSELALWAYS, $TVS_CHECKBOXES)
-Local $downloaded_images_path = "~/.emulationstation/downloaded_images/" & $emulator_folder_name
-Local $roms_folder = "F:\RetroPie\home\pi\RetroPie\roms\" & $emulator_folder_name
+Local $downloaded_images_path = "~/.emulationstation/downloaded_images/" ; & $emulator_folder_name
+Local $roms_folder = "F:\RetroPie\home\pi\RetroPie\roms\" ; & $emulator_folder_name
 
 ; MAIN GUI
 
@@ -66,7 +116,7 @@ Global $scrape_tabitem = GUICtrlCreateTabItem("Scrape")
 
 ;GUICtrlCreateGroup("Scraper", 10, 10, 300, 300)
 
-Global $websites_label = GUICtrlCreateLabel("Website(s)", 20, 40, 80, 20)
+Global $websites_label = GUICtrlCreateLabel("Website(s)", 20, 40, 70, 20)
 _GUIToolTip_AddTool($tooltip, 0, "The website(s) to scrape the box art from", GUICtrlGetHandle($websites_label))
 Global $rf_generation_checkbox = GUICtrlCreateCheckbox("RF Generation", 90, 40, 85, 20)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the RF Generation website", GUICtrlGetHandle($rf_generation_checkbox))
@@ -144,11 +194,31 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	, GUICtrlGetHandle($scrape_button))
 ;GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlCreateTabItem("Merge")
+GUICtrlCreateTabItem("Shrink")
+Global $image_compression_quality_label = GUICtrlCreateLabel("Image Compression / Quality", 20, 40, 160, 20)
+_GUIToolTip_AddTool($tooltip, 0, "The maximum level of compression / quality required", GUICtrlGetHandle($image_compression_quality_label))
+Global $image_compression_quality_input = GUICtrlCreateInput("80", 190, 40, 30, 20)
+GUICtrlCreateLabel("%", 225, 40, 20, 20)
+Global $image_compression_quality_slider = GUICtrlCreateSlider(260, 40, 200, 20)
+GUICtrlSetLimit(-1, 10, 1)
+GUICtrlSetData(-1, 10)
+
+Global $image_compression_listview = GUICtrlCreateListView("Filename|Original Size (KB)|Compressed Size (KB)|Ratio (%)", 20, 80, 760, 460)
+_GUICtrlListView_SetColumnWidth(-1, 0, 300)
+_GUICtrlListView_SetColumnWidth(-1, 1, 120)
+_GUICtrlListView_SetColumnWidth(-1, 2, 120)
+_GUICtrlListView_SetColumnWidth(-1, 2, 60)
+
+
 ;GUICtrlCreateGroup("Merger", 400, 5, 660, 560)
 ;$idTreeView = GUICtrlCreateTreeView(410, 20, 360, 540, $iStyle, $WS_EX_CLIENTEDGE)
-Local $merge_button = GUICtrlCreateButton("Merge", 90, 100, 80, 20)
-_GUIToolTip_AddTool($tooltip, 0, "Merges all scraped art into the Box_Full folder with -full-cover filename suffix.  Art in the Box and BoxBack folders will be merged into Box_Full.  Art in Box_Full will be renamed with a -full-cover filename suffix and optionally compressed.", GUICtrlGetHandle($merge_button))
+Local $calculate_button = GUICtrlCreateButton("Calculate", 200, 540, 80, 20)
+Local $proceed_button = GUICtrlCreateButton("Proceed", 300, 540, 80, 20)
+Global $total_image_compression_files_label = GUICtrlCreateLabel("0 of 0 files", 650, 540, 120, 20)
+
+
+
+;_GUIToolTip_AddTool($tooltip, 0, "Merges all scraped art into the Box_Full folder with -full-cover filename suffix.  Art in the Box and BoxBack folders will be merged into Box_Full.  Art in Box_Full will be renamed with a -full-cover filename suffix and optionally compressed.", GUICtrlGetHandle($merge_button))
 ;GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlCreateTabItem("Match")
@@ -165,6 +235,8 @@ GUISetState(@SW_SHOW)
 GUIRegisterMsg($WM_NOTIFY, "WM_NOTIFY")
 _TipDisplayLen(30000)
 
+
+#cs
 if FileExists($download_path & "\Box_Full") = False Then
 
 	DirCreate($download_path & "\Box_Full")
@@ -210,7 +282,7 @@ if FileExists(@ScriptDir & "\" & $app_name & ".txt") = True Then
 EndIf
 
 _GUICtrlTreeView_SelectItem($idTreeView, _GUICtrlTreeView_GetFirstItem($idTreeView))
-
+#ce
 
 
 While True
@@ -449,13 +521,76 @@ While True
 
 
 
+		Case $proceed_button
 
-		Case $merge_button
+			for $i = 0 to (_GUICtrlListView_GetItemCount ($image_compression_listview) - 1)
+
+				Local $compressed_filepath = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\" & _GUICtrlListView_GetItemText($image_compression_listview, $i)
+				Local $original_filepath = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListView_GetItemText($image_compression_listview, $i)
+
+				local $result = FileCopy($compressed_filepath, $original_filepath, 9)
+
+				if $result = 1 Then
+
+					FileDelete($compressed_filepath)
+				EndIf
+
+			Next
+
+			_GUICtrlListView_BeginUpdate($image_compression_listview)
+			_GUICtrlListView_DeleteAllItems($image_compression_listview)
+			_GUICtrlListView_EndUpdate($image_compression_listview)
 
 
-			ShellExecuteWait("magick.exe", "-quality 80% """ & $download_path & "\Box_Full\3D Tic-Tac-Toe.jpg"" """ & $download_path & "\Box_Full\3D Tic-Tac-Toe-full-cover.jpg""", $ImageMagick_path, "", @SW_HIDE)
 
 
+		Case $calculate_button
+
+
+			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed") = False Then
+
+				DirCreate($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed")
+			EndIf
+
+			Local $arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full", "*.jpg", 1, 0, 1)
+
+			_GUICtrlListView_BeginUpdate($image_compression_listview)
+			_GUICtrlListView_DeleteAllItems($image_compression_listview)
+			_GUICtrlListView_EndUpdate($image_compression_listview)
+
+			GUICtrlSetData($total_image_compression_files_label, "0 of " & $arr[0] & " files")
+			FileDelete($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\*.*")
+
+			for $i = 1 to $arr[0]
+
+;				$rr = "-quality 80% """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $arr[$i] & """ """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\" & $arr[$i] & """"
+;				ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $rr = ' & $rr & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+
+				ShellExecuteWait("magick.exe", "-quality 80% """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $arr[$i] & """ """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\" & $arr[$i] & """", $ImageMagick_path, "", @SW_HIDE)
+
+				Local $filesize = FileGetSize($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $arr[$i])
+				Local $filesize_compressed = FileGetSize($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\" & $arr[$i])
+				local $compression_ratio = int(($filesize_compressed / $filesize) * 100)
+
+				if $compression_ratio >= 80 Then
+
+					FileDelete($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\" & $arr[$i])
+				Else
+
+					GUICtrlCreateListViewItem($arr[$i] & "|" & int($filesize / 1024) & "|" & int($filesize_compressed / 1024) & "|" & $compression_ratio, $image_compression_listview)
+				EndIf
+
+				GUICtrlSetData($total_image_compression_files_label, $i & " of " & $arr[0] & " files")
+
+
+			Next
+
+;			_GUICtrlListView_EndUpdate($image_compression_listview)
+
+
+
+#cs
 
 
 			Exit
@@ -517,12 +652,13 @@ While True
 
 			FileWrite($download_path & "\gamelist.xml", $xml)
 
-			ConsoleWrite("Manually copy " & $download_path & "\Box_Full\*.jpg to /opt/retropie/configs/all/emulationstation/downloaded_images/" & $emulator_folder_name & @CRLF)
-			ConsoleWrite("Manually copy " & $download_path & "\gamelist.xml to /opt/retropie/configs/all/emulationstation/gamelists/" & $emulator_folder_name & @CRLF)
+;			ConsoleWrite("Manually copy " & $download_path & "\Box_Full\*.jpg to /opt/retropie/configs/all/emulationstation/downloaded_images/" & $emulator_folder_name & @CRLF)
+;			ConsoleWrite("Manually copy " & $download_path & "\gamelist.xml to /opt/retropie/configs/all/emulationstation/gamelists/" & $emulator_folder_name & @CRLF)
 
 
 
 			Exit
+			#ce
 
 	EndSwitch
 WEnd
@@ -610,26 +746,37 @@ EndFunc
 
 Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 	#forceref $hWnd, $iMsg, $wParam
-	Local $hWndFrom, $iIDFrom, $iCode, $tNMHDR, $hWndSlider
-	$hWndSlider = $max_scrapers_slider
-	If Not IsHWnd($max_scrapers_slider) Then $hWndSlider = GUICtrlGetHandle($max_scrapers_slider)
+	Local $hWndFrom, $iIDFrom, $iCode, $tNMHDR, $hWndSlider1, $hWndSlider2
+
+	$hWndSlider1 = $max_scrapers_slider
+	If Not IsHWnd($max_scrapers_slider) Then $hWndSlider1 = GUICtrlGetHandle($max_scrapers_slider)
+	$hWndSlider2 = $image_compression_quality_slider
+	If Not IsHWnd($image_compression_quality_slider) Then $hWndSlider2 = GUICtrlGetHandle($image_compression_quality_slider)
 
 	$tNMHDR = DllStructCreate($tagNMHDR, $lParam)
 	$hWndFrom = HWnd(DllStructGetData($tNMHDR, "hWndFrom"))
 	$iIDFrom = DllStructGetData($tNMHDR, "IDFrom")
 	$iCode = DllStructGetData($tNMHDR, "Code")
 	Switch $hWndFrom
-		Case $hWndSlider
+
+		Case $hWndSlider1
 			Switch $iCode
 				Case $NM_RELEASEDCAPTURE ; The control is releasing mouse capture
+
+
+					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $NM_RELEASEDCAPTURE = ' & $NM_RELEASEDCAPTURE & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+			EndSwitch
+
+		Case $hWndSlider2
+			Switch $iCode
+				Case $NM_RELEASEDCAPTURE ; The control is releasing mouse capture
+
+
 					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $NM_RELEASEDCAPTURE = ' & $NM_RELEASEDCAPTURE & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
 
 
-				;	_DebugPrint("$NM_RELEASEDCAPTURE" & @CRLF & "--> hWndFrom:" & @TAB & $hWndFrom & @CRLF & _
-				;			"-->IDFrom:" & @TAB & $iIDFrom & @CRLF & _
-				;			"-->Code:" & @TAB & $iCode)
-					; No return value
+
 			EndSwitch
 	EndSwitch
 	Return $GUI_RUNDEFMSG

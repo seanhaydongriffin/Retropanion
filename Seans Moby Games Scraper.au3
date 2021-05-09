@@ -11,10 +11,12 @@
 #include <Array.au3>
 #include <File.au3>
 
+Local $app_name = "Seans Moby Games Scraper"
+
+Local $ImageMagick_path = "C:\Program Files\ImageMagick-7.0.11-Q16-HDRI"
 Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
 Local $sDrive1 = "", $sDir1 = "", $sFileName1 = "", $sExtension1 = ""
 Local $sDrive2 = "", $sDir2 = "", $sFileName2 = "", $sExtension2 = ""
-Local $app_name = "Seans Moby Games Scraper"
 
 Global $system_dict = ObjCreate("Scripting.Dictionary")
 $system_dict.Add("3DO", "3do")
@@ -354,7 +356,6 @@ for $page_num = $page_start_page to $end_page
 
 		Local $arr2 = StringRegExp($html, ".*style=""background-image:url\((?U)(.*)\).*></a>      </div>      <div class=""thumbnail-cover-caption"">        <p>Front Cover</p>", 3)
 		Local $arr2_error = @error
-;		Local $arr3 = StringRegExp($html, ".*style=""background-image:url\((?U)(.*)-back-cover.jpg", 3)
 		Local $arr3 = StringRegExp($html, ".*style=""background-image:url\((?U)(.*)\);""></a>      </div>      <div class=""thumbnail-cover-caption"">        <p>Back Cover</p>", 3)
 		Local $arr3_error = @error
 
@@ -371,7 +372,6 @@ for $page_num = $page_start_page to $end_page
 
 			Local $arr2 = StringRegExp($html, ".*style=""background-image:url\((?U)(.*)\).*></a>      </div>      <div class=""thumbnail-cover-caption"">        <p>Manual<br>Front</p>", 3)
 			Local $arr2_error = @error
-	;		Local $arr3 = StringRegExp($html, ".*style=""background-image:url\((?U)(.*)-back-cover.jpg", 3)
 			Local $arr3 = StringRegExp($html, ".*style=""background-image:url\((?U)(.*)\);""></a>      </div>      <div class=""thumbnail-cover-caption"">        <p>Manual<br>Back</p>", 3)
 			Local $arr3_error = @error
 
@@ -386,6 +386,11 @@ for $page_num = $page_start_page to $end_page
 				InetGet("http://www.mobygames.com" & $arr3[0], $emulator_folder & "\BoxBack\" & $arr[$i + 1] & ".jpg")
 			EndIf
 		EndIf
+
+		; join BoxBack to Box and save result as *-full-cover.jpg in Box_Full
+
+		ShellExecuteWait("magick.exe", """" & $emulator_folder & "\BoxBack\" & $arr[$i + 1] & ".jpg"" """ & $emulator_folder & "\Box\" & $arr[$i + 1] & ".jpg"" +append """ & $emulator_folder & "\Box_Full\" & $arr[$i + 1] & "-full-cover.jpg""", $ImageMagick_path, "", @SW_HIDE)
+
 
 ;		$last_title = $arr[$i + 1]
 	Next

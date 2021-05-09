@@ -11,10 +11,12 @@
 #include <Array.au3>
 #include <File.au3>
 
+Local $app_name = "Seans Cover Project Scraper"
+
+Local $ImageMagick_path = "C:\Program Files\ImageMagick-7.0.11-Q16-HDRI"
 Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
 Local $sDrive1 = "", $sDir1 = "", $sFileName1 = "", $sExtension1 = ""
 Local $sDrive2 = "", $sDir2 = "", $sFileName2 = "", $sExtension2 = ""
-Local $app_name = "Seans Cover Project Scraper"
 
 Global $page_letter[27] = ["9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 Global $system_dict = ObjCreate("Scripting.Dictionary")
@@ -364,7 +366,7 @@ for $page_num = $page_start_page to $end_page
 			$arr[$i + 1] = StringRegExpReplace($arr[$i + 1], '\\|/|:|\*|\?|\"|\<|\>|\|', "")
 			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $arr[$i + 1] = ' & $arr[$i + 1] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-			InetGet("http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=" & $arr2[0], $emulator_folder & "\Box_Full\" & $arr[$i + 1] & ".jpg")
+			InetGet("http://www.thecoverproject.net/download_cover.php?src=cdn&cover_id=" & $arr2[0], $emulator_folder & "\Box_Full\" & $arr[$i + 1] & "-full-cover.jpg")
 
 		Next
 

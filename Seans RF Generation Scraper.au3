@@ -11,10 +11,12 @@
 #include <Array.au3>
 #include <File.au3>
 
+Local $app_name = "Seans RF Generation Scraper"
+
+Local $ImageMagick_path = "C:\Program Files\ImageMagick-7.0.11-Q16-HDRI"
 Local $sDrive = "", $sDir = "", $sFileName = "", $sExtension = ""
 Local $sDrive1 = "", $sDir1 = "", $sFileName1 = "", $sExtension1 = ""
 Local $sDrive2 = "", $sDir2 = "", $sFileName2 = "", $sExtension2 = ""
-Local $app_name = "Seans RF Generation Scraper"
 
 Global $system_dict = ObjCreate("Scripting.Dictionary")
 $system_dict.Add("3DO", "052")
@@ -347,6 +349,10 @@ for $page_num = $page_start_page to $end_page
 
 			InetGet("http://www.rfgeneration.com/images/games/" & StringLeft($arr[$i + 0], 5) & "/bf/" & $arr[$i + 0] & ".jpg", $emulator_folder & "\Box\" & $arr[$i + 1] & ".jpg")
 			InetGet("http://www.rfgeneration.com/images/games/" & StringLeft($arr[$i + 0], 5) & "/bb/" & $arr[$i + 0] & ".jpg", $emulator_folder & "\BoxBack\" & $arr[$i + 1] & ".jpg")
+
+			; join BoxBack to Box and save result as *-full-cover.jpg in Box_Full
+
+			ShellExecuteWait("magick.exe", """" & $emulator_folder & "\BoxBack\" & $arr[$i + 1] & ".jpg"" """ & $emulator_folder & "\Box\" & $arr[$i + 1] & ".jpg"" +append """ & $emulator_folder & "\Box_Full\" & $arr[$i + 1] & "-full-cover.jpg""", $ImageMagick_path, "", @SW_HIDE)
 		EndIf
 
 		$last_title = $arr[$i + 1]

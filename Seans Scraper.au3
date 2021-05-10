@@ -10,6 +10,7 @@
 #include <Math.au3>
 #include <GuiToolTip.au3>
 #include <GuiListView.au3>
+#include <GuiListBox.au3>
 
 ; Fuzzy match rom filenames to artwork from RF Generation
 
@@ -47,9 +48,9 @@ Global $download_path_dict = ObjCreate("Scripting.Dictionary")
 $download_path_dict.Add("3DO", "3DO")
 $download_path_dict.Add("Amstrad CPC 464", "")
 $download_path_dict.Add("Apple II / Apple III", "")
-$download_path_dict.Add("Atari 2600", "")
-$download_path_dict.Add("Atari 5200", "")
-$download_path_dict.Add("Atari 7800", "")
+$download_path_dict.Add("Atari 2600", "Atari_2600")
+$download_path_dict.Add("Atari 5200", "Atari_5200")
+$download_path_dict.Add("Atari 7800", "Atari_7800")
 $download_path_dict.Add("Atari 8-bit Family", "")
 $download_path_dict.Add("Atari Jaguar", "")
 $download_path_dict.Add("Atari Lynx", "Atari_Lynx")
@@ -88,6 +89,51 @@ $download_path_dict.Add("Sony PlayStation", "")
 $download_path_dict.Add("Sony PlayStation 2", "")
 $download_path_dict.Add("Sony PSP", "")
 
+Global $roms_path_dict = ObjCreate("Scripting.Dictionary")
+$roms_path_dict.Add("3DO", "3do")
+$roms_path_dict.Add("Amstrad CPC 464", "amstradcpc")
+$roms_path_dict.Add("Apple II / Apple III", "")
+$roms_path_dict.Add("Atari 2600", "atari2600")
+$roms_path_dict.Add("Atari 5200", "atari5200")
+$roms_path_dict.Add("Atari 7800", "atari7800")
+$roms_path_dict.Add("Atari 8-bit Family", "atari800")
+$roms_path_dict.Add("Atari Jaguar", "atarijaguar")
+$roms_path_dict.Add("Atari Lynx", "atarilynx")
+$roms_path_dict.Add("Atari ST / TT / Falcon", "")
+$roms_path_dict.Add("Bandai WonderSwan", "wonderswan")
+$roms_path_dict.Add("Bandai WonderSwan Color / SwanCrystal", "wonderswancolor")
+$roms_path_dict.Add("Coleco / CBS ColecoVision", "coleco")
+$roms_path_dict.Add("Commodore 64 / 128", "")
+$roms_path_dict.Add("Commodore Amiga", "amiga")
+$roms_path_dict.Add("Dragon 32 / 64", "")
+$roms_path_dict.Add("GCE Vectrex / Bandai Kousokusen", "vectrex")
+$roms_path_dict.Add("LaserDisc", "daphne")
+$roms_path_dict.Add("Magnavox Odyssey^2 / VideoPac", "videopac")
+$roms_path_dict.Add("Mattel Intellivision", "intellivision")
+$roms_path_dict.Add("NEC PC Engine / TurboGrafx-16", "pcengine")
+$roms_path_dict.Add("Nintendo 64", "n64")
+$roms_path_dict.Add("Nintendo DS", "nds")
+$roms_path_dict.Add("Nintendo Famicom Disk System", "")
+$roms_path_dict.Add("Nintendo Game & Watch", "gameandwatch")
+$roms_path_dict.Add("Nintendo Game Boy", "gb")
+$roms_path_dict.Add("Nintendo Game Boy Advance", "gba")
+$roms_path_dict.Add("Nintendo Game Boy Color", "gbc")
+$roms_path_dict.Add("Nintendo GameCube", "")
+$roms_path_dict.Add("Nintendo NES / Famicom", "")
+$roms_path_dict.Add("Nintendo SNES / Super Famicom", "snes")
+$roms_path_dict.Add("Sega 32X", "sega32x")
+$roms_path_dict.Add("Sega CD / Mega CD", "segacd")
+$roms_path_dict.Add("Sega Dreamcast", "dreamcast")
+$roms_path_dict.Add("Sega Game Gear", "gamegear")
+$roms_path_dict.Add("Sega Genesis / Mega Drive", "megadrive")
+$roms_path_dict.Add("Sega Saturn", "saturn")
+$roms_path_dict.Add("Sega SG-1000 / SC-3000", "sg-1000")
+$roms_path_dict.Add("SNK Neo Geo Pocket", "ngp")
+$roms_path_dict.Add("SNK Neo Geo Pocket Color", "ngpc")
+$roms_path_dict.Add("Sony PlayStation", "psx")
+$roms_path_dict.Add("Sony PlayStation 2", "")
+$roms_path_dict.Add("Sony PSP", "psp")
+
 
 
 
@@ -118,13 +164,13 @@ Global $scrape_tabitem = GUICtrlCreateTabItem("Scrape")
 
 Global $websites_label = GUICtrlCreateLabel("Website(s)", 20, 40, 70, 20)
 _GUIToolTip_AddTool($tooltip, 0, "The website(s) to scrape the box art from", GUICtrlGetHandle($websites_label))
-Global $rf_generation_checkbox = GUICtrlCreateCheckbox("RF Generation", 90, 40, 85, 20)
-_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the RF Generation website", GUICtrlGetHandle($rf_generation_checkbox))
-Global $moby_games_checkbox = GUICtrlCreateCheckbox("Moby Games", 180, 40, 80, 20)
-_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the Moby Games website", GUICtrlGetHandle($moby_games_checkbox))
-Global $cover_project_checkbox = GUICtrlCreateCheckbox("Cover Project", 270, 40, 80, 20)
+Global $rf_generation_radio = GUICtrlCreateRadio("RF Generation", 90, 40, 85, 20)
+_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the RF Generation website", GUICtrlGetHandle($rf_generation_radio))
+Global $moby_games_radio = GUICtrlCreateRadio("Moby Games", 180, 40, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the Moby Games website", GUICtrlGetHandle($moby_games_radio))
+Global $cover_project_radio = GUICtrlCreateRadio("Cover Project", 270, 40, 80, 20)
 GUICtrlSetState(-1, $GUI_CHECKED)
-_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the Cover Project website", GUICtrlGetHandle($cover_project_checkbox))
+_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the Cover Project website", GUICtrlGetHandle($cover_project_radio))
 
 Global $system_label = GUICtrlCreateLabel("System", 20, 70, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
@@ -194,7 +240,7 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	, GUICtrlGetHandle($scrape_button))
 ;GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlCreateTabItem("Shrink")
+GUICtrlCreateTabItem("Compress")
 Global $image_compression_quality_label = GUICtrlCreateLabel("Image Compression / Quality", 20, 40, 160, 20)
 _GUIToolTip_AddTool($tooltip, 0, "The maximum level of compression / quality required", GUICtrlGetHandle($image_compression_quality_label))
 Global $image_compression_quality_input = GUICtrlCreateInput("80", 190, 40, 30, 20)
@@ -203,7 +249,15 @@ Global $image_compression_quality_slider = GUICtrlCreateSlider(260, 40, 200, 20)
 GUICtrlSetLimit(-1, 10, 1)
 GUICtrlSetData(-1, 10)
 
-Global $image_compression_listview = GUICtrlCreateListView("Filename|Original Size (KB)|Compressed Size (KB)|Ratio (%)", 20, 80, 760, 460)
+Local $analyse_files_button = GUICtrlCreateButton("Analyse Files", 20, 70, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "Click to find the files that can be compressed to a factor less than specified above (" & GUICtrlRead($image_compression_quality_input) & "%)", GUICtrlGetHandle($analyse_files_button))
+Global $total_image_compression_files_label = GUICtrlCreateLabel("0 of 0 files", 110, 70, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "The number of files that can be compressed to a factor less than specified above (" & GUICtrlRead($image_compression_quality_input) & "%)", GUICtrlGetHandle($total_image_compression_files_label))
+Local $compress_files_button = GUICtrlCreateButton("Compress Files", 200, 70, 80, 20)
+GUICtrlSetState(-1, $GUI_DISABLE)
+_GUIToolTip_AddTool($tooltip, 0, "Click to compress the files below to the factor specified above (" & GUICtrlRead($image_compression_quality_input) & "%)", GUICtrlGetHandle($compress_files_button))
+
+Global $image_compression_listview = GUICtrlCreateListView("Filename|Original Size (KB)|Compressed Size (KB)|Ratio (%)", 20, 100, 760, 460)
 _GUICtrlListView_SetColumnWidth(-1, 0, 300)
 _GUICtrlListView_SetColumnWidth(-1, 1, 120)
 _GUICtrlListView_SetColumnWidth(-1, 2, 120)
@@ -212,19 +266,37 @@ _GUICtrlListView_SetColumnWidth(-1, 2, 60)
 
 ;GUICtrlCreateGroup("Merger", 400, 5, 660, 560)
 ;$idTreeView = GUICtrlCreateTreeView(410, 20, 360, 540, $iStyle, $WS_EX_CLIENTEDGE)
-Local $calculate_button = GUICtrlCreateButton("Calculate", 200, 540, 80, 20)
-Local $proceed_button = GUICtrlCreateButton("Proceed", 300, 540, 80, 20)
-Global $total_image_compression_files_label = GUICtrlCreateLabel("0 of 0 files", 650, 540, 120, 20)
 
 
 
 ;_GUIToolTip_AddTool($tooltip, 0, "Merges all scraped art into the Box_Full folder with -full-cover filename suffix.  Art in the Box and BoxBack folders will be merged into Box_Full.  Art in Box_Full will be renamed with a -full-cover filename suffix and optionally compressed.", GUICtrlGetHandle($merge_button))
 ;GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlCreateTabItem("Match")
-$idTreeView = GUICtrlCreateTreeView(410, 20, 360, 540, $iStyle, $WS_EX_CLIENTEDGE)
-Local $match_button = GUICtrlCreateButton("Match", 90, 570, 80, 20)
+GUICtrlCreateTabItem("Rename")
 
+Global $max_matches_label = GUICtrlCreateLabel("Max Matches", 20, 40, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "The maximum number of matches to each rom", GUICtrlGetHandle($max_matches_label))
+Global $max_matches_input = GUICtrlCreateInput("3", 90, 40, 30, 20)
+Global $max_matches_slider = GUICtrlCreateSlider(130, 40, 200, 20)
+GUICtrlSetLimit(-1, 10, 1)
+GUICtrlSetData(-1, 10)
+Global $exclude_unmatched_roms_checkbox = GUICtrlCreateCheckbox("Exclude Unmatched Roms", 20, 70, 160, 20)
+_GUIToolTip_AddTool($tooltip, 0, "If checked then roms with no matches will be excluded", GUICtrlGetHandle($exclude_unmatched_roms_checkbox))
+GUICtrlSetState(-1, $GUI_CHECKED)
+Global $exclude_poorly_matched_roms_checkbox = GUICtrlCreateCheckbox("Exclude Poorly Matched Roms", 20, 90, 160, 20)
+_GUIToolTip_AddTool($tooltip, 0, "If checked then roms with uncertain matches will be excluded", GUICtrlGetHandle($exclude_poorly_matched_roms_checkbox))
+GUICtrlSetState(-1, $GUI_CHECKED)
+
+
+Local $refresh_button = GUICtrlCreateButton("Refresh", 20, 120, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "Click to update the tree with rom file names matches to possible art files names", GUICtrlGetHandle($refresh_button))
+Local $rename_button = GUICtrlCreateButton("Rename", 20, 140, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "Click to rename all selected art files to the associated rom file names", GUICtrlGetHandle($rename_button))
+$idTreeView = GUICtrlCreateTreeView(410, 40, 360, 520, $iStyle, $WS_EX_CLIENTEDGE)
+
+GUICtrlCreateTabItem("Missing")
+Global $missing_refresh_button = GUICtrlCreateButton("Refresh", 20, 80, 80, 20)
+Global $missing_list = GUICtrlCreateList("", 20, 100, 500, 460)
 
 GUICtrlCreateTabItem("") ; end tabitem definition
 
@@ -330,24 +402,52 @@ While True
 			GUIDelete($main_gui)
 			ExitLoop
 
+
+		Case $missing_refresh_button
+
+			Local $gamelist_arr
+			_FileReadToArray("F:\RetroPie\opt\retropie\configs\all\emulationstation\gamelists\" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "\gamelist.xml", $gamelist_arr, 0)
+
+			_GUICtrlListBox_BeginUpdate($missing_list)
+			_GUICtrlListBox_ResetContent($missing_list)
+
+			for $i = 0 to (UBound($gamelist_arr) - 1)
+
+				if StringInStr($gamelist_arr[$i], "<name>") > 0 Then
+
+					$gamelist_arr[$i] = StringReplace($gamelist_arr[$i], "<name>", "")
+					$gamelist_arr[$i] = StringReplace($gamelist_arr[$i], "</name>", "")
+
+					if FileExists("F:\RetroPie\opt\retropie\configs\all\emulationstation\downloaded_images\" & $gamelist_arr[$i] & "-full-cover.jpg") = False Then
+
+						_GUICtrlListBox_AddString($missing_list, $gamelist_arr[$i] & "-full-cover.jpg")
+					EndIf
+
+				EndIf
+			Next
+
+			_GUICtrlListBox_EndUpdate($missing_list)
+
+
+
 		Case $scrape_button
 
 			Local $system_name
 			Local $scraper_exe
 
-			if GUICtrlRead($rf_generation_checkbox) = $GUI_CHECKED Then
+			if GUICtrlRead($rf_generation_radio) = $GUI_CHECKED Then
 
 				$system_name = "RF Generation"
 				$scraper_exe = "Seans RF Generation Scraper.exe"
 			endif
 
-			if GUICtrlRead($moby_games_checkbox) = $GUI_CHECKED Then
+			if GUICtrlRead($moby_games_radio) = $GUI_CHECKED Then
 
 				$system_name = "Moby Games"
 				$scraper_exe = "Seans Moby Games Scraper.exe"
 			endif
 
-			if GUICtrlRead($cover_project_checkbox) = $GUI_CHECKED Then
+			if GUICtrlRead($cover_project_radio) = $GUI_CHECKED Then
 
 				$system_name = "The Cover Project"
 				$scraper_exe = "Seans Cover Project Scraper.exe"
@@ -397,7 +497,7 @@ While True
 			GUICtrlSetData($status_input, "")
 
 
-		Case $match_button
+		Case $refresh_button
 
 			; scrape the tree
 
@@ -405,9 +505,9 @@ While True
 
 			for $k = 0 to (UBound($alphanumeric_arr) - 1)
 
-				Local $roms_arr = _FileListToArrayRec($roms_folder, $alphanumeric_arr[$k] & "*.*", 1, 0, 1)
+				Local $roms_arr = _FileListToArrayRec($roms_folder & "\" & $roms_path_dict.Item(GUICtrlRead($system_combo)), $alphanumeric_arr[$k] & "*.*", 1, 0, 1)
 				_ArrayDelete($roms_arr, 0)
-				Local $art_arr = _FileListToArrayRec($download_path & "\Box", $alphanumeric_arr[$k] & "*", 1, 0, 1)
+				Local $art_arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full", $alphanumeric_arr[$k] & "*", 1, 0, 1)
 				_ArrayDelete($art_arr, 0)
 
 				Local $tree_first_item = Null
@@ -416,45 +516,8 @@ While True
 
 					_PathSplit($roms_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
 
-					if StringCompare($sExtension1, ".state") <> 0 Then
+					if StringCompare($sExtension1, ".state") <> 0 and FileExists("F:\RetroPie\opt\retropie\configs\all\emulationstation\downloaded_images\" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "\" & $sFileName1 & "-full-cover.jpg") = False Then
 
-						Local $sFileName1_cleaned = $sFileName1
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(World)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(USA)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(USA, Australia)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(USA, Europe)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(Europe)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(Japan)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(Germany)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(Spain)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(Japan, Europe)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(Demo)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(Proto)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(En,De)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(En,Es,It)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(En,Ja)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(En,Fr,De)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(En,Fr,It)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(En,Fr,De,Es,It,Nl)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(En,Fr,De,Es,Nl)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(En,Sv,No,Da,Fi)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, "(Fr,De,Nl)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " (J)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " [M][!]", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " [M][f1]", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " [M][o1]", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " [M][o1][f1]", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " [M]", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " (PD)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " (Rev A)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " (Rev B)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " (Rev 1)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " (Rev 2)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " (SGB Enhanced)", "")
-						$sFileName1_cleaned = StringReplace($sFileName1_cleaned, " (Rumble Version)", "")
-						$sFileName1_cleaned = StringStripWS($sFileName1_cleaned, 3)
-
-						ConsoleWrite("rom " & $sFileName1_cleaned & @CRLF)
 						Local $tree_parent_item = _GUICtrlTreeView_Add($idTreeView, 0, $sFileName1)
 				;		$tree_file_str = $tree_file_str & $sFileName1 & @CRLF
 
@@ -469,59 +532,82 @@ While True
 
 							_PathSplit($art_arr[$j], $sDrive2, $sDir2, $sFileName2, $sExtension2)
 
-							Local $similarity = _Typos($sFileName1_cleaned, $sFileName2)
-							;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $sFileName1_cleaned = ' & $sFileName1_cleaned & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-							;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $sFileName2 = ' & $sFileName2 & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-							;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $similarity = ' & $similarity & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+							Local $sFileName1_cleaned = CleanRomFilename($sFileName1)
+							Local $sFileName2_cleaned = CleanRomFilename($sFileName2)
+							Local $similarity = _Typos($sFileName1_cleaned, $sFileName2_cleaned)
 
 							if $similarity <= 0 Then
 
 								ReDim $similarity_arr[0]
-								_ArrayAdd($similarity_arr, StringFormat("%.2d", $similarity) & "|" & $sFileName2, 0, chr(28))
+								_ArrayAdd($similarity_arr, StringFormat("%.2d", $similarity) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
 								ExitLoop
 							EndIf
 
 							if $similarity <= 10 Then
 
-								_ArrayAdd($similarity_arr, StringFormat ( "%.2d" , $similarity ) & "|" & $sFileName2, 0, chr(28))
-								;_ArrayDisplay($similarity_arr)
+								_ArrayAdd($similarity_arr, StringFormat ( "%.2d" , $similarity ) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
+							EndIf
 
-								;ConsoleWrite("   " & $similarity & "|" & $sFileName2 & @CRLF)
+							if $similarity > 10 Then
+
+								Local $sFileName1_cleaned = CleanRomFilename2($sFileName1)
+								Local $sFileName2_cleaned = CleanRomFilename($sFileName2)
+								Local $similarity = _Typos($sFileName1_cleaned, $sFileName2_cleaned)
+
+								if $similarity <= 0 Then
+
+									ReDim $similarity_arr[0]
+									_ArrayAdd($similarity_arr, StringFormat("%.2d", $similarity) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
+									ExitLoop
+								EndIf
+
+								if $similarity <= 10 Then
+
+									_ArrayAdd($similarity_arr, StringFormat ( "%.2d" , $similarity ) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
+								EndIf
+
 							EndIf
 
 						Next
 
 						_ArraySort($similarity_arr)
-						;_ArrayDisplay($similarity_arr)
 
-						for $j = 0 to (UBound($similarity_arr) - 1)
+						if GUICtrlRead($exclude_unmatched_roms_checkbox) = $GUI_CHECKED And UBound($similarity_arr) = 0 Then
 
-							Local $similarity_part = StringSplit($similarity_arr[$j], "|", 2)
-							;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $similarity_arr[$j] = ' & $similarity_arr[$j] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-							Local $treeview_child_item = _GUICtrlTreeView_AddChild($idTreeView, $tree_parent_item, $similarity_part[1])
-				;			$tree_file_str = $tree_file_str & "	" & $similarity_part[1]
+							_GUICtrlTreeView_Delete($idTreeView, $tree_parent_item)
+						Else
 
-							if Number($similarity_part[0]) = 0 Then
+							if GUICtrlRead($exclude_poorly_matched_roms_checkbox) = $GUI_CHECKED And (UBound($similarity_arr) > 1 or StringInStr($similarity_arr[0], "00|", 1) = 0) Then
 
-								_GUICtrlTreeView_SetChecked($idTreeView, $treeview_child_item)
-				;				$tree_file_str = $tree_file_str & "	GUI_CHECKED"
-				;			Else
+								_GUICtrlTreeView_Delete($idTreeView, $tree_parent_item)
+							Else
 
-				;				$tree_file_str = $tree_file_str & "	GUI_UNCHECKED"
+								for $j = 0 to _Min(UBound($similarity_arr) - 1, Number(GUICtrlRead($max_matches_input)) - 1)
+
+									Local $similarity_part = StringSplit($similarity_arr[$j], "|", 2)
+									Local $treeview_child_item = _GUICtrlTreeView_AddChild($idTreeView, $tree_parent_item, $similarity_part[1])
+
+									if Number($similarity_part[0]) = 0 Then
+
+										_GUICtrlTreeView_SetChecked($idTreeView, $treeview_child_item)
+									EndIf
+								Next
+
+								_GUICtrlTreeView_Expand($idTreeView, $tree_parent_item)
 							EndIf
-
-				;			$tree_file_str = $tree_file_str & @CRLF
-
-						Next
-
-						_GUICtrlTreeView_Expand($idTreeView, $tree_parent_item)
+						EndIf
 					EndIf
 				Next
 			Next
 
 
 
-		Case $proceed_button
+		Case $compress_files_button
+
+			GUICtrlSetState($image_compression_quality_input, $GUI_DISABLE)
+			GUICtrlSetState($image_compression_quality_slider, $GUI_DISABLE)
+			GUICtrlSetState($analyse_files_button, $GUI_DISABLE)
+			GUICtrlSetState($compress_files_button, $GUI_DISABLE)
 
 			for $i = 0 to (_GUICtrlListView_GetItemCount ($image_compression_listview) - 1)
 
@@ -541,11 +627,18 @@ While True
 			_GUICtrlListView_DeleteAllItems($image_compression_listview)
 			_GUICtrlListView_EndUpdate($image_compression_listview)
 
+			GUICtrlSetState($image_compression_quality_input, $GUI_ENABLE)
+			GUICtrlSetState($image_compression_quality_slider, $GUI_ENABLE)
+			GUICtrlSetState($analyse_files_button, $GUI_ENABLE)
 
 
 
-		Case $calculate_button
+		Case $analyse_files_button
 
+			GUICtrlSetState($image_compression_quality_input, $GUI_DISABLE)
+			GUICtrlSetState($image_compression_quality_slider, $GUI_DISABLE)
+			GUICtrlSetState($analyse_files_button, $GUI_DISABLE)
+			GUICtrlSetState($compress_files_button, $GUI_DISABLE)
 
 			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed") = False Then
 
@@ -588,13 +681,24 @@ While True
 
 ;			_GUICtrlListView_EndUpdate($image_compression_listview)
 
+			GUICtrlSetData($total_image_compression_files_label, _GUICtrlListView_GetItemCount($image_compression_listview) & " of " & $arr[0] & " files")
+
+			GUICtrlSetState($image_compression_quality_input, $GUI_ENABLE)
+			GUICtrlSetState($image_compression_quality_slider, $GUI_ENABLE)
+			GUICtrlSetState($analyse_files_button, $GUI_ENABLE)
+
+			if _GUICtrlListView_GetItemCount($image_compression_listview) > 0 Then
+
+				GUICtrlSetState($compress_files_button, $GUI_ENABLE)
+			EndIf
 
 
-#cs
+		Case $rename_button
 
+			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Done") = False Then
 
-			Exit
-
+				DirCreate($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Done")
+			EndIf
 
 			Local $tree_item = _GUICtrlTreeView_GetFirstItem($idTreeView)
 
@@ -603,19 +707,26 @@ While True
 				if _GUICtrlTreeView_Level($idTreeView, $tree_item) > 0 and _GUICtrlTreeView_GetChecked($idTreeView, $tree_item) = True Then
 
 					local $scraped_name = _GUICtrlTreeView_GetText($idTreeView, $tree_item)
-					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $scraped_name = ' & $scraped_name & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 					local $rom_name = _GUICtrlTreeView_GetText($idTreeView, _GUICtrlTreeView_GetParentHandle($idTreeView, $tree_item))
-					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $rom_name = ' & $rom_name & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-					ShellExecuteWait("magick.exe", """" & $download_path & "\BoxBack\" & $scraped_name & ".jpg"" """ & $download_path & "\Box\" & $scraped_name & ".jpg"" +append """ & $download_path & "\Box_Full\" & $rom_name & "-full-cover.jpg""", $ImageMagick_path, "", @SW_HIDE)
+					if StringCompare($scraped_name, $rom_name, 1) <> 0 Then
 
+						Local $msg = "Renaming " & $scraped_name & "-full-cover.jpg to " & $rom_name & "-full-cover.jpg"
+						GUICtrlSetData($status_input, $msg)
+						FileMove($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $scraped_name & "-full-cover.jpg", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $rom_name & "-full-cover.jpg", 1)
+					EndIf
+
+					FileCopy($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $rom_name & "-full-cover.jpg", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Done\" & $rom_name & "-full-cover.jpg", 1)
 				EndIf
 
 				$tree_item = _GUICtrlTreeView_GetNext($idTreeView, $tree_item)
 
 			WEnd
 
+			GUICtrlSetData($status_input, "")
 
+
+#cs
 			; Create gamelist.xml
 
 
@@ -654,11 +765,10 @@ While True
 
 ;			ConsoleWrite("Manually copy " & $download_path & "\Box_Full\*.jpg to /opt/retropie/configs/all/emulationstation/downloaded_images/" & $emulator_folder_name & @CRLF)
 ;			ConsoleWrite("Manually copy " & $download_path & "\gamelist.xml to /opt/retropie/configs/all/emulationstation/gamelists/" & $emulator_folder_name & @CRLF)
+#ce
 
 
 
-			Exit
-			#ce
 
 	EndSwitch
 WEnd
@@ -790,3 +900,67 @@ Func _TipDisplayLen($time=5000)
     Next
 EndFunc
 
+
+Func CleanRomFilename($filename)
+
+	$filename = StringReplace($filename, " [M][!]", "")
+	$filename = StringReplace($filename, " [M][f1]", "")
+	$filename = StringReplace($filename, " [M][o1]", "")
+	$filename = StringReplace($filename, " [M][o1][f1]", "")
+	$filename = StringReplace($filename, " [M]", "")
+
+	$filename = StringRegExpReplace($filename, "\(.*" , "")
+
+	$filename = StringReplace($filename, "-full-cover", "")
+	$filename = StringStripWS($filename, 3)
+	Return $filename
+
+
+#cs
+	$filename = StringReplace($filename, "(World)", "")
+	$filename = StringReplace($filename, "(USA)", "")
+	$filename = StringReplace($filename, "(USA, Australia)", "")
+	$filename = StringReplace($filename, "(USA, Europe)", "")
+	$filename = StringReplace($filename, "(Europe)", "")
+	$filename = StringReplace($filename, "(Japan)", "")
+	$filename = StringReplace($filename, "(Germany)", "")
+	$filename = StringReplace($filename, "(Spain)", "")
+	$filename = StringReplace($filename, "(Japan, Europe)", "")
+	$filename = StringReplace($filename, "(Demo)", "")
+	$filename = StringReplace($filename, "(Proto)", "")
+	$filename = StringReplace($filename, "(En,De)", "")
+	$filename = StringReplace($filename, "(En,Es,It)", "")
+	$filename = StringReplace($filename, "(En,Ja)", "")
+	$filename = StringReplace($filename, "(En,Fr,De)", "")
+	$filename = StringReplace($filename, "(En,Fr,It)", "")
+	$filename = StringReplace($filename, "(En,Fr,De,Es,It,Nl)", "")
+	$filename = StringReplace($filename, "(En,Fr,De,Es,Nl)", "")
+	$filename = StringReplace($filename, "(En,Sv,No,Da,Fi)", "")
+	$filename = StringReplace($filename, "(Fr,De,Nl)", "")
+	$filename = StringReplace($filename, " (J)", "")
+	$filename = StringReplace($filename, " (PD)", "")
+	$filename = StringReplace($filename, " (Rev A)", "")
+	$filename = StringReplace($filename, " (Rev B)", "")
+	$filename = StringReplace($filename, " (Rev 1)", "")
+	$filename = StringReplace($filename, " (Rev 2)", "")
+	$filename = StringReplace($filename, " (SGB Enhanced)", "")
+	$filename = StringReplace($filename, " (Rumble Version)", "")
+#ce
+
+EndFunc
+
+
+Func CleanRomFilename2($filename)
+
+	$filename = StringReplace($filename, " [M][!]", "")
+	$filename = StringReplace($filename, " [M][f1]", "")
+	$filename = StringReplace($filename, " [M][o1]", "")
+	$filename = StringReplace($filename, " [M][o1][f1]", "")
+	$filename = StringReplace($filename, " [M]", "")
+
+	$filename = StringRegExpReplace($filename, " - .*" , "")
+
+	$filename = StringReplace($filename, "-full-cover", "")
+	$filename = StringStripWS($filename, 3)
+	Return $filename
+EndFunc

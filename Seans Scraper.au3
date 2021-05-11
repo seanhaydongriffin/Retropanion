@@ -11,10 +11,12 @@
 #include <GuiToolTip.au3>
 #include <GuiListView.au3>
 #include <GuiListBox.au3>
+#include "WinSCP.au3"
+
+Local $app_name = "Seans Scraper"
 
 ; Fuzzy match rom filenames to artwork from RF Generation
 
-Local $app_name = "Seans Scraper"
 ;Local $emulator_folder_name = "snes"
 ;Local $download_path = "D:\dwn\Nintendo_SNES"
 ;Local $emulator_folder_name = "wonderswan"
@@ -145,7 +147,6 @@ Local $alphanumeric_arr[36] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
 ;Local $alphanumeric_arr[13] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C"]
 Local $iStyle = BitOR($TVS_EDITLABELS, $TVS_HASBUTTONS, $TVS_HASLINES, $TVS_LINESATROOT, $TVS_DISABLEDRAGDROP, $TVS_SHOWSELALWAYS, $TVS_CHECKBOXES)
 Local $downloaded_images_path = "~/.emulationstation/downloaded_images/" ; & $emulator_folder_name
-Local $roms_folder = "F:\RetroPie\home\pi\RetroPie\roms\" ; & $emulator_folder_name
 
 ; MAIN GUI
 
@@ -405,30 +406,26 @@ While True
 
 		Case $missing_refresh_button
 
-			Local $gamelist_arr
-			_FileReadToArray("F:\RetroPie\opt\retropie\configs\all\emulationstation\gamelists\" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "\gamelist.xml", $gamelist_arr, 0)
+			_WinSCP_Open()
+			Local $rom_filename_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".bin|.zip|.lha|.a52|.a78|.j64|.lnx|.rom|.nes|.mgw|.gba|.love|.7z|.n64|.z64|.nds|.iso|.32x|.sfc|.smc|.vec|.ws")
+			Local $art_filename_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".jpg")
+			;_ArrayDisplay($rom_filename_arr)
+			_WinSCP_Close()
 
 			_GUICtrlListBox_BeginUpdate($missing_list)
 			_GUICtrlListBox_ResetContent($missing_list)
 
-			for $i = 0 to (UBound($gamelist_arr) - 1)
+			for $i = 0 to (UBound($rom_filename_arr) - 1)
 
-				if StringInStr($gamelist_arr[$i], "<name>") > 0 Then
+				_PathSplit($rom_filename_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
 
-					$gamelist_arr[$i] = StringReplace($gamelist_arr[$i], "<name>", "")
-					$gamelist_arr[$i] = StringReplace($gamelist_arr[$i], "</name>", "")
+				if _ArraySearch($art_filename_arr, $sFileName1 & ".jpg") < 0 Then
 
-					if FileExists("F:\RetroPie\opt\retropie\configs\all\emulationstation\downloaded_images\" & $gamelist_arr[$i] & "-full-cover.jpg") = False Then
-
-						_GUICtrlListBox_AddString($missing_list, $gamelist_arr[$i] & "-full-cover.jpg")
-					EndIf
-
+					_GUICtrlListBox_AddString($missing_list, $sFileName1 & ".jpg")
 				EndIf
 			Next
 
 			_GUICtrlListBox_EndUpdate($missing_list)
-
-
 
 		Case $scrape_button
 
@@ -502,13 +499,19 @@ While True
 			; scrape the tree
 
 			_GUICtrlTreeView_DeleteAll($idTreeView)
+			_WinSCP_Open()
+			Local $retropie_art_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "-full-cover.jpg")
+			;_ArrayDisplay($roms_arr)
 
 			for $k = 0 to (UBound($alphanumeric_arr) - 1)
 
-				Local $roms_arr = _FileListToArrayRec($roms_folder & "\" & $roms_path_dict.Item(GUICtrlRead($system_combo)), $alphanumeric_arr[$k] & "*.*", 1, 0, 1)
-				_ArrayDelete($roms_arr, 0)
-				Local $art_arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full", $alphanumeric_arr[$k] & "*", 1, 0, 1)
-				_ArrayDelete($art_arr, 0)
+				Local $roms_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "(?i)^" & $alphanumeric_arr[$k])
+				;_ArrayDisplay($roms_arr)
+
+
+
+				Local $scraped_art_arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full", $alphanumeric_arr[$k] & "*", 1, 0, 1)
+				_ArrayDelete($scraped_art_arr, 0)
 
 				Local $tree_first_item = Null
 
@@ -516,7 +519,7 @@ While True
 
 					_PathSplit($roms_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
 
-					if StringCompare($sExtension1, ".state") <> 0 and FileExists("F:\RetroPie\opt\retropie\configs\all\emulationstation\downloaded_images\" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "\" & $sFileName1 & "-full-cover.jpg") = False Then
+					if StringCompare($sExtension1, ".state") <> 0 and _ArraySearch($retropie_art_arr, $sFileName1 & "-full-cover.jpg") < 0 Then
 
 						Local $tree_parent_item = _GUICtrlTreeView_Add($idTreeView, 0, $sFileName1)
 				;		$tree_file_str = $tree_file_str & $sFileName1 & @CRLF
@@ -528,9 +531,9 @@ While True
 
 						Local $similarity_arr[0]
 
-						for $j = 0 to (UBound($art_arr) - 1)
+						for $j = 0 to (UBound($scraped_art_arr) - 1)
 
-							_PathSplit($art_arr[$j], $sDrive2, $sDir2, $sFileName2, $sExtension2)
+							_PathSplit($scraped_art_arr[$j], $sDrive2, $sDir2, $sFileName2, $sExtension2)
 
 							Local $sFileName1_cleaned = CleanRomFilename($sFileName1)
 							Local $sFileName2_cleaned = CleanRomFilename($sFileName2)
@@ -598,8 +601,10 @@ While True
 						EndIf
 					EndIf
 				Next
+
 			Next
 
+			_WinSCP_Close()
 
 
 		Case $compress_files_button
@@ -964,3 +969,5 @@ Func CleanRomFilename2($filename)
 	$filename = StringStripWS($filename, 3)
 	Return $filename
 EndFunc
+
+

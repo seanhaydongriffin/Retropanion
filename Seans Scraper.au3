@@ -150,32 +150,14 @@ Local $downloaded_images_path = "~/.emulationstation/downloaded_images/" ; & $em
 
 ; MAIN GUI
 
-Local $main_gui = GUICreate($app_name, 800, 600)
+Local $main_gui = GUICreate($app_name, 800, 800)
 
 Global $tooltip = _GUIToolTip_Create(0) ; default style tooltip
 _GUIToolTip_SetMaxTipWidth($tooltip, 300)
 
-GUICtrlCreateTab(5, 5, 790, 570)
-
-Global $scrape_tabitem = GUICtrlCreateTabItem("Scrape")
-;_GUIToolTip_AddTool($tooltip, 0, "Clears the list", GUICtrlGetHandle($scrape_tabitem))
-
-
-;GUICtrlCreateGroup("Scraper", 10, 10, 300, 300)
-
-Global $websites_label = GUICtrlCreateLabel("Website(s)", 20, 40, 70, 20)
-_GUIToolTip_AddTool($tooltip, 0, "The website(s) to scrape the box art from", GUICtrlGetHandle($websites_label))
-Global $rf_generation_radio = GUICtrlCreateRadio("RF Generation", 90, 40, 85, 20)
-_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the RF Generation website", GUICtrlGetHandle($rf_generation_radio))
-Global $moby_games_radio = GUICtrlCreateRadio("Moby Games", 180, 40, 80, 20)
-_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the Moby Games website", GUICtrlGetHandle($moby_games_radio))
-Global $cover_project_radio = GUICtrlCreateRadio("Cover Project", 270, 40, 80, 20)
-GUICtrlSetState(-1, $GUI_CHECKED)
-_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the Cover Project website", GUICtrlGetHandle($cover_project_radio))
-
-Global $system_label = GUICtrlCreateLabel("System", 20, 70, 80, 20)
+Global $system_label = GUICtrlCreateLabel("System", 20, 5, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
-Local $system_combo = GUICtrlCreateCombo("", 90, 70, 250, 20, $CBS_DROPDOWNLIST)
+Local $system_combo = GUICtrlCreateCombo("", 90, 5, 250, 20, $CBS_DROPDOWNLIST)
 _GUICtrlComboBox_AddString($system_combo, "3DO")
 _GUICtrlComboBox_AddString($system_combo, "Amstrad CPC 464")
 _GUICtrlComboBox_AddString($system_combo, "Apple II / Apple III")
@@ -221,6 +203,20 @@ _GUICtrlComboBox_AddString($system_combo, "Sony PlayStation 2")
 _GUICtrlComboBox_AddString($system_combo, "Sony PSP")
 _GUICtrlComboBox_SetCurSel($system_combo, 0)
 
+GUICtrlCreateTab(5, 30, 790, 570)
+
+Global $scrape_tabitem = GUICtrlCreateTabItem("Scrape")
+
+;_GUIToolTip_AddTool($tooltip, 0, "Clears the list", GUICtrlGetHandle($scrape_tabitem))
+Global $websites_label = GUICtrlCreateLabel("Website(s)", 20, 60, 70, 20)
+_GUIToolTip_AddTool($tooltip, 0, "The website(s) to scrape the box art from", GUICtrlGetHandle($websites_label))
+Global $rf_generation_radio = GUICtrlCreateRadio("RF Generation", 90, 60, 85, 20)
+_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the RF Generation website", GUICtrlGetHandle($rf_generation_radio))
+Global $moby_games_radio = GUICtrlCreateRadio("Moby Games", 180, 60, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the Moby Games website", GUICtrlGetHandle($moby_games_radio))
+Global $cover_project_radio = GUICtrlCreateRadio("Cover Project", 270, 60, 80, 20)
+GUICtrlSetState(-1, $GUI_CHECKED)
+_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the Cover Project website", GUICtrlGetHandle($cover_project_radio))
 Global $max_scrapers_label = GUICtrlCreateLabel("Max Scrapers", 20, 100, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "The maximum number of scrapers that will run in parallel", GUICtrlGetHandle($max_scrapers_label))
 Global $max_scrapers_input = GUICtrlCreateInput("10", 90, 100, 30, 20)
@@ -230,7 +226,6 @@ GUICtrlSetData(-1, 10)
 Global $minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Minimized Scrapers", 20, 130, 120, 20)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($minimized_scrapers_checkbox))
 GUICtrlSetState(-1, $GUI_CHECKED)
-
 Local $scrape_button = GUICtrlCreateButton("Scrape", 20, 160, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, _
 	"Scrapes box art according to the selections above." & @CRLF & _
@@ -239,69 +234,69 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	"Back Covers will be stored in the BoxBack folder." & @CRLF  & _
 	"Full Covers will be stored in the BoxFull folder." & @CRLF _
 	, GUICtrlGetHandle($scrape_button))
-;GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlCreateTabItem("Compress")
-Global $image_compression_quality_label = GUICtrlCreateLabel("Image Compression / Quality", 20, 40, 160, 20)
+
+Global $image_compression_quality_label = GUICtrlCreateLabel("Image Compression / Quality", 20, 60, 160, 20)
 _GUIToolTip_AddTool($tooltip, 0, "The maximum level of compression / quality required", GUICtrlGetHandle($image_compression_quality_label))
-Global $image_compression_quality_input = GUICtrlCreateInput("80", 190, 40, 30, 20)
-GUICtrlCreateLabel("%", 225, 40, 20, 20)
-Global $image_compression_quality_slider = GUICtrlCreateSlider(260, 40, 200, 20)
+Global $image_compression_quality_input = GUICtrlCreateInput("80", 190, 60, 30, 20)
+GUICtrlCreateLabel("%", 225, 60, 20, 20)
+Global $image_compression_quality_slider = GUICtrlCreateSlider(260, 60, 200, 20)
 GUICtrlSetLimit(-1, 10, 1)
 GUICtrlSetData(-1, 10)
-
-Local $analyse_files_button = GUICtrlCreateButton("Analyse Files", 20, 70, 80, 20)
+Local $analyse_files_button = GUICtrlCreateButton("Analyse Files", 20, 90, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "Click to find the files that can be compressed to a factor less than specified above (" & GUICtrlRead($image_compression_quality_input) & "%)", GUICtrlGetHandle($analyse_files_button))
-Global $total_image_compression_files_label = GUICtrlCreateLabel("0 of 0 files", 110, 70, 80, 20)
+Global $total_image_compression_files_label = GUICtrlCreateLabel("0 of 0 files", 110, 90, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "The number of files that can be compressed to a factor less than specified above (" & GUICtrlRead($image_compression_quality_input) & "%)", GUICtrlGetHandle($total_image_compression_files_label))
-Local $compress_files_button = GUICtrlCreateButton("Compress Files", 200, 70, 80, 20)
+Local $compress_files_button = GUICtrlCreateButton("Compress Files", 200, 90, 80, 20)
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUIToolTip_AddTool($tooltip, 0, "Click to compress the files below to the factor specified above (" & GUICtrlRead($image_compression_quality_input) & "%)", GUICtrlGetHandle($compress_files_button))
-
-Global $image_compression_listview = GUICtrlCreateListView("Filename|Original Size (KB)|Compressed Size (KB)|Ratio (%)", 20, 100, 760, 460)
+Global $image_compression_listview = GUICtrlCreateListView("Filename|Original Size (KB)|Compressed Size (KB)|Ratio (%)", 20, 120, 760, 460)
 _GUICtrlListView_SetColumnWidth(-1, 0, 300)
 _GUICtrlListView_SetColumnWidth(-1, 1, 120)
 _GUICtrlListView_SetColumnWidth(-1, 2, 120)
 _GUICtrlListView_SetColumnWidth(-1, 2, 60)
 
+GUICtrlCreateTabItem("Reconcile")
 
-;GUICtrlCreateGroup("Merger", 400, 5, 660, 560)
-;$idTreeView = GUICtrlCreateTreeView(410, 20, 360, 540, $iStyle, $WS_EX_CLIENTEDGE)
+Global $retropie_hostname_label = GUICtrlCreateLabel("RetroPie Hostname", 20, 80, 100, 20)
+Global $retropie_hostname_input = GUICtrlCreateInput("retropie", 130, 80, 240, 20)
+Global $retropie_username_label = GUICtrlCreateLabel("RetroPie Username", 20, 100, 100, 20)
+Global $retropie_username_input = GUICtrlCreateInput("pi", 130, 100, 240, 20)
+Global $retropie_password_label = GUICtrlCreateLabel("RetroPie Password", 20, 120, 100, 20)
+Global $retropie_password_input = GUICtrlCreateInput("raspberry", 130, 120, 240, 20)
+Global $retropie_ssh_key_label = GUICtrlCreateLabel("RetroPie SSH Key", 20, 140, 100, 20)
+Global $retropie_ssh_key_input = GUICtrlCreateInput("ssh-ed25519 255 cq4AFscwWDozkpWLAzpJmZak8M7USnljP1lO36e23Co=", 130, 140, 240, 20)
 
+GUICtrlCreateGroup("Display roms with missing art", 10, 180, 370, 400)
+Global $missing_refresh_button = GUICtrlCreateButton("Refresh", 20, 200, 80, 20)
+Global $missing_label = GUICtrlCreateLabel("", 120, 200, 200, 20)
+Global $missing_list = GUICtrlCreateList("", 20, 220, 350, 350)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-
-;_GUIToolTip_AddTool($tooltip, 0, "Merges all scraped art into the Box_Full folder with -full-cover filename suffix.  Art in the Box and BoxBack folders will be merged into Box_Full.  Art in Box_Full will be renamed with a -full-cover filename suffix and optionally compressed.", GUICtrlGetHandle($merge_button))
-;GUICtrlCreateGroup("", -99, -99, 1, 1)
-
-GUICtrlCreateTabItem("Rename")
-
-Global $max_matches_label = GUICtrlCreateLabel("Max Matches", 20, 40, 80, 20)
+GUICtrlCreateGroup("Reconcile roms with missing art", 400, 50, 380, 530)
+Global $max_matches_label = GUICtrlCreateLabel("Max Matches", 420, 80, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "The maximum number of matches to each rom", GUICtrlGetHandle($max_matches_label))
-Global $max_matches_input = GUICtrlCreateInput("3", 90, 40, 30, 20)
-Global $max_matches_slider = GUICtrlCreateSlider(130, 40, 200, 20)
+Global $max_matches_input = GUICtrlCreateInput("3", 490, 80, 30, 20)
+Global $max_matches_slider = GUICtrlCreateSlider(530, 80, 200, 20)
 GUICtrlSetLimit(-1, 10, 1)
 GUICtrlSetData(-1, 10)
-Global $exclude_unmatched_roms_checkbox = GUICtrlCreateCheckbox("Exclude Unmatched Roms", 20, 70, 160, 20)
+Global $exclude_unmatched_roms_checkbox = GUICtrlCreateCheckbox("Exclude Unmatched Roms", 420, 110, 160, 20)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then roms with no matches will be excluded", GUICtrlGetHandle($exclude_unmatched_roms_checkbox))
 GUICtrlSetState(-1, $GUI_CHECKED)
-Global $exclude_poorly_matched_roms_checkbox = GUICtrlCreateCheckbox("Exclude Poorly Matched Roms", 20, 90, 160, 20)
+Global $exclude_poorly_matched_roms_checkbox = GUICtrlCreateCheckbox("Exclude Poorly Matched Roms", 580, 110, 160, 20)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then roms with uncertain matches will be excluded", GUICtrlGetHandle($exclude_poorly_matched_roms_checkbox))
 GUICtrlSetState(-1, $GUI_CHECKED)
-
-
-Local $refresh_button = GUICtrlCreateButton("Refresh", 20, 120, 80, 20)
+Local $refresh_button = GUICtrlCreateButton("Refresh", 420, 140, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "Click to update the tree with rom file names matches to possible art files names", GUICtrlGetHandle($refresh_button))
-Local $rename_button = GUICtrlCreateButton("Rename", 20, 140, 80, 20)
-_GUIToolTip_AddTool($tooltip, 0, "Click to rename all selected art files to the associated rom file names", GUICtrlGetHandle($rename_button))
-$idTreeView = GUICtrlCreateTreeView(410, 40, 360, 520, $iStyle, $WS_EX_CLIENTEDGE)
-
-GUICtrlCreateTabItem("Missing")
-Global $missing_refresh_button = GUICtrlCreateButton("Refresh", 20, 80, 80, 20)
-Global $missing_list = GUICtrlCreateList("", 20, 100, 500, 460)
+Local $reconcile_button = GUICtrlCreateButton("Reconcile", 520, 140, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "Click to rename all selected art files to the associated rom file names", GUICtrlGetHandle($reconcile_button))
+$idTreeView = GUICtrlCreateTreeView(410, 160, 360, 400, $iStyle, $WS_EX_CLIENTEDGE)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlCreateTabItem("") ; end tabitem definition
 
-Global $status_input = GUICtrlCreateInput("Hint - hover mouse over controls for help", 10, 600 - 25, 800 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
+Global $status_input = GUICtrlCreateInput("Hint - hover mouse over controls for help", 10, 800 - 25, 800 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 
 
 GUISetState(@SW_SHOW)
@@ -406,26 +401,44 @@ While True
 
 		Case $missing_refresh_button
 
-			_WinSCP_Open()
-			Local $rom_filename_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".bin|.zip|.lha|.a52|.a78|.j64|.lnx|.rom|.nes|.mgw|.gba|.love|.7z|.n64|.z64|.nds|.iso|.32x|.sfc|.smc|.vec|.ws")
-			Local $art_filename_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".jpg")
-			;_ArrayDisplay($rom_filename_arr)
-			_WinSCP_Close()
+			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
-			_GUICtrlListBox_BeginUpdate($missing_list)
-			_GUICtrlListBox_ResetContent($missing_list)
+			Local $result = _WinSCP_Open()
 
-			for $i = 0 to (UBound($rom_filename_arr) - 1)
+			if $result = False Then
 
-				_PathSplit($rom_filename_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
+				GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
+			Else
 
-				if _ArraySearch($art_filename_arr, $sFileName1 & ".jpg") < 0 Then
+				GUICtrlSetData($status_input, "")
 
-					_GUICtrlListBox_AddString($missing_list, $sFileName1 & ".jpg")
-				EndIf
-			Next
+				Local $rom_filename_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".bin|.zip|.lha|.a52|.a78|.j64|.lnx|.rom|.nes|.mgw|.gba|.love|.7z|.n64|.z64|.nds|.iso|.32x|.sfc|.smc|.vec|.ws")
+				Local $art_filename_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "-full-cover.jpg")
+				;_ArrayDisplay($rom_filename_arr)
+				_WinSCP_Close()
 
-			_GUICtrlListBox_EndUpdate($missing_list)
+				_GUICtrlListBox_BeginUpdate($missing_list)
+				_GUICtrlListBox_ResetContent($missing_list)
+
+				Local $num_roms_without_art = 0
+				GUICtrlSetData($missing_label, $num_roms_without_art & " roms without art")
+
+				for $i = 0 to (UBound($rom_filename_arr) - 1)
+
+					_PathSplit($rom_filename_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
+
+					if _ArraySearch($art_filename_arr, $sFileName1 & "-full-cover.jpg") < 0 Then
+
+	;					_GUICtrlListBox_AddString($missing_list, $sFileName1 & ".jpg")
+						_GUICtrlListBox_AddString($missing_list, $rom_filename_arr[$i])
+						$num_roms_without_art = $num_roms_without_art + 1
+						GUICtrlSetData($missing_label, $num_roms_without_art & " roms without art")
+					EndIf
+				Next
+
+				_GUICtrlListBox_EndUpdate($missing_list)
+			EndIf
+
 
 		Case $scrape_button
 
@@ -493,118 +506,6 @@ While True
 
 			GUICtrlSetData($status_input, "")
 
-
-		Case $refresh_button
-
-			; scrape the tree
-
-			_GUICtrlTreeView_DeleteAll($idTreeView)
-			_WinSCP_Open()
-			Local $retropie_art_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "-full-cover.jpg")
-			;_ArrayDisplay($roms_arr)
-
-			for $k = 0 to (UBound($alphanumeric_arr) - 1)
-
-				Local $roms_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "(?i)^" & $alphanumeric_arr[$k])
-				;_ArrayDisplay($roms_arr)
-
-
-
-				Local $scraped_art_arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full", $alphanumeric_arr[$k] & "*", 1, 0, 1)
-				_ArrayDelete($scraped_art_arr, 0)
-
-				Local $tree_first_item = Null
-
-				for $i = 0 to (UBound($roms_arr) - 1)
-
-					_PathSplit($roms_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
-
-					if StringCompare($sExtension1, ".state") <> 0 and _ArraySearch($retropie_art_arr, $sFileName1 & "-full-cover.jpg") < 0 Then
-
-						Local $tree_parent_item = _GUICtrlTreeView_Add($idTreeView, 0, $sFileName1)
-				;		$tree_file_str = $tree_file_str & $sFileName1 & @CRLF
-
-						if $tree_first_item = Null Then
-
-							$tree_first_item = $tree_parent_item
-						EndIf
-
-						Local $similarity_arr[0]
-
-						for $j = 0 to (UBound($scraped_art_arr) - 1)
-
-							_PathSplit($scraped_art_arr[$j], $sDrive2, $sDir2, $sFileName2, $sExtension2)
-
-							Local $sFileName1_cleaned = CleanRomFilename($sFileName1)
-							Local $sFileName2_cleaned = CleanRomFilename($sFileName2)
-							Local $similarity = _Typos($sFileName1_cleaned, $sFileName2_cleaned)
-
-							if $similarity <= 0 Then
-
-								ReDim $similarity_arr[0]
-								_ArrayAdd($similarity_arr, StringFormat("%.2d", $similarity) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
-								ExitLoop
-							EndIf
-
-							if $similarity <= 10 Then
-
-								_ArrayAdd($similarity_arr, StringFormat ( "%.2d" , $similarity ) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
-							EndIf
-
-							if $similarity > 10 Then
-
-								Local $sFileName1_cleaned = CleanRomFilename2($sFileName1)
-								Local $sFileName2_cleaned = CleanRomFilename($sFileName2)
-								Local $similarity = _Typos($sFileName1_cleaned, $sFileName2_cleaned)
-
-								if $similarity <= 0 Then
-
-									ReDim $similarity_arr[0]
-									_ArrayAdd($similarity_arr, StringFormat("%.2d", $similarity) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
-									ExitLoop
-								EndIf
-
-								if $similarity <= 10 Then
-
-									_ArrayAdd($similarity_arr, StringFormat ( "%.2d" , $similarity ) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
-								EndIf
-
-							EndIf
-
-						Next
-
-						_ArraySort($similarity_arr)
-
-						if GUICtrlRead($exclude_unmatched_roms_checkbox) = $GUI_CHECKED And UBound($similarity_arr) = 0 Then
-
-							_GUICtrlTreeView_Delete($idTreeView, $tree_parent_item)
-						Else
-
-							if GUICtrlRead($exclude_poorly_matched_roms_checkbox) = $GUI_CHECKED And (UBound($similarity_arr) > 1 or StringInStr($similarity_arr[0], "00|", 1) = 0) Then
-
-								_GUICtrlTreeView_Delete($idTreeView, $tree_parent_item)
-							Else
-
-								for $j = 0 to _Min(UBound($similarity_arr) - 1, Number(GUICtrlRead($max_matches_input)) - 1)
-
-									Local $similarity_part = StringSplit($similarity_arr[$j], "|", 2)
-									Local $treeview_child_item = _GUICtrlTreeView_AddChild($idTreeView, $tree_parent_item, $similarity_part[1])
-
-									if Number($similarity_part[0]) = 0 Then
-
-										_GUICtrlTreeView_SetChecked($idTreeView, $treeview_child_item)
-									EndIf
-								Next
-
-								_GUICtrlTreeView_Expand($idTreeView, $tree_parent_item)
-							EndIf
-						EndIf
-					EndIf
-				Next
-
-			Next
-
-			_WinSCP_Close()
 
 
 		Case $compress_files_button
@@ -698,38 +599,173 @@ While True
 			EndIf
 
 
-		Case $rename_button
+		Case $refresh_button
 
-			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Done") = False Then
+			; scrape the tree
 
-				DirCreate($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Done")
+			_GUICtrlTreeView_DeleteAll($idTreeView)
+			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
+
+			Local $result = _WinSCP_Open()
+
+			if $result = False Then
+
+				GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
+			Else
+
+				GUICtrlSetData($status_input, "Getting the art file names from the RetroPie ...")
+
+				Local $retropie_art_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "-full-cover.jpg")
+				;_ArrayDisplay($roms_arr)
+
+				for $k = 0 to (UBound($alphanumeric_arr) - 1)
+
+	;				GUICtrlSetData($status_input, "Getting the rom file names starting with '" & $alphanumeric_arr[$k] & "' from the RetroPie ...")
+					GUICtrlSetData($status_input, "Roms starting with '" & $alphanumeric_arr[$k] & "' - Getting the rom file names from the RetroPie ...")
+					Local $roms_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "(?i)^" & $alphanumeric_arr[$k])
+					;_ArrayDisplay($roms_arr)
+
+					GUICtrlSetData($status_input, "Roms starting with '" & $alphanumeric_arr[$k] & "' - Matching with the scraped art file names ...")
+
+					Local $scraped_art_arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full", $alphanumeric_arr[$k] & "*", 1, 0, 1)
+					_ArrayDelete($scraped_art_arr, 0)
+
+					Local $tree_first_item = Null
+
+					for $i = 0 to (UBound($roms_arr) - 1)
+
+						_PathSplit($roms_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
+
+						if StringCompare($sExtension1, ".state") <> 0 and _ArraySearch($retropie_art_arr, $sFileName1 & "-full-cover.jpg") < 0 Then
+
+							Local $tree_parent_item = _GUICtrlTreeView_Add($idTreeView, 0, $sFileName1)
+					;		$tree_file_str = $tree_file_str & $sFileName1 & @CRLF
+
+							if $tree_first_item = Null Then
+
+								$tree_first_item = $tree_parent_item
+							EndIf
+
+							Local $similarity_arr[0]
+
+							for $j = 0 to (UBound($scraped_art_arr) - 1)
+
+								_PathSplit($scraped_art_arr[$j], $sDrive2, $sDir2, $sFileName2, $sExtension2)
+
+								Local $sFileName1_cleaned = CleanRomFilename($sFileName1)
+								Local $sFileName2_cleaned = CleanRomFilename($sFileName2)
+								Local $similarity = _Typos($sFileName1_cleaned, $sFileName2_cleaned)
+
+								if $similarity <= 0 Then
+
+									ReDim $similarity_arr[0]
+									_ArrayAdd($similarity_arr, StringFormat("%.2d", $similarity) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
+									ExitLoop
+								EndIf
+
+								if $similarity <= 10 Then
+
+									_ArrayAdd($similarity_arr, StringFormat ( "%.2d" , $similarity ) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
+								EndIf
+
+								if $similarity > 10 Then
+
+									Local $sFileName1_cleaned = CleanRomFilename2($sFileName1)
+									Local $sFileName2_cleaned = CleanRomFilename($sFileName2)
+									Local $similarity = _Typos($sFileName1_cleaned, $sFileName2_cleaned)
+
+									if $similarity <= 0 Then
+
+										ReDim $similarity_arr[0]
+										_ArrayAdd($similarity_arr, StringFormat("%.2d", $similarity) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
+										ExitLoop
+									EndIf
+
+									if $similarity <= 10 Then
+
+										_ArrayAdd($similarity_arr, StringFormat ( "%.2d" , $similarity ) & "|" & StringReplace($sFileName2, "-full-cover", ""), 0, chr(28))
+									EndIf
+
+								EndIf
+
+							Next
+
+							_ArraySort($similarity_arr)
+
+							if GUICtrlRead($exclude_unmatched_roms_checkbox) = $GUI_CHECKED And UBound($similarity_arr) = 0 Then
+
+								_GUICtrlTreeView_Delete($idTreeView, $tree_parent_item)
+							Else
+
+								if GUICtrlRead($exclude_poorly_matched_roms_checkbox) = $GUI_CHECKED And (UBound($similarity_arr) > 1 or StringInStr($similarity_arr[0], "00|", 1) = 0) Then
+
+									_GUICtrlTreeView_Delete($idTreeView, $tree_parent_item)
+								Else
+
+									for $j = 0 to _Min(UBound($similarity_arr) - 1, Number(GUICtrlRead($max_matches_input)) - 1)
+
+										Local $similarity_part = StringSplit($similarity_arr[$j], "|", 2)
+										Local $treeview_child_item = _GUICtrlTreeView_AddChild($idTreeView, $tree_parent_item, $similarity_part[1])
+
+										if Number($similarity_part[0]) = 0 Then
+
+											_GUICtrlTreeView_SetChecked($idTreeView, $treeview_child_item)
+										EndIf
+									Next
+
+									_GUICtrlTreeView_Expand($idTreeView, $tree_parent_item)
+								EndIf
+							EndIf
+						EndIf
+					Next
+
+				Next
+
+				GUICtrlSetData($status_input, "")
+				_WinSCP_Close()
 			EndIf
 
-			Local $tree_item = _GUICtrlTreeView_GetFirstItem($idTreeView)
+		Case $reconcile_button
 
-			While $tree_item <> 0
+			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
-				if _GUICtrlTreeView_Level($idTreeView, $tree_item) > 0 and _GUICtrlTreeView_GetChecked($idTreeView, $tree_item) = True Then
+			Local $result = _WinSCP_Open()
 
-					local $scraped_name = _GUICtrlTreeView_GetText($idTreeView, $tree_item)
-					local $rom_name = _GUICtrlTreeView_GetText($idTreeView, _GUICtrlTreeView_GetParentHandle($idTreeView, $tree_item))
+			if $result = False Then
 
-					if StringCompare($scraped_name, $rom_name, 1) <> 0 Then
+				GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
+			Else
 
-						Local $msg = "Renaming " & $scraped_name & "-full-cover.jpg to " & $rom_name & "-full-cover.jpg"
-						GUICtrlSetData($status_input, $msg)
-						FileMove($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $scraped_name & "-full-cover.jpg", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $rom_name & "-full-cover.jpg", 1)
+				GUICtrlSetData($status_input, "")
+				Local $tree_item = _GUICtrlTreeView_GetFirstItem($idTreeView)
+
+				While $tree_item <> 0
+
+					if _GUICtrlTreeView_Level($idTreeView, $tree_item) > 0 and _GUICtrlTreeView_GetChecked($idTreeView, $tree_item) = True Then
+
+						local $scraped_name = _GUICtrlTreeView_GetText($idTreeView, $tree_item)
+						local $rom_name = _GUICtrlTreeView_GetText($idTreeView, _GUICtrlTreeView_GetParentHandle($idTreeView, $tree_item))
+
+						if StringCompare($scraped_name, $rom_name, 1) <> 0 and _GUICtrlTreeView_GetChecked($idTreeView, $tree_item) = True Then
+
+							Local $msg = "Copying to the RetroPie - " & $scraped_name & "-full-cover.jpg as " & $rom_name & "-full-cover.jpg ..."
+							ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $msg = ' & $msg & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+							GUICtrlSetData($status_input, $msg)
+							_WinSCP_PutFiles($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $scraped_name & "-full-cover.jpg", "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $rom_name & "-full-cover.jpg")
+
+							;FileMove($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $scraped_name & "-full-cover.jpg", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $rom_name & "-full-cover.jpg", 1)
+						EndIf
+
+						;FileCopy($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $rom_name & "-full-cover.jpg", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Done\" & $rom_name & "-full-cover.jpg", 1)
 					EndIf
 
-					FileCopy($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $rom_name & "-full-cover.jpg", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Done\" & $rom_name & "-full-cover.jpg", 1)
-				EndIf
+					$tree_item = _GUICtrlTreeView_GetNext($idTreeView, $tree_item)
 
-				$tree_item = _GUICtrlTreeView_GetNext($idTreeView, $tree_item)
+				WEnd
 
-			WEnd
-
-			GUICtrlSetData($status_input, "")
-
+				GUICtrlSetData($status_input, "")
+				_WinSCP_Close()
+			EndIf
 
 #cs
 			; Create gamelist.xml

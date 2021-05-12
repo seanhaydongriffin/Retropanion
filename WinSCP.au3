@@ -11,7 +11,8 @@ Const Enum _
         $__eWSCP_TO_TransferMode_Automatic
 
 Global $oSession
-
+Global $_WinSCP_COM_error = False
+Global $_WinSCP_COM_error_description = ""
 
 #cs
 	With $oSession
@@ -55,8 +56,37 @@ Func _WinSCP_Open()
     $oSession = ObjCreate("WinSCP.Session");
 	$oSession.Open($oSessionOptions)
 
+	if $_WinSCP_COM_error = True Then
+
+		Return False
+	EndIf
+
+	Return True
 
 EndFunc
+
+Func _WinSCP_PutFiles($local_file_path, $remote_file_path)
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $local_file_path = ' & $local_file_path & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $remote_file_path = ' & $remote_file_path & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+
+	; Set TransferOptions
+	Local $oTransferOptions = ObjCreate("WinSCP.TransferOptions")
+	$oTransferOptions.TransferMode = $__eWSCP_TO_TransferMode_Binary
+	; Upload files: put @ScriptFullPath to the ROOT directory
+	Local $oTransferResult = $oSession.PutFiles($local_file_path, $remote_file_path, False, $oTransferOptions)
+
+	; Throw on any error
+	$oTransferResult.Check
+
+	; Print results
+	For $oTransfer In $oTransferResult.Transfers
+		ConsoleWrite("Upload of " & $oTransfer.FileName & " succeeded" & @CRLF)
+	Next
+
+
+EndFunc
+
 
 Func _WinSCP_ListDirectory_Directories($path)
 
@@ -160,6 +190,8 @@ EndFunc
 
 
 Func _ErrFunc($oError)
+
+
     ; Do anything here.
     ConsoleWrite(@ScriptName & " (" & $oError.scriptline & ") : ==> COM Error intercepted !" & @CRLF & _
             @TAB & "err.number is: " & @TAB & @TAB & "0x" & Hex($oError.number) & @CRLF & _
@@ -171,5 +203,9 @@ Func _ErrFunc($oError)
             @TAB & "err.lastdllerror is: " & @TAB & $oError.lastdllerror & @CRLF & _
             @TAB & "err.scriptline is: " & @TAB & $oError.scriptline & @CRLF & _
             @TAB & "err.retcode is: " & @TAB & "0x" & Hex($oError.retcode) & @CRLF & @CRLF)
+
+	$_WinSCP_COM_error = True
+	$_WinSCP_COM_error_description = $oError.description
+
 EndFunc   ;==>_ErrFunc
 

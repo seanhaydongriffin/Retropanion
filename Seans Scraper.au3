@@ -53,7 +53,7 @@ $download_path_dict.Add("Apple II / Apple III", "")
 $download_path_dict.Add("Atari 2600", "Atari_2600")
 $download_path_dict.Add("Atari 5200", "Atari_5200")
 $download_path_dict.Add("Atari 7800", "Atari_7800")
-$download_path_dict.Add("Atari 8-bit Family", "")
+$download_path_dict.Add("Atari 8-bit Family", "Atari_8-bit_Family")
 $download_path_dict.Add("Atari Jaguar", "")
 $download_path_dict.Add("Atari Lynx", "Atari_Lynx")
 $download_path_dict.Add("Atari ST / TT / Falcon", "")
@@ -65,7 +65,7 @@ $download_path_dict.Add("Commodore Amiga", "")
 $download_path_dict.Add("Dragon 32 / 64", "")
 $download_path_dict.Add("GCE Vectrex / Bandai Kousokusen", "")
 $download_path_dict.Add("LaserDisc", "")
-$download_path_dict.Add("Magnavox Odyssey^2 / VideoPac", "")
+$download_path_dict.Add("Magnavox Odyssey^2 / VideoPac", "Magnavox_Odyssey^2_VideoPac")
 $download_path_dict.Add("Mattel Intellivision", "")
 $download_path_dict.Add("NEC PC Engine / TurboGrafx-16", "NEC_PC_Engine_TurboGrafx")
 $download_path_dict.Add("Nintendo 64", "Nintendo_64")
@@ -146,11 +146,11 @@ Local $sDrive2 = "", $sDir2 = "", $sFileName2 = "", $sExtension2 = ""
 Local $alphanumeric_arr[36] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
 ;Local $alphanumeric_arr[13] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C"]
 Local $iStyle = BitOR($TVS_EDITLABELS, $TVS_HASBUTTONS, $TVS_HASLINES, $TVS_LINESATROOT, $TVS_DISABLEDRAGDROP, $TVS_SHOWSELALWAYS, $TVS_CHECKBOXES)
-Local $downloaded_images_path = "~/.emulationstation/downloaded_images/" ; & $emulator_folder_name
+Local $downloaded_images_path = "~/.emulationstation/downloaded_images"
 
 ; MAIN GUI
 
-Local $main_gui = GUICreate($app_name, 800, 800)
+Global $main_gui = GUICreate($app_name, 800, 800)
 
 Global $tooltip = _GUIToolTip_Create(0) ; default style tooltip
 _GUIToolTip_SetMaxTipWidth($tooltip, 300)
@@ -291,7 +291,8 @@ Local $refresh_button = GUICtrlCreateButton("Refresh", 420, 140, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "Click to update the tree with rom file names matches to possible art files names", GUICtrlGetHandle($refresh_button))
 Local $reconcile_button = GUICtrlCreateButton("Reconcile", 520, 140, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "Click to rename all selected art files to the associated rom file names", GUICtrlGetHandle($reconcile_button))
-$idTreeView = GUICtrlCreateTreeView(410, 160, 360, 400, $iStyle, $WS_EX_CLIENTEDGE)
+Global $idTreeView = GUICtrlCreateTreeView(410, 160, 360, 400, $iStyle, $WS_EX_CLIENTEDGE)
+Global $reconcile_pic = GUICtrlCreatePic("", 410, 570, 360, 200)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlCreateTabItem("") ; end tabitem definition
@@ -302,6 +303,7 @@ Global $status_input = GUICtrlCreateInput("Hint - hover mouse over controls for 
 GUISetState(@SW_SHOW)
 GUIRegisterMsg($WM_NOTIFY, "WM_NOTIFY")
 _TipDisplayLen(30000)
+
 
 
 #cs
@@ -417,13 +419,21 @@ While True
 				;_ArrayDisplay($rom_filename_arr)
 				_WinSCP_Close()
 
-				_GUICtrlListBox_BeginUpdate($missing_list)
 				_GUICtrlListBox_ResetContent($missing_list)
+				_GUICtrlListBox_BeginUpdate($missing_list)
 
 				Local $num_roms_without_art = 0
 				GUICtrlSetData($missing_label, $num_roms_without_art & " roms without art")
+				GUICtrlSetData($missing_refresh_button, "Stop")
 
 				for $i = 0 to (UBound($rom_filename_arr) - 1)
+
+					$msg = GUIGetMsg()
+
+					if $msg = $missing_refresh_button Then
+
+						ExitLoop
+					EndIf
 
 					_PathSplit($rom_filename_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
 
@@ -436,6 +446,7 @@ While True
 					EndIf
 				Next
 
+				GUICtrlSetData($missing_refresh_button, "Refresh")
 				_GUICtrlListBox_EndUpdate($missing_list)
 			EndIf
 
@@ -562,11 +573,7 @@ While True
 
 			for $i = 1 to $arr[0]
 
-;				$rr = "-quality 80% """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $arr[$i] & """ """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\" & $arr[$i] & """"
-;				ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $rr = ' & $rr & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-
-
-				ShellExecuteWait("magick.exe", "-quality 80% """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $arr[$i] & """ """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\" & $arr[$i] & """", $ImageMagick_path, "", @SW_HIDE)
+				ShellExecuteWait("magick.exe", "-quality 80% """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $arr[$i] & """ -resize ""1920x1080>"" """ & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\" & $arr[$i] & """", $ImageMagick_path, "", @SW_HIDE)
 
 				Local $filesize = FileGetSize($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $arr[$i])
 				Local $filesize_compressed = FileGetSize($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full_Compressed\" & $arr[$i])
@@ -618,6 +625,8 @@ While True
 				Local $retropie_art_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "-full-cover.jpg")
 				;_ArrayDisplay($roms_arr)
 
+				GUICtrlSetData($refresh_button, "Stop")
+
 				for $k = 0 to (UBound($alphanumeric_arr) - 1)
 
 	;				GUICtrlSetData($status_input, "Getting the rom file names starting with '" & $alphanumeric_arr[$k] & "' from the RetroPie ...")
@@ -633,6 +642,13 @@ While True
 					Local $tree_first_item = Null
 
 					for $i = 0 to (UBound($roms_arr) - 1)
+
+						$msg = GUIGetMsg()
+
+						if $msg = $refresh_button Then
+
+							ExitLoop 2
+						EndIf
 
 						_PathSplit($roms_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
 
@@ -721,6 +737,7 @@ While True
 
 				Next
 
+				GUICtrlSetData($refresh_button, "Refresh")
 				GUICtrlSetData($status_input, "")
 				_WinSCP_Close()
 			EndIf
@@ -764,49 +781,57 @@ While True
 				WEnd
 
 				GUICtrlSetData($status_input, "")
-				_WinSCP_Close()
-			EndIf
-
-#cs
-			; Create gamelist.xml
 
 
-			Local $arr = _FileListToArray($roms_folder)
-			_ArrayDelete($arr, 0)
-			_ArraySort($arr)
+				; Create gamelist.xml
 
-			Local $xml = ""
-			$xml = $xml & "<?xml version=""1.0""?>" & @CRLF
-			$xml = $xml & "<gameList>" & @CRLF
+				GUICtrlSetData($status_input, "Creating gamelist.xml ...")
 
-			for $i = 0 to (UBound($arr) - 1)
+				Local $rom_filename_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".bin|.zip|.lha|.a52|.a78|.j64|.lnx|.rom|.nes|.mgw|.gba|.love|.7z|.n64|.z64|.nds|.iso|.32x|.sfc|.smc|.vec|.ws")
 
-				_PathSplit($arr[$i], $sDrive, $sDir, $sFileName, $sExtension)
+				;Local $arr = _FileListToArray($roms_folder)
+				;_ArrayDelete($arr, 0)
+				;_ArraySort($arr)
 
-				if StringCompare($sExtension, ".state") <> 0 Then
+				Local $xml = ""
+				$xml = $xml & "<?xml version=""1.0""?>" & @CRLF
+				$xml = $xml & "<gameList>" & @CRLF
 
-			;		ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $arr[$i] = ' & $arr[$i] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+				for $i = 0 to (UBound($rom_filename_arr) - 1)
 
-					$xml = $xml & "	<game>" & @CRLF
-					$xml = $xml & "		<path>./" & $sFileName & $sExtension & "</path>" & @CRLF
-					$xml = $xml & "		<name>" & $sFileName & "</name>" & @CRLF
-					$xml = $xml & "		<image>" & $downloaded_images_path & "/" & $sFileName & "-full-cover.jpg</image>" & @CRLF
-					$xml = $xml & "	</game>" & @CRLF
+					_PathSplit($rom_filename_arr[$i], $sDrive, $sDir, $sFileName, $sExtension)
+
+					;if StringCompare($sExtension, ".state") <> 0 Then
+
+				;		ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $rom_filename_arr[$i] = ' & $rom_filename_arr[$i] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+						$xml = $xml & "	<game>" & @CRLF
+						$xml = $xml & "		<path>./" & $sFileName & $sExtension & "</path>" & @CRLF
+						$xml = $xml & "		<name>" & $sFileName & "</name>" & @CRLF
+						$xml = $xml & "		<image>" & $downloaded_images_path & "/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName & "-full-cover.jpg</image>" & @CRLF
+						$xml = $xml & "	</game>" & @CRLF
+					;EndIf
+				Next
+
+				$xml = $xml & "</gameList>" & @CRLF
+
+				Local $gamelist_filepath = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\gamelist.xml"
+
+				if FileExists($gamelist_filepath) = True Then
+
+					FileDelete($gamelist_filepath)
 				EndIf
-			Next
 
-			$xml = $xml & "</gameList>" & @CRLF
+				FileWrite($gamelist_filepath, $xml)
+				ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $gamelist_filepath = ' & $gamelist_filepath & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-			if FileExists($download_path & "\gamelist.xml") = True Then
+				GUICtrlSetData($status_input, "Putting gamelist.xml to the RetroPie ...")
+				_WinSCP_PutFiles($gamelist_filepath, "/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
+				GUICtrlSetData($status_input, "")
+				_WinSCP_Close()
 
-				FileDelete($download_path & "\gamelist.xml")
 			EndIf
 
-			FileWrite($download_path & "\gamelist.xml", $xml)
-
-;			ConsoleWrite("Manually copy " & $download_path & "\Box_Full\*.jpg to /opt/retropie/configs/all/emulationstation/downloaded_images/" & $emulator_folder_name & @CRLF)
-;			ConsoleWrite("Manually copy " & $download_path & "\gamelist.xml to /opt/retropie/configs/all/emulationstation/gamelists/" & $emulator_folder_name & @CRLF)
-#ce
 
 
 
@@ -897,12 +922,15 @@ EndFunc
 
 Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 	#forceref $hWnd, $iMsg, $wParam
-	Local $hWndFrom, $iIDFrom, $iCode, $tNMHDR, $hWndSlider1, $hWndSlider2
+	Local $hWndFrom, $iIDFrom, $iCode, $tNMHDR, $hWndSlider1, $hWndSlider2, $hWndTreeview
 
 	$hWndSlider1 = $max_scrapers_slider
 	If Not IsHWnd($max_scrapers_slider) Then $hWndSlider1 = GUICtrlGetHandle($max_scrapers_slider)
 	$hWndSlider2 = $image_compression_quality_slider
 	If Not IsHWnd($image_compression_quality_slider) Then $hWndSlider2 = GUICtrlGetHandle($image_compression_quality_slider)
+
+    $hWndTreeview = $idTreeView
+    If Not IsHWnd($idTreeView) Then $hWndTreeview = GUICtrlGetHandle($idTreeView)
 
 	$tNMHDR = DllStructCreate($tagNMHDR, $lParam)
 	$hWndFrom = HWnd(DllStructGetData($tNMHDR, "hWndFrom"))
@@ -924,11 +952,43 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 
 
 					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $NM_RELEASEDCAPTURE = ' & $NM_RELEASEDCAPTURE & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+			EndSwitch
 
+		Case $hWndTreeview
 
+			Switch $iCode
 
+                Case $TVN_SELCHANGEDA, $TVN_SELCHANGEDW
+
+                    ;_DebugPrint("$TVN_SELCHANGED")
+
+					if _GUICtrlTreeView_Level($idTreeView, _GUICtrlTreeView_GetSelection($idTreeView)) > 0 Then
+
+						local $scraped_name = _GUICtrlTreeView_GetText($idTreeView, _GUICtrlTreeView_GetSelection($idTreeView))
+						ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $scraped_name = ' & $scraped_name & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+						GUICtrlSetImage($reconcile_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $scraped_name & "-full-cover.jpg")
+;						GUICtrlSetPos($reconcile_pic, 410, 570, 360, 200)
+						ControlMove($main_gui, "", $reconcile_pic, 410, 570, 360, 200)
+					Else
+
+						GUICtrlSetImage($reconcile_pic, "")
+;						GUICtrlSetPos($reconcile_pic, 410, 570, 360, 200)
+						ControlMove($main_gui, "", $reconcile_pic, 410, 570, 360, 200)
+
+					;local $rom_name = _GUICtrlTreeView_GetText($idTreeView, _GUICtrlTreeView_GetParentHandle($idTreeView, $tree_item))
+
+					;if StringCompare($scraped_name, $rom_name, 1) <> 0 and _GUICtrlTreeView_GetChecked($idTreeView, $tree_item) = True Then
+
+					;	Local $msg = "Copying to the RetroPie - " & $scraped_name & "-full-cover.jpg as " & $rom_name & "-full-cover.jpg ..."
+					;	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $msg = ' & $msg & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+					;	GUICtrlSetData($status_input, $msg)
+					;	_WinSCP_PutFiles($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $scraped_name & "-full-cover.jpg", "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $rom_name & "-full-cover.jpg")
+
+					EndIf
 
 			EndSwitch
+
 	EndSwitch
 	Return $GUI_RUNDEFMSG
 EndFunc   ;==>WM_NOTIFY
@@ -1007,3 +1067,10 @@ Func CleanRomFilename2($filename)
 EndFunc
 
 
+Func _DebugPrint($s_Text, $sLine = @ScriptLineNumber)
+    ConsoleWrite( _
+            "!===========================================================" & @CRLF & _
+            "+======================================================" & @CRLF & _
+            "-->Line(" & StringFormat("%04d", $sLine) & "):" & @TAB & $s_Text & @CRLF & _
+            "+======================================================" & @CRLF)
+EndFunc   ;==>_DebugPrint

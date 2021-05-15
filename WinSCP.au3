@@ -56,6 +56,14 @@ Func _WinSCP_Open()
     $oSession = ObjCreate("WinSCP.Session");
 	$oSession.Open($oSessionOptions)
 
+	if IsObj($oSession) = True Then
+
+		ConsoleWrite("$oSession is an object")
+	Else
+
+		ConsoleWrite("$oSession is not an object")
+	EndIf
+
 	if $_WinSCP_COM_error = True Then
 
 		Return False
@@ -66,29 +74,48 @@ Func _WinSCP_Open()
 EndFunc
 
 Func _WinSCP_PutFiles($local_file_path, $remote_file_path)
-	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $local_file_path = ' & $local_file_path & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $remote_file_path = ' & $remote_file_path & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-
 
 	; Set TransferOptions
 	Local $oTransferOptions = ObjCreate("WinSCP.TransferOptions")
 	$oTransferOptions.TransferMode = $__eWSCP_TO_TransferMode_Binary
+
+	if IsObj($oSession) = False Then
+
+		Return False
+	EndIf
+
 	; Upload files: put @ScriptFullPath to the ROOT directory
 	Local $oTransferResult = $oSession.PutFiles($local_file_path, $remote_file_path, False, $oTransferOptions)
 
+	if $_WinSCP_COM_error = True Then
+
+		Return False
+	EndIf
+
 	; Throw on any error
 	$oTransferResult.Check
+
+	if $_WinSCP_COM_error = True Then
+
+		Return False
+	EndIf
 
 	; Print results
 	For $oTransfer In $oTransferResult.Transfers
 		ConsoleWrite("Upload of " & $oTransfer.FileName & " succeeded" & @CRLF)
 	Next
 
+	Return True
 
 EndFunc
 
 
 Func _WinSCP_ListDirectory_Directories($path)
+
+	if IsObj($oSession) = False Then
+
+		Return Null
+	EndIf
 
 	$directoryInfo = $oSession.ListDirectory($path)
 
@@ -123,8 +150,11 @@ EndFunc
 
 
 Func _WinSCP_ListDirectory_Files($path, $filter = "")
-;	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $path = ' & $path & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-;	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $filter = ' & $filter & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+	if IsObj($oSession) = False Then
+
+		Return Null
+	EndIf
 
 	$directoryInfo = $oSession.ListDirectory($path)
 	Local $num_files = 0
@@ -183,8 +213,15 @@ EndFunc
 
 Func _WinSCP_Close()
 
-	$oSession.Dispose()
+	if IsObj($oSession) = False Then
 
+		Return False
+	EndIf
+
+	$oSession.Dispose()
+	$oSession = Null
+
+	Return True
 
 EndFunc
 

@@ -1620,7 +1620,9 @@ Func CreateGamelistOnRetroPie()
 	GUICtrlSetData($status_input, "Creating gamelist.xml ...")
 
 	Local $art_filename_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "-full-cover.jpg")
+	_ArraySort($art_filename_arr)
 	Local $rom_filename_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".bin|.zip|.lha|.a52|.a78|.j64|.lnx|.rom|.nes|.mgw|.gba|.love|.7z|.n64|.z64|.nds|.iso|.32x|.sfc|.smc|.vec|.ws")
+	_ArraySort($rom_filename_arr)
 
 	;Local $arr = _FileListToArray($roms_folder)
 	;_ArrayDelete($arr, 0)

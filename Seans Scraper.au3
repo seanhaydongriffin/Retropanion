@@ -13,9 +13,9 @@
 #include <GuiListBox.au3>
 #include <GuiTab.au3>
 #include "WinSCP.au3"
-#include "image_get_info.au3"
 #include <GDIPlus.au3>
 #include "GUIScrollbars_Ex.au3"
+#include "GUIScrollBars_Size.au3"
 
 
 _GDIPlus_Startup()
@@ -251,7 +251,11 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	"Full Covers will be stored in the BoxFull folder." & @CRLF _
 	, GUICtrlGetHandle($scrape_button))
 
-Global $scrape_auto_join_art_label = GUICtrlCreateLabel("Art", 20, 100, 70, 20)
+Global $scrape_auto_join_match_art_to_roms_radio = GUICtrlCreateRadio("Match Art to Roms", 650, 120, 120, 20)
+GUICtrlSetState(-1, $GUI_CHECKED)
+Global $scrape_auto_join_match_roms_to_art_radio = GUICtrlCreateRadio("Match Roms to Art", 650, 140, 120, 20)
+
+Global $scrape_auto_join_art_label = GUICtrlCreateLabel("Art", 20, 100, 100, 20)
 Global $scrape_auto_join_art_files_label = GUICtrlCreateLabel("0 Files", 180, 100, 70, 20)
 Global $scrape_auto_join_art_list = GUICtrlCreateList("", 20, 120, 200, 350, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
 GUICtrlSetLimit(-1, 500)
@@ -260,10 +264,10 @@ Global $scrape_auto_join_rom_files_label = GUICtrlCreateLabel("0 Files", 400, 10
 Global $scrape_auto_join_rom_list = GUICtrlCreateList("", 240, 120, 200, 350, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
 GUICtrlSetLimit(-1, 500)
 Local $scrape_auto_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 480, 80, 40)
-Local $scrape_auto_join_upload_button = GUICtrlCreateButton("Upload &Art", 240, 480, 80, 40)
+Local $scrape_auto_join_upload_button = GUICtrlCreateButton("Upload &Art", 440, 550, 180, 40)
 GUICtrlSetState(-1, $GUI_DEFBUTTON)
+Local $scrape_auto_join_rotate_art_button = GUICtrlCreateButton("Split Back && Front Art and R&otate", 440, 600, 180, 40)
 Local $scrape_auto_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 680, 480, 100, 40)
-Local $scrape_auto_join_rotate_art_button = GUICtrlCreateButton("R&otate Art", 440, 560, 100, 40)
 
 Global $scrape_auto_join_art_1_pic = GUICtrlCreatePic("", 20, 540, 384, 216)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -551,6 +555,26 @@ While True
 			EndIf
 
 
+		case $scrape_auto_join_match_art_to_roms_radio
+
+			GUICtrlSetPos($scrape_auto_join_art_label, 20, 100, 100, 20)
+			GUICtrlSetPos($scrape_auto_join_art_files_label, 180, 100, 70, 20)
+			GUICtrlSetPos($scrape_auto_join_art_list, 20, 120, 200, 350)
+			GUICtrlSetPos($scrape_auto_join_rom_label, 240, 100, 100, 20)
+			GUICtrlSetPos($scrape_auto_join_rom_files_label, 400, 100, 70, 20)
+			GUICtrlSetPos($scrape_auto_join_rom_list, 240, 120, 200, 350)
+
+
+		case $scrape_auto_join_match_roms_to_art_radio
+
+
+			GUICtrlSetPos($scrape_auto_join_rom_label, 20, 100, 100, 20)
+			GUICtrlSetPos($scrape_auto_join_rom_files_label, 180, 100, 70, 20)
+			GUICtrlSetPos($scrape_auto_join_rom_list, 20, 120, 200, 350)
+			GUICtrlSetPos($scrape_auto_join_art_label, 240, 100, 100, 20)
+			GUICtrlSetPos($scrape_auto_join_art_files_label, 400, 100, 70, 20)
+			GUICtrlSetPos($scrape_auto_join_art_list, 240, 120, 200, 350)
+
 		case $art_big_pic3
 
 			; Where is the cursor on the child?
@@ -598,20 +622,63 @@ While True
 
 			GUISetState(@SW_DISABLE, $main_gui)
 
-			$aInfo = _ImageGetInfo($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)) & "-full-cover.jpg")
-			$art_big_pic3_width = _ImageGetParam($aInfo, "Width")
-			$art_big_pic3_height = _ImageGetParam($aInfo, "Height")
+			; recreate the GUI so scrollbars can be recreated to suit the size of the image
+
+			GUICtrlDelete($art_big_pic3)
+			GUIDelete($art_gui3)
+			$art_gui3 = GUICreate("Child", 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+			$art_big_pic3 = GUICtrlCreatePic("", 0, 0, 1024, 576) ;, 0, 0)
+
+			$hImage =  _GDIPlus_ImageLoadFromFile($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)) & "-full-cover.jpg")
+			$art_big_pic3_width = _GDIPlus_ImageGetWidth($hImage)
+			$art_big_pic3_height = _GDIPlus_ImageGetHeight($hImage)
+			_GDIPlus_ImageDispose($hImage)
 
 			GUICtrlSetPos($art_big_pic3, 0, 0, $art_big_pic3_width, $art_big_pic3_height)
 			GUICtrlSetImage($art_big_pic3, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)) & "-full-cover.jpg")
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)) & "-full-cover.jpg" = ' & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)) & "-full-cover.jpg" & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 			GUISetState(@SW_SHOW, $art_gui3)
 			$current_gui = $art_gui3
+
+			; reset scrollbars in GUIScrollBars_Ex
+
+			ReDim $__g_aSB_WindowInfo[1][10]
+			$__g_aSB_WindowInfo[0][0] = 0
+			$__g_aSB_WindowInfo[0][1] = 0
+			$__g_aSB_WindowInfo[0][2] = 0
+			$__g_aSB_WindowInfo[0][3] = 0
+			$__g_aSB_WindowInfo[0][4] = -1
+			$__g_aSB_WindowInfo[0][5] = 0
+			$__g_aSB_WindowInfo[0][6] = 0
+			$__g_aSB_WindowInfo[0][7] = 0
+			$__g_aSB_WindowInfo[0][8] = 0
+			$__g_aSB_WindowInfo[0][9] = 0
+
+			redim $__g_aSB_WindowInfoEx[1][9]
+			$__g_aSB_WindowInfoEx[0][0] = 0
+			$__g_aSB_WindowInfoEx[0][1] = 0
+			$__g_aSB_WindowInfoEx[0][2] = 0
+			$__g_aSB_WindowInfoEx[0][3] = 0
+			$__g_aSB_WindowInfoEx[0][4] = 0
+			$__g_aSB_WindowInfoEx[0][5] = 0
+			$__g_aSB_WindowInfoEx[0][6] = 0
+			$__g_aSB_WindowInfoEx[0][7] = 0
+			$__g_aSB_WindowInfoEx[0][8] = 0
 
 			; Create the scrollbars in the child
 			_GUIScrollbars_Generate($art_gui3, $art_big_pic3_width, $art_big_pic3_height)
 
 			; Now we get the scrollbar factors to determine how each of them moves
 			$aFactors = _Get_Factors($art_gui3)
+
+			; calculate the number of pages (additional to the first) that it will take to scroll to the halfway point
+			Local $pcnt_of_image_visible = 1024 / $art_big_pic3_width
+			Local $pcnt_of_image_not_visible = 1 - $pcnt_of_image_visible
+			Local $pcnt_to_scroll_to_halfway = $pcnt_of_image_not_visible / 2
+			Local $additional_pages_to_scroll_to_halfway = $pcnt_to_scroll_to_halfway / $pcnt_of_image_visible
+
+			; scroll to the halfway point
+			_GUIScrollbars_Scroll_Page($art_gui3, 1 + $additional_pages_to_scroll_to_halfway, 0)
 
 		case $scrape_auto_join_art_1_pic
 
@@ -1027,9 +1094,21 @@ While True
 			Else
 
 				Local $art_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)
+				Local $rom_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_rom_list)
 				_GUICtrlListBox_DeleteString($scrape_auto_join_art_list, $art_list_selected_index)
-				_GUICtrlListBox_DeleteString($scrape_auto_join_rom_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_rom_list))
-				_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, $art_list_selected_index)
+				_GUICtrlListBox_DeleteString($scrape_auto_join_rom_list, $rom_list_selected_index)
+
+				if GUICtrlRead($scrape_auto_join_match_art_to_roms_radio) = $GUI_CHECKED Then
+
+					_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, $art_list_selected_index)
+				EndIf
+
+				if GUICtrlRead($scrape_auto_join_match_roms_to_art_radio) = $GUI_CHECKED Then
+
+					_GUICtrlListBox_ClickItem($scrape_auto_join_rom_list, $rom_list_selected_index)
+				EndIf
+
+
 			EndIf
 
 			GUICtrlSetData($status_input, "")
@@ -1587,22 +1666,26 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
                 Case $LBN_SELCHANGE ; Sent when the user cancels the selection in a list box
 
 					Local $art_name = _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list))
-					Local $selected_index = 0
 
-					for $i = 1 to StringLen($art_name)
+					if GUICtrlRead($scrape_auto_join_match_art_to_roms_radio) = $GUI_CHECKED Then
 
-						Local $rom_name_search_text = StringLeft($art_name, $i)
-						Local $result = _GUICtrlListBox_SelectString($scrape_auto_join_rom_list, $rom_name_search_text)
+						Local $selected_index = 0
 
-						if $result < 0 Then
+						for $i = 1 to StringLen($art_name)
 
-							ExitLoop
-						EndIf
+							Local $rom_name_search_text = StringLeft($art_name, $i)
+							Local $result = _GUICtrlListBox_SelectString($scrape_auto_join_rom_list, $rom_name_search_text)
 
-						$selected_index = $result
-					Next
+							if $result < 0 Then
 
-					_GUICtrlListBox_SetTopIndex($scrape_auto_join_rom_list, $selected_index - 11)
+								ExitLoop
+							EndIf
+
+							$selected_index = $result
+						Next
+
+						_GUICtrlListBox_SetTopIndex($scrape_auto_join_rom_list, $selected_index - 11)
+					EndIf
 
 					if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg") = True Then
 
@@ -1613,6 +1696,45 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($scrape_auto_join_art_1_pic, $GUI_HIDE)
 					EndIf
 			EndSwitch
+
+
+        Case GUICtrlGetHandle($scrape_auto_join_rom_list)
+
+			Switch $iCode
+
+                Case $LBN_SELCHANGE ; Sent when the user cancels the selection in a list box
+
+					if GUICtrlRead($scrape_auto_join_match_roms_to_art_radio) = $GUI_CHECKED Then
+
+						Local $rom_name = _GUICtrlListBox_GetText($scrape_auto_join_rom_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_rom_list))
+						Local $selected_index = 0
+
+						for $i = 1 to StringLen($rom_name)
+
+							Local $art_name_search_text = StringLeft($rom_name, $i)
+							Local $result = _GUICtrlListBox_SelectString($scrape_auto_join_art_list, $art_name_search_text)
+
+							if $result < 0 Then
+
+								ExitLoop
+							EndIf
+
+							$selected_index = $result
+						Next
+
+						_GUICtrlListBox_SetTopIndex($scrape_auto_join_art_list, $selected_index - 11)
+
+						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, $selected_index) & "-full-cover.jpg") = True Then
+
+							GUICtrlSetState($scrape_auto_join_art_1_pic, $GUI_SHOW)
+							GUICtrlSetImage($scrape_auto_join_art_1_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, $selected_index) & "-full-cover.jpg")
+						Else
+
+							GUICtrlSetState($scrape_auto_join_art_1_pic, $GUI_HIDE)
+						EndIf
+					EndIf
+			EndSwitch
+
 
 
         Case GUICtrlGetHandle($scrape_manual_join_art_list)

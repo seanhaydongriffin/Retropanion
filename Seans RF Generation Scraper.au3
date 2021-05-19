@@ -311,6 +311,11 @@ if FileExists($emulator_folder & "\BoxBack") = False Then
 	DirCreate($emulator_folder & "\BoxBack")
 EndIf
 
+if FileExists($emulator_folder & "\Box_Full") = False Then
+
+	DirCreate($emulator_folder & "\Box_Full")
+EndIf
+
 ; get the number of pages available
 
 if $page_start_page = 0 and $end_page = 0 Then

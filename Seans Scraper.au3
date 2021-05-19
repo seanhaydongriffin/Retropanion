@@ -21,6 +21,7 @@
 #include "GUIScrollbars_Ex.au3"
 
 
+
 _GDIPlus_Startup()
 
 Local $app_name = "Seans Scraper"
@@ -57,94 +58,94 @@ Local $app_name = "Seans Scraper"
 Global $download_path = "D:\dwn"
 
 Global $download_path_dict = ObjCreate("Scripting.Dictionary")
-$download_path_dict.Add("3DO", "3DO")
-$download_path_dict.Add("Amstrad CPC 464", "")
-$download_path_dict.Add("Apple II / Apple III", "")
-$download_path_dict.Add("Atari 2600", "Atari_2600")
-$download_path_dict.Add("Atari 5200", "Atari_5200")
-$download_path_dict.Add("Atari 7800", "Atari_7800")
-$download_path_dict.Add("Atari 8-bit Family", "Atari_8-bit_Family")
-$download_path_dict.Add("Atari Jaguar", "")
-$download_path_dict.Add("Atari Lynx", "Atari_Lynx")
-$download_path_dict.Add("Atari ST / TT / Falcon", "")
-$download_path_dict.Add("Bandai WonderSwan", "Bandai_WonderSwan")
-$download_path_dict.Add("Bandai WonderSwan Color / SwanCrystal", "Bandai_WonderSwan_Color_SwanCrystal")
-$download_path_dict.Add("Coleco / CBS ColecoVision", "")
-$download_path_dict.Add("Commodore 64 / 128", "")
-$download_path_dict.Add("Commodore Amiga", "")
-$download_path_dict.Add("Dragon 32 / 64", "")
-$download_path_dict.Add("GCE Vectrex / Bandai Kousokusen", "")
-$download_path_dict.Add("LaserDisc", "")
-$download_path_dict.Add("Magnavox Odyssey^2 / VideoPac", "Magnavox_Odyssey^2_VideoPac")
-$download_path_dict.Add("Mattel Intellivision", "")
-$download_path_dict.Add("NEC PC Engine / TurboGrafx-16", "NEC_PC_Engine_TurboGrafx")
-$download_path_dict.Add("Nintendo 64", "Nintendo_64")
-$download_path_dict.Add("Nintendo DS", "")
-$download_path_dict.Add("Nintendo Famicom Disk System", "")
-$download_path_dict.Add("Nintendo Game & Watch", "")
-$download_path_dict.Add("Nintendo Game Boy", "Nintendo_Game_Boy")
-$download_path_dict.Add("Nintendo Game Boy Advance", "")
-$download_path_dict.Add("Nintendo Game Boy Color", "Nintendo_Game_Boy_Color")
-$download_path_dict.Add("Nintendo GameCube", "")
-$download_path_dict.Add("Nintendo NES / Famicom", "")
-$download_path_dict.Add("Nintendo SNES / Super Famicom", "Nintendo_SNES_Super_Famicom")
-$download_path_dict.Add("Sega 32X", "")
-$download_path_dict.Add("Sega CD / Mega CD", "")
-$download_path_dict.Add("Sega Dreamcast", "")
-$download_path_dict.Add("Sega Game Gear", "Sega_Game_Gear")
-$download_path_dict.Add("Sega Genesis / Mega Drive", "")
-$download_path_dict.Add("Sega Saturn", "")
-$download_path_dict.Add("Sega SG-1000 / SC-3000", "")
-$download_path_dict.Add("SNK Neo Geo Pocket", "SNK_Neo_Geo_Pocket")
-$download_path_dict.Add("SNK Neo Geo Pocket Color", "SNK_Neo_Geo_Pocket_Color")
-$download_path_dict.Add("Sony PlayStation", "")
-$download_path_dict.Add("Sony PlayStation 2", "")
-$download_path_dict.Add("Sony PSP", "")
+$download_path_dict.Add("3DO", 										"3DO")
+$download_path_dict.Add("Amstrad CPC 464", 							"Amstrad_CPC_464")
+$download_path_dict.Add("Apple II / Apple III", 					"")
+$download_path_dict.Add("Atari 2600", 								"Atari_2600")
+$download_path_dict.Add("Atari 5200", 								"Atari_5200")
+$download_path_dict.Add("Atari 7800", 								"Atari_7800")
+$download_path_dict.Add("Atari 8-bit Family", 						"Atari_8-bit_Family")
+$download_path_dict.Add("Atari Jaguar", 							"Atari_Jaguar")
+$download_path_dict.Add("Atari Lynx", 								"Atari_Lynx")
+$download_path_dict.Add("Atari ST / TT / Falcon", 					"")
+$download_path_dict.Add("Bandai WonderSwan", 						"Bandai_WonderSwan")
+$download_path_dict.Add("Bandai WonderSwan Color / SwanCrystal", 	"Bandai_WonderSwan_Color_SwanCrystal")
+$download_path_dict.Add("Coleco / CBS ColecoVision", 				"Coleco_CBS_ColecoVision")
+$download_path_dict.Add("Commodore 64 / 128", 						"")
+$download_path_dict.Add("Commodore Amiga", 							"Commodore_Amiga")
+$download_path_dict.Add("Dragon 32 / 64", 							"")
+$download_path_dict.Add("GCE Vectrex / Bandai Kousokusen", 			"")
+$download_path_dict.Add("LaserDisc", 								"LaserDisc")
+$download_path_dict.Add("Magnavox Odyssey^2 / VideoPac", 			"Magnavox_Odyssey^2_VideoPac")
+$download_path_dict.Add("Mattel Intellivision", 					"Mattel_Intellivision")
+$download_path_dict.Add("NEC PC Engine / TurboGrafx-16", 			"NEC_PC_Engine_TurboGrafx")
+$download_path_dict.Add("Nintendo 64", 								"Nintendo_64")
+$download_path_dict.Add("Nintendo DS", 								"Nintendo_DS")
+$download_path_dict.Add("Nintendo Famicom Disk System", 			"Nintendo_Famicom_Disk_System")
+$download_path_dict.Add("Nintendo Game & Watch", 					"")
+$download_path_dict.Add("Nintendo Game Boy", 						"Nintendo_Game_Boy")
+$download_path_dict.Add("Nintendo Game Boy Advance", 				"Nintendo_Game_Boy_Advance")
+$download_path_dict.Add("Nintendo Game Boy Color", 					"Nintendo_Game_Boy_Color")
+$download_path_dict.Add("Nintendo GameCube", 						"Nintendo_GameCube")
+$download_path_dict.Add("Nintendo NES / Famicom", 					"Nintendo_NES_Famicom")
+$download_path_dict.Add("Nintendo SNES / Super Famicom", 			"Nintendo_SNES_Super_Famicom")
+$download_path_dict.Add("Sega 32X", 								"")
+$download_path_dict.Add("Sega CD / Mega CD", 						"")
+$download_path_dict.Add("Sega Dreamcast", 							"Sega_Dreamcast")
+$download_path_dict.Add("Sega Game Gear", 							"Sega_Game_Gear")
+$download_path_dict.Add("Sega Genesis / Mega Drive", 				"Sega_Genesis_Mega_Drive")
+$download_path_dict.Add("Sega Saturn", 								"Sega_Saturn")
+$download_path_dict.Add("Sega SG-1000 / SC-3000",					"")
+$download_path_dict.Add("SNK Neo Geo Pocket", 						"SNK_Neo_Geo_Pocket")
+$download_path_dict.Add("SNK Neo Geo Pocket Color", 				"SNK_Neo_Geo_Pocket_Color")
+$download_path_dict.Add("Sony PlayStation", 						"Sony_PlayStation")
+$download_path_dict.Add("Sony PlayStation 2", 						"")
+$download_path_dict.Add("Sony PSP", 								"Sony_PSP")
 
 Global $roms_path_dict = ObjCreate("Scripting.Dictionary")
-$roms_path_dict.Add("3DO", "3do")
-$roms_path_dict.Add("Amstrad CPC 464", "amstradcpc")
-$roms_path_dict.Add("Apple II / Apple III", "")
-$roms_path_dict.Add("Atari 2600", "atari2600")
-$roms_path_dict.Add("Atari 5200", "atari5200")
-$roms_path_dict.Add("Atari 7800", "atari7800")
-$roms_path_dict.Add("Atari 8-bit Family", "atari800")
-$roms_path_dict.Add("Atari Jaguar", "atarijaguar")
-$roms_path_dict.Add("Atari Lynx", "atarilynx")
-$roms_path_dict.Add("Atari ST / TT / Falcon", "")
-$roms_path_dict.Add("Bandai WonderSwan", "wonderswan")
-$roms_path_dict.Add("Bandai WonderSwan Color / SwanCrystal", "wonderswancolor")
-$roms_path_dict.Add("Coleco / CBS ColecoVision", "coleco")
-$roms_path_dict.Add("Commodore 64 / 128", "")
-$roms_path_dict.Add("Commodore Amiga", "amiga")
-$roms_path_dict.Add("Dragon 32 / 64", "")
-$roms_path_dict.Add("GCE Vectrex / Bandai Kousokusen", "vectrex")
-$roms_path_dict.Add("LaserDisc", "daphne")
-$roms_path_dict.Add("Magnavox Odyssey^2 / VideoPac", "videopac")
-$roms_path_dict.Add("Mattel Intellivision", "intellivision")
-$roms_path_dict.Add("NEC PC Engine / TurboGrafx-16", "pcengine")
-$roms_path_dict.Add("Nintendo 64", "n64")
-$roms_path_dict.Add("Nintendo DS", "nds")
-$roms_path_dict.Add("Nintendo Famicom Disk System", "")
-$roms_path_dict.Add("Nintendo Game & Watch", "gameandwatch")
-$roms_path_dict.Add("Nintendo Game Boy", "gb")
-$roms_path_dict.Add("Nintendo Game Boy Advance", "gba")
-$roms_path_dict.Add("Nintendo Game Boy Color", "gbc")
-$roms_path_dict.Add("Nintendo GameCube", "")
-$roms_path_dict.Add("Nintendo NES / Famicom", "")
-$roms_path_dict.Add("Nintendo SNES / Super Famicom", "snes")
-$roms_path_dict.Add("Sega 32X", "sega32x")
-$roms_path_dict.Add("Sega CD / Mega CD", "segacd")
-$roms_path_dict.Add("Sega Dreamcast", "dreamcast")
-$roms_path_dict.Add("Sega Game Gear", "gamegear")
-$roms_path_dict.Add("Sega Genesis / Mega Drive", "megadrive")
-$roms_path_dict.Add("Sega Saturn", "saturn")
-$roms_path_dict.Add("Sega SG-1000 / SC-3000", "sg-1000")
-$roms_path_dict.Add("SNK Neo Geo Pocket", "ngp")
-$roms_path_dict.Add("SNK Neo Geo Pocket Color", "ngpc")
-$roms_path_dict.Add("Sony PlayStation", "psx")
-$roms_path_dict.Add("Sony PlayStation 2", "")
-$roms_path_dict.Add("Sony PSP", "psp")
+$roms_path_dict.Add("3DO", 										"3do")
+$roms_path_dict.Add("Amstrad CPC 464", 							"amstradcpc")
+$roms_path_dict.Add("Apple II / Apple III", 					"apple2")
+$roms_path_dict.Add("Atari 2600", 								"atari2600")
+$roms_path_dict.Add("Atari 5200", 								"atari5200")
+$roms_path_dict.Add("Atari 7800", 								"atari7800")
+$roms_path_dict.Add("Atari 8-bit Family", 						"atari800")
+$roms_path_dict.Add("Atari Jaguar", 							"atarijaguar")
+$roms_path_dict.Add("Atari Lynx", 								"atarilynx")
+$roms_path_dict.Add("Atari ST / TT / Falcon", 					"atarist")
+$roms_path_dict.Add("Bandai WonderSwan", 						"wonderswan")
+$roms_path_dict.Add("Bandai WonderSwan Color / SwanCrystal", 	"wonderswancolor")
+$roms_path_dict.Add("Coleco / CBS ColecoVision", 				"coleco")
+$roms_path_dict.Add("Commodore 64 / 128", 						"c64")
+$roms_path_dict.Add("Commodore Amiga", 							"amiga")
+$roms_path_dict.Add("Dragon 32 / 64", 							"dragon32")
+$roms_path_dict.Add("GCE Vectrex / Bandai Kousokusen", 			"vectrex")
+$roms_path_dict.Add("LaserDisc", 								"daphne")
+$roms_path_dict.Add("Magnavox Odyssey^2 / VideoPac", 			"videopac")
+$roms_path_dict.Add("Mattel Intellivision", 					"intellivision")
+$roms_path_dict.Add("NEC PC Engine / TurboGrafx-16", 			"pcengine")
+$roms_path_dict.Add("Nintendo 64", 								"n64")
+$roms_path_dict.Add("Nintendo DS", 								"nds")
+$roms_path_dict.Add("Nintendo Famicom Disk System", 			"fds")
+$roms_path_dict.Add("Nintendo Game & Watch", 					"gameandwatch")
+$roms_path_dict.Add("Nintendo Game Boy", 						"gb")
+$roms_path_dict.Add("Nintendo Game Boy Advance", 				"gba")
+$roms_path_dict.Add("Nintendo Game Boy Color", 					"gbc")
+$roms_path_dict.Add("Nintendo GameCube", 						"gc")
+$roms_path_dict.Add("Nintendo NES / Famicom", 					"nes")
+$roms_path_dict.Add("Nintendo SNES / Super Famicom", 			"snes")
+$roms_path_dict.Add("Sega 32X", 								"sega32x")
+$roms_path_dict.Add("Sega CD / Mega CD", 						"segacd")
+$roms_path_dict.Add("Sega Dreamcast", 							"dreamcast")
+$roms_path_dict.Add("Sega Game Gear", 							"gamegear")
+$roms_path_dict.Add("Sega Genesis / Mega Drive", 				"megadrive")
+$roms_path_dict.Add("Sega Saturn", 								"saturn")
+$roms_path_dict.Add("Sega SG-1000 / SC-3000", 					"sg-1000")
+$roms_path_dict.Add("SNK Neo Geo Pocket", 						"ngp")
+$roms_path_dict.Add("SNK Neo Geo Pocket Color", 				"ngpc")
+$roms_path_dict.Add("Sony PlayStation", 						"psx")
+$roms_path_dict.Add("Sony PlayStation 2", 						"")
+$roms_path_dict.Add("Sony PSP", 								"psp")
 
 
 
@@ -234,7 +235,8 @@ Global $retropie_password_label = GUICtrlCreateLabel("RetroPie Password", 20, 12
 Global $retropie_password_input = GUICtrlCreateInput("raspberry", 130, 120, 240, 20)
 Global $retropie_ssh_key_label = GUICtrlCreateLabel("RetroPie SSH Key", 20, 140, 100, 20)
 Global $retropie_ssh_key_input = GUICtrlCreateInput("ssh-ed25519 255 cq4AFscwWDozkpWLAzpJmZak8M7USnljP1lO36e23Co=", 130, 140, 240, 20)
-
+Global $retropie_download_path_label = GUICtrlCreateLabel("Download Path", 20, 160, 100, 20)
+Global $retropie_download_path_input = GUICtrlCreateInput("D:\dwn", 130, 160, 240, 20)
 
 
 Global $scrape_tabitem = GUICtrlCreateTabItem("Scrape + Auto Join")
@@ -270,10 +272,16 @@ _GUIToolTip_AddTool($tooltip, 0, _
 Global $scrape_auto_join_match_art_to_roms_radio = GUICtrlCreateRadio("Match Art to Roms", 650, 120, 120, 20)
 GUICtrlSetState(-1, $GUI_CHECKED)
 Global $scrape_auto_join_match_roms_to_art_radio = GUICtrlCreateRadio("Match Roms to Art", 650, 140, 120, 20)
+Global $exclude_uploaded_art_checkbox = GUICtrlCreateCheckbox("Exclude Uploaded Art", 650, 160, 120, 20)
+GUICtrlSetState(-1, $GUI_CHECKED)
 
 Global $scrape_auto_join_art_label = GUICtrlCreateLabel("Art", 20, 100, 100, 20)
 Global $scrape_auto_join_art_files_label = GUICtrlCreateLabel("0 Files", 180, 100, 70, 20)
 Global $scrape_auto_join_art_list = GUICtrlCreateList("", 20, 120, 200, 350, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
+;Global $scrape_auto_join_art_list = _GUICtrlListBox_Create($main_gui, "", 20, 120, 200, 350, BitOR($WS_HSCROLL, $WS_VSCROLL, $WS_BORDER, $LBS_HASSTRINGS, $LBS_MULTIPLESEL))
+;Global $scrape_auto_join_art_list = _GUICtrlListBox_Create($main_gui, "", 20, 120, 200, 350, BitOR($WS_HSCROLL, $WS_VSCROLL, $WS_BORDER, $LBS_HASSTRINGS, $LBS_MULTIPLESEL))
+;Global $scrape_auto_join_art_list2 = _GUICtrlListBox_Create($main_gui, 20, 120, 200, 350) ;, 0x00B00002, $WS_HSCROLL)
+
 GUICtrlSetLimit(-1, 500)
 Global $scrape_auto_join_rom_label = GUICtrlCreateLabel("Roms without Art", 240, 100, 100, 20)
 Global $scrape_auto_join_rom_files_label = GUICtrlCreateLabel("0 Files", 400, 100, 70, 20)
@@ -508,7 +516,7 @@ While True
 				$current_gui = $main_gui
 			EndIf
 
-			if _GUICtrlTab_GetCurSel($tab) = 0 Then
+			if _GUICtrlTab_GetCurSel($tab) = 1 Then
 
 				_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list))
 			EndIf
@@ -840,15 +848,24 @@ While True
 			_GUICtrlListBox_ResetContent($scrape_auto_join_rom_list)
 
 			Local $arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full", "*-full-cover.jpg", 1, 0, 1)
-			Local $num_files = 0
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full" = ' & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full" & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+			;_ArrayDisplay($arr)
 
-			for $i = 1 to $arr[0]
+			if UBound($arr) < 1 Then
 
-				Local $art_name = StringReplace($arr[$i], "-full-cover.jpg", "")
-				_GUICtrlListBox_InsertString($scrape_auto_join_art_list, $art_name)
-				$num_files = $num_files + 1
-				GUICtrlSetData($scrape_auto_join_art_files_label, $num_files & " Files")
-			Next
+				GUICtrlSetData($status_input, "No art found in " & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full")
+			Else
+
+				Local $num_files = 0
+
+				for $i = 1 to $arr[0]
+
+					Local $art_name = StringReplace($arr[$i], "-full-cover.jpg", "")
+					_GUICtrlListBox_InsertString($scrape_auto_join_art_list, $art_name)
+					$num_files = $num_files + 1
+					GUICtrlSetData($scrape_auto_join_art_files_label, $num_files & " Files")
+				Next
+			EndIf
 
 			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
@@ -863,6 +880,7 @@ While True
 
 				Local $art_filename_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "-full-cover.jpg")
 				_ArraySort($art_filename_arr)
+				;_ArrayDisplay($art_filename_arr)
 				Local $rom_filename_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".bin|.zip|.lha|.a52|.a78|.j64|.lnx|.rom|.nes|.mgw|.gba|.love|.7z|.n64|.z64|.nds|.iso|.32x|.sfc|.smc|.vec|.ws")
 				_ArraySort($rom_filename_arr)
 				;_ArrayDisplay($rom_filename_arr)
@@ -967,6 +985,9 @@ While True
 
 			if StringCompare($art_name, $sFileName1) <> 0 Then
 
+				Local $curr_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)
+				_GUICtrlListBox_ReplaceString($scrape_auto_join_art_list, $curr_index, $sFileName1)
+				_GUICtrlListBox_SetCurSel($scrape_auto_join_art_list, $curr_index)
 				FileMove($old_art_path, $new_art_path, 1)
 			EndIf
 
@@ -991,6 +1012,7 @@ While True
 			Local $msg = "Copying to the RetroPie - " & $sFileName1 & "-full-cover.jpg ..."
 			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $msg = ' & $msg & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 			GUICtrlSetData($status_input, $msg)
+			ConsoleWrite("Putting file """ & $new_art_path & """ to ""/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg""" & @CRLF)
 			Local $result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
 
 			if $result = False Then
@@ -1000,13 +1022,18 @@ While True
 
 				Local $art_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)
 				Local $rom_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_rom_list)
-				_GUICtrlListBox_DeleteString($scrape_auto_join_art_list, $art_list_selected_index)
+
+				if GUICtrlRead($exclude_uploaded_art_checkbox) = $GUI_CHECKED Then
+
+					_GUICtrlListBox_DeleteString($scrape_auto_join_art_list, $art_list_selected_index)
+				EndIf
+
 				_GUICtrlListBox_DeleteString($scrape_auto_join_rom_list, $rom_list_selected_index)
 
-				if GUICtrlRead($scrape_auto_join_match_art_to_roms_radio) = $GUI_CHECKED Then
+				;if GUICtrlRead($scrape_auto_join_match_art_to_roms_radio) = $GUI_CHECKED Then
 
 					_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, $art_list_selected_index)
-				EndIf
+				;EndIf
 
 				if GUICtrlRead($scrape_auto_join_match_roms_to_art_radio) = $GUI_CHECKED Then
 
@@ -1877,12 +1904,12 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 
 				Case $NM_CLICK
 
-					if _GUICtrlTab_GetCurSel($tab) = 0 Then
+					if _GUICtrlTab_GetCurSel($tab) = 1 Then
 
 						GUICtrlSetState($scrape_auto_join_upload_button, $GUI_DEFBUTTON)
 					EndIf
 
-					if _GUICtrlTab_GetCurSel($tab) = 1 Then
+					if _GUICtrlTab_GetCurSel($tab) = 2 Then
 
 						GUICtrlSetState($scrape_manual_join_upload_button, $GUI_DEFBUTTON)
 					EndIf
@@ -2019,9 +2046,9 @@ Func CreateGamelistOnRetroPie()
 	FileClose($hFileOpen)
 
 ;	FileWrite($gamelist_filepath, $xml)
-	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $gamelist_filepath = ' & $gamelist_filepath & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-	GUICtrlSetData($status_input, "Putting gamelist.xml to the RetroPie ...")
+	ConsoleWrite("Putting """ & $gamelist_filepath & """ to ""/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml""" & @CRLF)
+	GUICtrlSetData($status_input, "Putting """ & $gamelist_filepath & """ to ""/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml""")
 	_WinSCP_PutFiles($gamelist_filepath, "/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
 	GUICtrlSetData($status_input, "")
 

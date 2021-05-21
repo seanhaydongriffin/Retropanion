@@ -1276,7 +1276,15 @@ While True
 				if GUICtrlRead($scrape_manual_join_match_art_to_roms_radio) = $GUI_CHECKED Then
 
 					GUICtrlSetState($scrape_manual_join_art_list, $GUI_ENABLE)
-					_GUICtrlListBox_ClickItem($scrape_manual_join_art_list, $art_list_selected_index)
+
+					if GUICtrlRead($scrape_manual_join_exclude_uploaded_art_checkbox) = $GUI_CHECKED Then
+
+						_GUICtrlListBox_ClickItem($scrape_manual_join_art_list, $art_list_selected_index)
+					Else
+
+						_GUICtrlListBox_SetCurSel($scrape_manual_join_rom_list, $rom_list_selected_index)
+						GUICtrlSetState($scrape_manual_join_art_list, $GUI_FOCUS)
+					EndIf
 				EndIf
 
 				if GUICtrlRead($scrape_manual_join_match_roms_to_art_radio) = $GUI_CHECKED Then

@@ -163,13 +163,15 @@ Global $downloaded_images_path = "~/.emulationstation/downloaded_images"
 ; MAIN GUI
 
 
-Global $main_gui = GUICreate($app_name, 800, 800)
+Global $main_gui = GUICreate($app_name, 1000, 800, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU))
 Global $tooltip = _GUIToolTip_Create(0) ; default style tooltip
 _GUIToolTip_SetMaxTipWidth($tooltip, 300)
 
 Global $system_label = GUICtrlCreateLabel("System", 20, 5, 80, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
 Global $system_combo = GUICtrlCreateCombo("", 90, 5, 250, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUICtrlComboBox_AddString($system_combo, "3DO")
 _GUICtrlComboBox_AddString($system_combo, "Amstrad CPC 464")
 _GUICtrlComboBox_AddString($system_combo, "Apple II / Apple III")
@@ -216,51 +218,71 @@ _GUICtrlComboBox_AddString($system_combo, "Sony PSP")
 _GUICtrlComboBox_SetCurSel($system_combo, 0)
 
 Global $tab = GUICtrlCreateTab(5, 30, 790, 740)
+GUICtrlSetResizing(-1, $GUI_DOCKVCENTER + $GUI_DOCKBORDERS)
 
 Global $settings_tabitem = GUICtrlCreateTabItem("Settings")
 
 Global $image_compression_quality_label = GUICtrlCreateLabel("Image Compression / Quality", 20, 60, 160, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The maximum level of compression / quality required", GUICtrlGetHandle($image_compression_quality_label))
 Global $image_compression_quality_input = GUICtrlCreateInput("80", 190, 60, 30, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlCreateLabel("%", 225, 60, 20, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $image_compression_quality_slider = GUICtrlCreateSlider(260, 60, 200, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 10, 1)
 GUICtrlSetData(-1, 10)
 
 Global $retropie_hostname_label = GUICtrlCreateLabel("RetroPie Hostname", 20, 80, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_hostname_input = GUICtrlCreateInput("retropie", 130, 80, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_username_label = GUICtrlCreateLabel("RetroPie Username", 20, 100, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_username_input = GUICtrlCreateInput("pi", 130, 100, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_password_label = GUICtrlCreateLabel("RetroPie Password", 20, 120, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_password_input = GUICtrlCreateInput("raspberry", 130, 120, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_ssh_key_label = GUICtrlCreateLabel("RetroPie SSH Key", 20, 140, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_ssh_key_input = GUICtrlCreateInput("ssh-ed25519 255 cq4AFscwWDozkpWLAzpJmZak8M7USnljP1lO36e23Co=", 130, 140, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_download_path_label = GUICtrlCreateLabel("Download Path", 20, 160, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_download_path_input = GUICtrlCreateInput("D:\dwn", 130, 160, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 
 
 Global $scrape_tabitem = GUICtrlCreateTabItem("Scrape + Auto Join")
 
 ;_GUIToolTip_AddTool($tooltip, 0, "Clears the list", GUICtrlGetHandle($scrape_tabitem))
 Global $websites_label = GUICtrlCreateLabel("Website(s)", 20, 60, 70, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The website(s) to scrape the box art from", GUICtrlGetHandle($websites_label))
-
 Global $scrape_auto_join_website_combo = GUICtrlCreateCombo("", 90, 60, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUICtrlComboBox_AddString($scrape_auto_join_website_combo, "RF Generation")
 _GUICtrlComboBox_AddString($scrape_auto_join_website_combo, "Moby Games")
 _GUICtrlComboBox_AddString($scrape_auto_join_website_combo, "The Cover Project")
 _GUICtrlComboBox_SetCurSel($scrape_auto_join_website_combo, 0)
-
 Global $max_scrapers_label = GUICtrlCreateLabel("Max Scrapers", 250, 60, 80, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The maximum number of scrapers that will run in parallel", GUICtrlGetHandle($max_scrapers_label))
 Global $max_scrapers_input = GUICtrlCreateInput("10", 320, 60, 30, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $max_scrapers_slider = GUICtrlCreateSlider(360, 60, 150, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 10, 1)
 GUICtrlSetData(-1, 10)
 Global $minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Minimized Scrapers", 520, 60, 120, 20)
-_GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($minimized_scrapers_checkbox))
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
+_GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($minimized_scrapers_checkbox))
 Local $scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 80, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
 	"Scrapes box art according to the selections above." & @CRLF & _
 	@CRLF & _
@@ -276,22 +298,26 @@ Global $scrape_auto_join_exclude_uploaded_art_checkbox = GUICtrlCreateCheckbox("
 GUICtrlSetState(-1, $GUI_CHECKED)
 
 Global $scrape_auto_join_art_label = GUICtrlCreateLabel("Art", 20, 100, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_auto_join_art_files_label = GUICtrlCreateLabel("0 Files", 180, 100, 70, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_auto_join_art_list = GUICtrlCreateList("", 20, 120, 200, 350, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
-;Global $scrape_auto_join_art_list = _GUICtrlListBox_Create($main_gui, "", 20, 120, 200, 350, BitOR($WS_HSCROLL, $WS_VSCROLL, $WS_BORDER, $LBS_HASSTRINGS, $LBS_MULTIPLESEL))
-;Global $scrape_auto_join_art_list = _GUICtrlListBox_Create($main_gui, "", 20, 120, 200, 350, BitOR($WS_HSCROLL, $WS_VSCROLL, $WS_BORDER, $LBS_HASSTRINGS, $LBS_MULTIPLESEL))
-;Global $scrape_auto_join_art_list2 = _GUICtrlListBox_Create($main_gui, 20, 120, 200, 350) ;, 0x00B00002, $WS_HSCROLL)
-
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 500)
 Global $scrape_auto_join_rom_label = GUICtrlCreateLabel("Roms without Art", 240, 100, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_auto_join_rom_files_label = GUICtrlCreateLabel("0 Files", 400, 100, 70, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_auto_join_rom_list = GUICtrlCreateList("", 240, 120, 200, 350, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 500)
 Local $scrape_auto_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 480, 80, 40)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Local $scrape_auto_join_upload_button = GUICtrlCreateButton("Upload &Art", 440, 550, 180, 40)
 GUICtrlSetState(-1, $GUI_DEFBUTTON)
 Local $scrape_auto_join_rotate_art_button = GUICtrlCreateButton("Split Back && Front Art and R&otate", 440, 600, 180, 40)
 Local $scrape_auto_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 680, 480, 100, 40)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 
 Global $scrape_auto_join_art_1_pic = GUICtrlCreatePic("", 20, 540, 384, 216)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -299,24 +325,29 @@ GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateTabItem("Scrape + Manual Join")
 
 Global $scrape_manual_join_websites_label = GUICtrlCreateLabel("Website(s)", 20, 60, 70, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The website(s) to scrape the box art from", GUICtrlGetHandle($scrape_manual_join_websites_label))
-
 Global $scrape_manual_join_website_combo = GUICtrlCreateCombo("", 90, 60, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUICtrlComboBox_AddString($scrape_manual_join_website_combo, "Atarimania")
 _GUICtrlComboBox_AddString($scrape_manual_join_website_combo, "LaunchBox")
 _GUICtrlComboBox_SetCurSel($scrape_manual_join_website_combo, 0)
-
 ;_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the RF Generation website", GUICtrlGetHandle($rf_generation_radio))
-Global $scrape_manual_join_max_scrapers_label = GUICtrlCreateLabel("Max Scrapers", 20, 100, 80, 20)
+Global $scrape_manual_join_max_scrapers_label = GUICtrlCreateLabel("Max Scrapers", 250, 60, 80, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The maximum number of scrapers that will run in parallel", GUICtrlGetHandle($scrape_manual_join_max_scrapers_label))
-Global $scrape_manual_join_max_scrapers_input = GUICtrlCreateInput("10", 90, 100, 30, 20)
-Global $scrape_manual_join_max_scrapers_slider = GUICtrlCreateSlider(130, 100, 200, 20)
+Global $scrape_manual_join_max_scrapers_input = GUICtrlCreateInput("10", 320, 60, 30, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $scrape_manual_join_max_scrapers_slider = GUICtrlCreateSlider(360, 60, 150, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 10, 1)
 GUICtrlSetData(-1, 10)
-Global $scrape_manual_join_minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Minimized Scrapers", 20, 130, 120, 20)
-_GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($scrape_manual_join_minimized_scrapers_checkbox))
+Global $scrape_manual_join_minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Minimized Scrapers", 520, 60, 120, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
-Local $scrape_manual_join_scrape_button = GUICtrlCreateButton("Scrape", 20, 160, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($scrape_manual_join_minimized_scrapers_checkbox))
+Local $scrape_manual_join_scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 80, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
 	"Scrapes box art according to the selections above." & @CRLF & _
 	@CRLF & _
@@ -325,78 +356,113 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	"Full Covers will be stored in the BoxFull folder." & @CRLF _
 	, GUICtrlGetHandle($scrape_manual_join_scrape_button))
 
-Global $scrape_manual_join_match_art_to_roms_radio = GUICtrlCreateRadio("Match Art to Roms", 340, 100, 120, 20)
+Global $scrape_manual_join_match_art_to_roms_radio = GUICtrlCreateRadio("Match Art to Roms", 20, 90, 120, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
-Global $scrape_manual_join_match_roms_to_art_radio = GUICtrlCreateRadio("Match Roms to Art", 340, 120, 120, 20)
-Global $scrape_manual_join_exclude_uploaded_art_checkbox = GUICtrlCreateCheckbox("Exclude Uploaded Art", 340, 140, 120, 20)
+Global $scrape_manual_join_match_roms_to_art_radio = GUICtrlCreateRadio("Match Roms to Art", 140, 90, 120, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $scrape_manual_join_exclude_uploaded_art_checkbox = GUICtrlCreateCheckbox("Exclude Uploaded Art", 260, 90, 120, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
 
 Global $scrape_manual_join_art_label = GUICtrlCreateLabel("Art", 20, 180, 70, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_manual_join_art_files_label = GUICtrlCreateLabel("0 Files", 180, 180, 70, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_manual_join_art_list = GUICtrlCreateList("", 20, 200, 200, 500, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
+GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 GUICtrlSetLimit(-1, 500)
 Global $scrape_manual_join_rom_label = GUICtrlCreateLabel("Roms without Art", 240, 180, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_manual_join_rom_files_label = GUICtrlCreateLabel("0 Files", 400, 180, 70, 20)
-Global $scrape_manual_join_rom_list = GUICtrlCreateList("", 240, 200, 200, 500, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $scrape_manual_join_rom_list = GUICtrlCreateList("", 240, 200, 200, 500, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL, $LBS_EXTENDEDSEL))
+GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 GUICtrlSetLimit(-1, 500)
+
 Local $scrape_manual_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 720, 80, 40)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 Local $scrape_manual_join_upload_button = GUICtrlCreateButton("Upload &Art", 240, 720, 80, 40)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 Local $scrape_manual_join_down_button = GUICtrlCreateButton("&Down", 480, 720, 50, 40)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 Local $scrape_manual_join_up_button = GUICtrlCreateButton("&Up", 540, 720, 50, 40)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 Local $scrape_manual_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 680, 720, 100, 40)
 
-Global $scrape_manual_join_art_1_pic = GUICtrlCreatePic("", 480, 60, 160, 120)
+Global $scrape_manual_join_art_1_pic = GUICtrlCreatePic("", 480, 80, 220, 120)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKTOP + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_2_pic = GUICtrlCreatePic("", 480, 190, 160, 120)
+Global $scrape_manual_join_art_2_pic = GUICtrlCreatePic("", 480, 210, 220, 120)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_3_pic = GUICtrlCreatePic("", 480, 320, 160, 120)
+Global $scrape_manual_join_art_3_pic = GUICtrlCreatePic("", 480, 340, 220, 120)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_4_pic = GUICtrlCreatePic("", 480, 450, 160, 120)
+Global $scrape_manual_join_art_4_pic = GUICtrlCreatePic("", 480, 470, 220, 120)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_5_pic = GUICtrlCreatePic("", 480, 580, 160, 120)
+Global $scrape_manual_join_art_5_pic = GUICtrlCreatePic("", 480, 600, 220, 120)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKBOTTOM)
 GUICtrlSetState(-1, $GUI_HIDE)
 
 GUIStartGroup()
-Global $art_1_front = GUICtrlCreateRadio("Front", 645, 110, 60, 20)
+Global $art_1_front = GUICtrlCreateRadio("Front", 705, 110, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_2_front = GUICtrlCreateRadio("Front", 645, 240, 60, 20)
+Global $art_2_front = GUICtrlCreateRadio("Front", 705, 240, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_3_front = GUICtrlCreateRadio("Front", 645, 370, 60, 20)
+Global $art_3_front = GUICtrlCreateRadio("Front", 705, 370, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_4_front = GUICtrlCreateRadio("Front", 645, 500, 60, 20)
+Global $art_4_front = GUICtrlCreateRadio("Front", 705, 500, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_5_front = GUICtrlCreateRadio("Front", 645, 630, 60, 20)
+Global $art_5_front = GUICtrlCreateRadio("Front", 705, 630, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 GUIStartGroup()
-Global $art_1_back = GUICtrlCreateRadio("Back", 705, 110, 60, 20)
+Global $art_1_back = GUICtrlCreateRadio("Back", 765, 110, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_2_back = GUICtrlCreateRadio("Back", 705, 240, 60, 20)
+Global $art_2_back = GUICtrlCreateRadio("Back", 765, 240, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_3_back = GUICtrlCreateRadio("Back", 705, 370, 60, 20)
+Global $art_3_back = GUICtrlCreateRadio("Back", 765, 370, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_4_back = GUICtrlCreateRadio("Back", 705, 500, 60, 20)
+Global $art_4_back = GUICtrlCreateRadio("Back", 765, 500, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_5_back = GUICtrlCreateRadio("Back", 705, 630, 60, 20)
+Global $art_5_back = GUICtrlCreateRadio("Back", 765, 630, 60, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 
 GUICtrlCreateTabItem("") ; end tabitem definition
 
 Global $status_input = GUICtrlCreateInput("Hint - hover mouse over controls for help", 10, 800 - 25, 800 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
+GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM + $GUI_DOCKHEIGHT + $GUI_DOCKLEFT + $GUI_DOCKRIGHT)
+
+Global $shift_up_dummy = GUICtrlCreateDummy()
+Global $shift_down_dummy = GUICtrlCreateDummy()
+Local $aAccelKeys[2][2] = [["+{UP}", $shift_up_dummy], ["+{DOWN}", $shift_down_dummy]]
+GUISetAccelerators($aAccelKeys)
 
 
-Global $art_gui = GUICreate($app_name, 640, 480, -1, -1, -1, -1, $main_gui)
+Global $art_gui = GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
 Global $art_big_pic = GUICtrlCreatePic("", 0, 0, 640, 480)
-Global $art_gui2 = GUICreate($app_name, 1024, 576, -1, -1, -1, -1, $main_gui)
+Global $art_gui2 = GUICreate($app_name, 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
 Global $art_big_pic2 = GUICtrlCreatePic("", 0, 0, 1024, 576)
 Global $art_gui3 = GUICreate("Child", 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
 Global $art_big_pic3 = GUICtrlCreatePic("", 0, 0, 1024, 576) ;, 0, 0)
@@ -505,9 +571,8 @@ While True
 			FileWrite(@ScriptDir & "\" & $app_name & ".txt", $tree_file_str)
 #ce
 
-			GUISetState(@SW_HIDE, $current_gui)
 			GUISetState(@SW_ENABLE, $main_gui)
-			GUISetState(@SW_SHOWNORMAL, $main_gui)
+			GUISetState(@SW_HIDE, $current_gui)
 
 			if $current_gui = $main_gui Then
 
@@ -522,6 +587,18 @@ While True
 
 				_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list))
 			EndIf
+
+
+		case $shift_up_dummy
+
+			Local $arr = _GUICtrlListBox_GetSelItems($scrape_manual_join_rom_list)
+			_GUICtrlListBox_SelItemRange($scrape_manual_join_rom_list, $arr[UBound($arr)-1], $arr[UBound($arr)-1], False)
+
+		case $shift_down_dummy
+
+			Local $arr = _GUICtrlListBox_GetSelItems($scrape_manual_join_rom_list)
+			_GUICtrlListBox_SelItemRange($scrape_manual_join_rom_list, $arr[UBound($arr)-1]+1, $arr[UBound($arr)-1]+1)
+
 
 
 		case $scrape_auto_join_match_art_to_roms_radio
@@ -680,35 +757,70 @@ While True
 
 		case $scrape_manual_join_art_1_pic
 
-			GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-1.jpg")
+			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-1.jpg") = True Then
+
+				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-1.jpg")
+			Else
+
+				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-1.png")
+			EndIf
+
 			GUISetState(@SW_DISABLE, $main_gui)
 			GUISetState(@SW_SHOW, $art_gui)
 			$current_gui = $art_gui
 
 		case $scrape_manual_join_art_2_pic
 
-			GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-2.jpg")
+			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-2.jpg") = True Then
+
+				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-2.jpg")
+			Else
+
+				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-2.png")
+			EndIf
+
 			GUISetState(@SW_DISABLE, $main_gui)
 			GUISetState(@SW_SHOW, $art_gui)
 			$current_gui = $art_gui
 
 		case $scrape_manual_join_art_3_pic
 
-			GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-3.jpg")
+			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-3.jpg") = True Then
+
+				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-3.jpg")
+			Else
+
+				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-3.png")
+			EndIf
+
 			GUISetState(@SW_DISABLE, $main_gui)
 			GUISetState(@SW_SHOW, $art_gui)
 			$current_gui = $art_gui
 
 		case $scrape_manual_join_art_4_pic
 
-			GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-4.jpg")
+			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-4.jpg") = True Then
+
+				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-4.jpg")
+			Else
+
+				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-4.png")
+			EndIf
+
 			GUISetState(@SW_DISABLE, $main_gui)
 			GUISetState(@SW_SHOW, $art_gui)
 			$current_gui = $art_gui
 
 		case $scrape_manual_join_art_5_pic
 
-			GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-5.jpg")
+			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-5.jpg") = True Then
+
+				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-5.jpg")
+			Else
+
+				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-5.png")
+			EndIf
+
 			GUISetState(@SW_DISABLE, $main_gui)
 			GUISetState(@SW_SHOW, $art_gui)
 			$current_gui = $art_gui
@@ -1059,241 +1171,248 @@ While True
 
 			Local $art_name = _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list))
 			Local $rom_name = _GUICtrlListBox_GetText($scrape_manual_join_rom_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_rom_list))
-			_PathSplit($rom_name, $sDrive1, $sDir1, $sFileName1, $sExtension1)
-			Local $old_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg"
-			Local $new_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $sFileName1 & "-full-cover.jpg"
-			Local $new_art_compressed_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $sFileName1 & "-full-cover-compressed.jpg"
-			Local $left_art_path
-			Local $right_art_path
+			Local $selected_indices = _GUICtrlListBox_GetSelItems($scrape_manual_join_rom_list)
 
-			; rename the art filename to match the rom filename
+			for $index_num = $selected_indices[0] to 1 step -1
 
-			if StringCompare($art_name, $sFileName1) <> 0 Then
+				Local $rom_name = _GUICtrlListBox_GetText($scrape_manual_join_rom_list, $selected_indices[$index_num])
+				_PathSplit($rom_name, $sDrive1, $sDir1, $sFileName1, $sExtension1)
+				Local $old_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg"
+				Local $new_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $sFileName1 & "-full-cover.jpg"
+				Local $new_art_compressed_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $sFileName1 & "-full-cover-compressed.jpg"
+				Local $left_art_path
+				Local $right_art_path
 
-				Local $curr_index = _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)
-				_GUICtrlListBox_ReplaceString($scrape_manual_join_art_list, $curr_index, $sFileName1)
-				_GUICtrlListBox_SetCurSel($scrape_manual_join_art_list, $curr_index)
-;				FileMove($old_art_path, $new_art_path, 1)
+				; rename the art filename to match the rom filename
 
-				for $i = 1 to 5
+				if StringCompare($art_name, $sFileName1) <> 0 Then
 
-					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-" & $i & ".jpg") = True Then
+					Local $curr_index = _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)
+					_GUICtrlListBox_ReplaceString($scrape_manual_join_art_list, $curr_index, $sFileName1)
+					_GUICtrlListBox_SetCurSel($scrape_manual_join_art_list, $curr_index)
+	;				FileMove($old_art_path, $new_art_path, 1)
 
-						FileMove($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-" & $i & ".jpg", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-" & $i & ".jpg", 1)
+					for $i = 1 to 5
+
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-" & $i & ".jpg") = True Then
+
+							FileMove($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-" & $i & ".jpg", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-" & $i & ".jpg", 1)
+						EndIf
+
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-" & $i & ".png") = True Then
+
+							FileMove($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-" & $i & ".png", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-" & $i & ".png", 1)
+						EndIf
+					Next
+
+				EndIf
+
+				if GUICtrlRead($art_1_back) = $GUI_CHECKED Then
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.jpg") = True Then
+
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.jpg"
 					EndIf
 
-					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-" & $i & ".png") = True Then
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.png") = True Then
 
-						FileMove($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-" & $i & ".png", $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-" & $i & ".png", 1)
-					EndIf
-				Next
-
-			EndIf
-
-			if GUICtrlRead($art_1_back) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.jpg") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.png") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.png"
-				EndIf
-			EndIf
-
-			if GUICtrlRead($art_2_back) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.jpg") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.png") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.png"
-				EndIf
-			EndIf
-
-			if GUICtrlRead($art_3_back) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.jpg") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.png") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.png"
-				EndIf
-			EndIf
-
-			if GUICtrlRead($art_4_back) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.jpg") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.png") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.png"
-				EndIf
-			EndIf
-
-			if GUICtrlRead($art_5_back) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.jpg") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.png") = True Then
-
-					$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.png"
-				EndIf
-			EndIf
-
-			if GUICtrlRead($art_1_front) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.jpg") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.png") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.png"
-				EndIf
-			EndIf
-
-			if GUICtrlRead($art_2_front) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.jpg") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.png") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.png"
-				EndIf
-			EndIf
-
-			if GUICtrlRead($art_3_front) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.jpg") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.png") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.png"
-				EndIf
-			EndIf
-
-			if GUICtrlRead($art_4_front) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.jpg") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.png") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.png"
-				EndIf
-			EndIf
-
-			if GUICtrlRead($art_5_front) = $GUI_CHECKED Then
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.jpg") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.jpg"
-				EndIf
-
-				if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.png") = True Then
-
-					$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.png"
-				EndIf
-			EndIf
-
-			; join the selected back and front art from Box to Box_Full
-;			ShellExecuteWait("magick.exe", """" & $left_art_path & """ """ & $right_art_path & """ +append """ & $new_art_path & """", $ImageMagick_path, "", @SW_HIDE)
-
-			; compress
-;			ShellExecuteWait("magick.exe", "-quality 80% """ & $new_art_path & """ -resize ""1920x1080>"" """ & $new_art_compressed_path & """", $ImageMagick_path, "", @SW_HIDE)
-
-			; resize back and front art to be the same (1920x1080), join together and output to Box_Full at quality 80%
-			ShellExecuteWait("magick.exe", """" & $left_art_path & """ """ & $right_art_path & """ -resize ""1920x1080"" +append -resize ""1920x1080>"" -quality 80% """ & $new_art_path & """", $ImageMagick_path, "", @SW_HIDE)
-
-
-
-			Local $filesize = FileGetSize($new_art_path)
-			Local $filesize_compressed = FileGetSize($new_art_compressed_path)
-			local $compression_ratio = int(($filesize_compressed / $filesize) * 100)
-
-			if $compression_ratio >= 80 Then
-
-				FileDelete($new_art_compressed_path)
-			Else
-
-				FileMove($new_art_compressed_path, $new_art_path, 1)
-			EndIf
-
-			; upload the joined art to the RetroPie
-			;	it's assumed the WinSCP connection is still open from the Refresh button above
-
-			Local $msg = "Copying to the RetroPie - " & $sFileName1 & "-full-cover.jpg ..."
-			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $msg = ' & $msg & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-			GUICtrlSetData($status_input, $msg)
-			Local $result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
-
-			if $result = False Then
-
-				GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
-			Else
-
-				Local $num_art_files = Number(StringReplace(GUICtrlRead($scrape_manual_join_art_files_label), " Files", ""))
-				Local $num_rom_files = Number(StringReplace(GUICtrlRead($scrape_manual_join_rom_files_label), " Files", ""))
-
-				Local $art_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)
-				Local $rom_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_manual_join_rom_list)
-
-				if GUICtrlRead($scrape_manual_join_exclude_uploaded_art_checkbox) = $GUI_CHECKED Then
-
-					_GUICtrlListBox_DeleteString($scrape_manual_join_art_list, $art_list_selected_index)
-					$num_art_files = $num_art_files - 1
-				EndIf
-
-				_GUICtrlListBox_DeleteString($scrape_manual_join_rom_list, $rom_list_selected_index)
-				$num_rom_files = $num_rom_files - 1
-				GUICtrlSetData($scrape_manual_join_art_files_label, $num_art_files & " Files")
-				GUICtrlSetData($scrape_manual_join_rom_files_label, $num_rom_files & " Files")
-
-				if GUICtrlRead($scrape_manual_join_match_art_to_roms_radio) = $GUI_CHECKED Then
-
-					GUICtrlSetState($scrape_manual_join_art_list, $GUI_ENABLE)
-
-					if GUICtrlRead($scrape_manual_join_exclude_uploaded_art_checkbox) = $GUI_CHECKED Then
-
-						_GUICtrlListBox_ClickItem($scrape_manual_join_art_list, $art_list_selected_index)
-					Else
-
-						_GUICtrlListBox_SetCurSel($scrape_manual_join_rom_list, $rom_list_selected_index)
-						GUICtrlSetState($scrape_manual_join_art_list, $GUI_FOCUS)
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.png"
 					EndIf
 				EndIf
 
-				if GUICtrlRead($scrape_manual_join_match_roms_to_art_radio) = $GUI_CHECKED Then
+				if GUICtrlRead($art_2_back) = $GUI_CHECKED Then
 
-					GUICtrlSetState($scrape_manual_join_rom_list, $GUI_ENABLE)
-					_GUICtrlListBox_ClickItem($scrape_manual_join_rom_list, $rom_list_selected_index)
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.jpg") = True Then
+
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.jpg"
+					EndIf
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.png") = True Then
+
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.png"
+					EndIf
 				EndIf
 
+				if GUICtrlRead($art_3_back) = $GUI_CHECKED Then
 
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.jpg") = True Then
+
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.jpg"
+					EndIf
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.png") = True Then
+
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.png"
+					EndIf
+				EndIf
+
+				if GUICtrlRead($art_4_back) = $GUI_CHECKED Then
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.jpg") = True Then
+
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.jpg"
+					EndIf
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.png") = True Then
+
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.png"
+					EndIf
+				EndIf
+
+				if GUICtrlRead($art_5_back) = $GUI_CHECKED Then
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.jpg") = True Then
+
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.jpg"
+					EndIf
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.png") = True Then
+
+						$left_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.png"
+					EndIf
+				EndIf
+
+				if GUICtrlRead($art_1_front) = $GUI_CHECKED Then
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.jpg") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.jpg"
+					EndIf
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.png") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-1.png"
+					EndIf
+				EndIf
+
+				if GUICtrlRead($art_2_front) = $GUI_CHECKED Then
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.jpg") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.jpg"
+					EndIf
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.png") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-2.png"
+					EndIf
+				EndIf
+
+				if GUICtrlRead($art_3_front) = $GUI_CHECKED Then
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.jpg") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.jpg"
+					EndIf
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.png") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-3.png"
+					EndIf
+				EndIf
+
+				if GUICtrlRead($art_4_front) = $GUI_CHECKED Then
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.jpg") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.jpg"
+					EndIf
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.png") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-4.png"
+					EndIf
+				EndIf
+
+				if GUICtrlRead($art_5_front) = $GUI_CHECKED Then
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.jpg") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.jpg"
+					EndIf
+
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.png") = True Then
+
+						$right_art_path = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $sFileName1 & "-5.png"
+					EndIf
+				EndIf
+
+				; join the selected back and front art from Box to Box_Full
+	;			ShellExecuteWait("magick.exe", """" & $left_art_path & """ """ & $right_art_path & """ +append """ & $new_art_path & """", $ImageMagick_path, "", @SW_HIDE)
+
+				; compress
+	;			ShellExecuteWait("magick.exe", "-quality 80% """ & $new_art_path & """ -resize ""1920x1080>"" """ & $new_art_compressed_path & """", $ImageMagick_path, "", @SW_HIDE)
+
+				; resize back and front art to be the same (1920x1080), join together and output to Box_Full at quality 80%
+				ShellExecuteWait("magick.exe", """" & $left_art_path & """ """ & $right_art_path & """ -resize ""1920x1080"" +append -resize ""1920x1080>"" -quality 80% """ & $new_art_path & """", $ImageMagick_path, "", @SW_HIDE)
+
+
+
+				Local $filesize = FileGetSize($new_art_path)
+				Local $filesize_compressed = FileGetSize($new_art_compressed_path)
+				local $compression_ratio = int(($filesize_compressed / $filesize) * 100)
+
+				if $compression_ratio >= 80 Then
+
+					FileDelete($new_art_compressed_path)
+				Else
+
+					FileMove($new_art_compressed_path, $new_art_path, 1)
+				EndIf
+
+				; upload the joined art to the RetroPie
+				;	it's assumed the WinSCP connection is still open from the Refresh button above
+
+				Local $msg = "Copying to the RetroPie - " & $sFileName1 & "-full-cover.jpg ..."
+				ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $msg = ' & $msg & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+				GUICtrlSetData($status_input, $msg)
+				Local $result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
+
+				if $result = False Then
+
+					GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
+				Else
+
+					Local $num_rom_files = Number(StringReplace(GUICtrlRead($scrape_manual_join_rom_files_label), " Files", ""))
+					;Local $rom_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_manual_join_rom_list)
+
+					_GUICtrlListBox_DeleteString($scrape_manual_join_rom_list, $selected_indices[$index_num])
+					$num_rom_files = $num_rom_files - 1
+					GUICtrlSetData($scrape_manual_join_rom_files_label, $num_rom_files & " Files")
+				EndIf
+			Next
+
+			Local $num_art_files = Number(StringReplace(GUICtrlRead($scrape_manual_join_art_files_label), " Files", ""))
+			Local $art_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)
+
+			if GUICtrlRead($scrape_manual_join_exclude_uploaded_art_checkbox) = $GUI_CHECKED Then
+
+				_GUICtrlListBox_DeleteString($scrape_manual_join_art_list, $art_list_selected_index)
+				$num_art_files = $num_art_files - 1
+			EndIf
+
+			GUICtrlSetData($scrape_manual_join_art_files_label, $num_art_files & " Files")
+
+			if GUICtrlRead($scrape_manual_join_match_art_to_roms_radio) = $GUI_CHECKED Then
+
+				GUICtrlSetState($scrape_manual_join_art_list, $GUI_ENABLE)
+				_GUICtrlListBox_ClickItem($scrape_manual_join_art_list, $art_list_selected_index)
+
+
+;				if GUICtrlRead($scrape_manual_join_exclude_uploaded_art_checkbox) = $GUI_CHECKED Then
+
+;					_GUICtrlListBox_ClickItem($scrape_manual_join_art_list, $art_list_selected_index)
+;				Else
+
+					;_GUICtrlListBox_SetCurSel($scrape_manual_join_rom_list, $rom_list_selected_index)
+;					GUICtrlSetState($scrape_manual_join_art_list, $GUI_FOCUS)
+;				EndIf
+			EndIf
+
+			if GUICtrlRead($scrape_manual_join_match_roms_to_art_radio) = $GUI_CHECKED Then
+
+				GUICtrlSetState($scrape_manual_join_rom_list, $GUI_ENABLE)
+				;_GUICtrlListBox_ClickItem($scrape_manual_join_rom_list, $rom_list_selected_index)
 			EndIf
 
 			GUICtrlSetData($status_input, "")
@@ -1609,11 +1728,13 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 					if GUICtrlRead($scrape_manual_join_match_art_to_roms_radio) = $GUI_CHECKED Then
 
 						Local $selected_index = 0
+						GUICtrlUnselect($scrape_manual_join_rom_list)
 
 						for $i = 1 to StringLen($art_name)
 
 							Local $rom_name_search_text = StringLeft($art_name, $i)
-							Local $result = _GUICtrlListBox_SelectString($scrape_manual_join_rom_list, $rom_name_search_text)
+							Local $result = _GUICtrlListBox_FindString($scrape_manual_join_rom_list, $rom_name_search_text)
+;							Local $result = _GUICtrlListBox_SelectString($scrape_manual_join_rom_list, $rom_name_search_text)
 
 							if $result < 0 Then
 
@@ -1623,6 +1744,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 							$selected_index = $result
 						Next
 
+						_GUICtrlListBox_SelItemRange($scrape_manual_join_rom_list, $selected_index, $selected_index)
 						_GUICtrlListBox_SetTopIndex($scrape_manual_join_rom_list, $selected_index - 11)
 					EndIf
 
@@ -2141,5 +2263,15 @@ Func GUICtrlSetImagePNG($ctrl, $png_path)
 	_GDIPlus_ImageSaveToFileEx($hImage, @TempDir & "\test.bmp", $hCLSID)
 	GUICtrlSetImage($ctrl, @TempDir & "\test.bmp")
 	_GDIPlus_ImageDispose($hImage)
+EndFunc
+
+Func GUICtrlUnselect($ctrl)
+
+	Local $aSel = _GUICtrlListBox_GetSelItems($ctrl)
+
+	For $i = 1 To $aSel[0]
+
+		_GUICtrlListBox_SetSel($ctrl, $aSel[$i], False)
+	Next
 EndFunc
 

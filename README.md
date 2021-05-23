@@ -1,7 +1,7 @@
 
 # Seans RetroPie Tools
 
-## Seans Scraper
+## Seans RetroPie Scraper
 
 
 ## Seans RetroPie Backup

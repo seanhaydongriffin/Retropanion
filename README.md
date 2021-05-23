@@ -1,9 +1,9 @@
 
 # Seans RetroPie Tools
 
-Please check the [[Wiki|Home]] for additional information.
+Please check the [Wiki](https://github.com/seanhaydongriffin/Seans-RetroPie-Tools/wiki) for additional information.
 
-[Link Text](https://github.com/seanhaydongriffin/Seans-RetroPie-Tools/wiki)
+
 
 ## Seans RetroPie Scraper
 

@@ -3,7 +3,7 @@
 
 Please check the [[Wiki|Home]] for additional information.
 
-[Link Text](full-URL-of-wiki-page)
+[Link Text](Home)
 
 ## Seans RetroPie Scraper
 

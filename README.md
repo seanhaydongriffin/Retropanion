@@ -3,7 +3,7 @@
 
 Please check the [[Wiki|Home]] for additional information.
 
-[Link Text](Home)
+[Link Text](https://github.com/seanhaydongriffin/Seans-RetroPie-Tools/wiki)
 
 ## Seans RetroPie Scraper
 

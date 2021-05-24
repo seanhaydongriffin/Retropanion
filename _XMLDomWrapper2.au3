@@ -361,7 +361,7 @@ EndFunc   ;==>_XMLCreateFile
 ;							On Failure - -1 and set @Error = 1
 ; Author(s):		Stephen Podhajecki <gehossafats@netmdc.com>
 ;===============================================================================
-Func _XMLSelectNodes($strXPath)
+Func _XMLSelectNodes($objDoc, $strXPath)
 	If not IsObj($objDoc) then
 		_XMLError("No object passed to function _XMLSelectNodes")
 		Return SetError(2,0,-1)
@@ -440,6 +440,34 @@ Func _XMLGetField($strXPath)
 		_XMLError("Error Selecting Node(s): " & $strXPath & $xmlerr)
 	Return SetError(1,0,-1)
 EndFunc   ;==>_XMLGetField
+
+
+
+Func _XMLGetXML($objDoc, $strXPath)
+	If not IsObj($objDoc) then
+		_XMLError("No object passed to function _XMLGetField")
+		Return SetError(1,2,-1)
+	EndIf
+	Local $objNodeList, $arrResponse[1], $xmlerr, $szNodePath, $aRet
+		$objNodeList = $objDoc.selectSingleNode ($strXPath)
+		If Not IsObj($objNodeList) Then
+			_XMLError("\nNo Matching Nodes found")
+			$arrResponse[0] = 0
+			Return SetError(2,0,-1)
+		EndIf
+
+		Return $objNodeList.xml
+		_XMLError("Error Selecting Node(s): " & $strXPath & $xmlerr)
+	Return SetError(1,0,-1)
+EndFunc   ;==>_XMLGetXML
+
+
+
+
+
+
+
+
 ;===============================================================================
 ; Function Name: 	_XMLGetValue
 ; Description: 	Get XML values based on XPath input from root node.
@@ -1176,6 +1204,44 @@ Func _XMLGetChildText($objDoc, $strXPath)
 	_XMLError("Error Selecting Node(s): " & $strXPath & $xmlerr)
 	Return SetError(1,0,-1)
 EndFunc   ;==>_XMLGetChildText
+
+
+
+Func _XMLGetChildXML($objDoc, $strXPath)
+	If not IsObj($objDoc) then
+		_XMLError("No object passed to function _XMLGetChildText")
+		Return SetError(1,19,-1)
+	EndIf
+	Local $objNodeList, $arrResponse[1], $xmlerr
+		$objNodeList = $objDoc.selectSingleNode ($strXPath)
+		If Not IsObj($objNodeList) Then
+			_XMLError(@CRLF & "No Matching Nodes found")
+			$arrResponse[0] = 0
+			Return SetError(1,0,-1)
+		EndIf
+		If $objNodeList.hasChildNodes () Then
+			For $objChild In $objNodeList.childNodes ()
+
+;					$objChild.xml
+;					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $objChild.xml = ' & $objChild.xml & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+;					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $objChild.nodeType = ' & $objChild.nodeType & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+;					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $NODE_TEXT = ' & $NODE_TEXT & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+				If $objChild.nodeType = $NODE_ELEMENT Then
+					_XMLArrayAdd($arrResponse, $objChild.xml)
+				EndIf
+			Next
+			$arrResponse[0] = UBound($arrResponse) - 1
+			Return $arrResponse
+		EndIf
+	$arrResponse[0] = 0
+	$xmlerr = @CRLF & "No Child Text Nodes found"
+	_XMLError("Error Selecting Node(s): " & $strXPath & $xmlerr)
+	Return SetError(1,0,-1)
+EndFunc   ;==>_XMLGetChildText
+
+
+
 ;===============================================================================
 ; Function Name:	_XMLGetChildNodes
 ; Description:		Selects XML child Node(s) of an element based on XPath input from root node.
@@ -1184,7 +1250,7 @@ EndFunc   ;==>_XMLGetChildText
 ; Author(s):		Stephen Podhajecki <gehossafats@netmdc.com>
 ; Return Value(s)			array of Nodes or -1 on failure
 ;===============================================================================
-Func _XMLGetChildNodes($strXPath)
+Func _XMLGetChildNodes($objDoc, $strXPath)
 	If not IsObj($objDoc) then
 		_XMLError("No object passed to function _XMLGetChildNodes")
 		Return SetError(1,20,-1)

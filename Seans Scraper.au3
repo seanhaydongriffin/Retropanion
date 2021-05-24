@@ -22,7 +22,6 @@
 #Include "_XMLDomWrapper2.au3"
 
 
-
 _GDIPlus_Startup()
 
 Local $app_name = "Seans Scraper"
@@ -455,6 +454,10 @@ GUICtrlCreateTabItem("Backup")
 
 GUICtrlCreateTabItem("System List Config")
 
+GUICtrlCreateGroup("System List Order", 30, 60, 140, 100)
+Local $system_list_config_reorder_button = GUICtrlCreateButton("ReOrder", 40, 80, 120, 40)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
 
 
 
@@ -600,6 +603,97 @@ While True
 				_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list))
 			EndIf
 
+
+
+		case $system_list_config_reorder_button
+
+			Local $result = 1
+			Local $systems_sorted_arr
+
+			$result = MsgBox(1+48+4096+256, $app_name, "Continuing will reorder ""es_systems.cfg"" on your RetroPie according to ""Seans Scraper Systems Sorted.txt""." & @CRLF & @CRLF & "You should backup ""es_systems.cfg"" before continuing." & @CRLF & @CRLF & "Continue?")
+
+			if $result = 1 Then
+
+				_FileReadToArray(@ScriptDir & "\Seans Scraper Systems Sorted.txt", $systems_sorted_arr, 0)
+
+				if @error <> 0 Then
+
+					GUICtrlSetData($status_input, "Error reading Seans Scraper Systems Sorted.txt. Aborted.")
+				Else
+
+					GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
+
+					$result = _WinSCP_Open()
+
+					if $result = False Then
+
+						GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
+					Else
+
+						GUICtrlSetData($status_input, "")
+
+						if FileExists(@ScriptDir & "\es_systems.cfg") = true Then
+
+							$result = FileDelete(@ScriptDir & "\es_systems.cfg")
+						EndIf
+
+						if $result = 0 Then
+
+							GUICtrlSetData($status_input, "Error deleting es_systems.cfg. Aborted.")
+						Else
+
+							$result = _WinSCP_GetFiles("/etc/emulationstation/es_systems.cfg", @ScriptDir & "\es_systems.cfg")
+							Local $es_systems_xml = FileRead(@ScriptDir & "\es_systems.cfg")
+
+							if @error <> 0 Then
+
+								GUICtrlSetData($status_input, "Error reading es_systems.cfg. Aborted.")
+							Else
+
+								Local $es_systems_xml_dom = _XMLLoadXML($es_systems_xml, "")
+								Local $num_nodes = _XMLGetNodeCount($es_systems_xml_dom, "/systemList/system")
+								Local $unsorted_index = UBound($systems_sorted_arr) - 1
+								Local $es_systems_xml_arr[$num_nodes + 3]
+								$es_systems_xml_arr[0] = "<?xml version=""1.0""?>"
+								$es_systems_xml_arr[1] = "<systemList>"
+								$es_systems_xml_arr[UBound($es_systems_xml_arr) - 1] = "</systemList>"
+
+								for $i = 1 to $num_nodes
+
+									Local $system_name = _XMLGetValue($es_systems_xml_dom, "/systemList/system[" & $i & "]/name")
+									$result = _ArraySearch($systems_sorted_arr, $system_name, 0, 0, 1)
+									Local $system_xml = _XMLGetXML($es_systems_xml_dom, "/systemList/system[" & $i & "]")
+
+									if $result < 0 Then
+
+										$unsorted_index = $unsorted_index + 1
+										$es_systems_xml_arr[$unsorted_index + 2] = "  " & $system_xml
+									Else
+
+										$es_systems_xml_arr[$result + 2] = "  " & $system_xml
+									EndIf
+								Next
+
+								_FileWriteFromArray(@ScriptDir & "\es_systems.cfg", $es_systems_xml_arr)
+
+								if @error <> 0 Then
+
+									GUICtrlSetData($status_input, "Error writing to es_systems.cfg. Aborted.")
+								Else
+
+									GUICtrlSetData($status_input, "Putting file es_systems.cfg to the RetroPie...")
+
+									_WinSCP_ExecuteCommand("sudo chmod 666 /etc/emulationstation/es_systems.cfg")
+									$result = _WinSCP_PutFiles(@ScriptDir & "\es_systems.cfg", "/etc/emulationstation/es_systems.cfg")
+									_WinSCP_ExecuteCommand("sudo chmod 644 /etc/emulationstation/es_systems.cfg")
+
+									GUICtrlSetData($status_input, "RetroPie updated with new es_systems.cfg.")
+								EndIf
+							EndIf
+						EndIf
+					EndIf
+				EndIf
+			EndIf
 
 		case $shift_up_dummy
 
@@ -2286,4 +2380,71 @@ Func GUICtrlUnselect($ctrl)
 		_GUICtrlListBox_SetSel($ctrl, $aSel[$i], False)
 	Next
 EndFunc
+
+Func Listbox_ItemMoveUD($hLB_ID, $iDir = -1)
+    ;Listbox_ItemMoveUD - Up/Down  Move Multi/Single item in a ListBox
+    ;$iDir: -1 up, 1 down
+    ;Return values -1 nothing to do, 0 nothing moved, >0 performed moves
+    Local $iCur, $iNxt, $aCou, $aSel, $i, $m = 0, $y, $slb = 0 ;Current, next, Count, Selection, loop , movecount
+
+    $aSel = _GUICtrlListBox_GetSelItems($hLB_ID) ;Put selected items in an array
+    $aCou = _GUICtrlListBox_GetCount($hLB_ID) ;Get total item count of the listbox
+
+    If $aSel[0] = 0 Then
+        $y = _GUICtrlListBox_GetCurSel($hLB_ID)
+        If $y > -1 Then
+            _ArrayAdd($aSel, $y)
+            $aSel[0] = 1
+            $slb = 1
+        EndIf
+    EndIf
+
+    ;WinSetTitle($hGUI, "", $aSel[0])                   ;Debugging info
+
+    Select
+        Case $iDir = -1 ;Move Up
+            For $i = 1 To $aSel[0]
+                If $aSel[$i] > 0 Then
+                    $iNxt = _GUICtrlListBox_GetText($hLB_ID, $aSel[$i] - 1) ;Save the selection index - 1 text
+                    _GUICtrlListBox_ReplaceString($hLB_ID, $aSel[$i] - 1, _GUICtrlListBox_GetText($hLB_ID, $aSel[$i])) ;Replace the index-1 text with the index text
+                    _GUICtrlListBox_ReplaceString($hLB_ID, $aSel[$i], $iNxt) ;Replace the selection with the saved var
+                    $m = $m + 1
+                EndIf
+            Next
+            For $i = 1 To $aSel[0] ;Restore the selections after moving
+                If $aSel[$i] > 0 Then
+                    If $slb = 0 Then
+                        _GUICtrlListBox_SetSel($hLB_ID, $aSel[$i] - 1, 1)
+                    Else
+                        _GUICtrlListBox_SetCurSel($hLB_ID, $aSel[$i] - 1)
+                    EndIf
+                EndIf
+            Next
+            Return $m
+        Case $iDir = 1 ;Move Down
+            If $aSel[0] > 0 Then
+                For $i = $aSel[0] To 1 Step -1
+                    If $aSel[$i] < $aCou - 1 Then
+                        $iNxt = _GUICtrlListBox_GetText($hLB_ID, $aSel[$i] + 1)
+                        _GUICtrlListBox_ReplaceString($hLB_ID, $aSel[$i] + 1, _GUICtrlListBox_GetText($hLB_ID, $aSel[$i]))
+                        _GUICtrlListBox_ReplaceString($hLB_ID, $aSel[$i], $iNxt)
+                        $m = $m + 1
+                    EndIf
+                Next
+            EndIf
+            For $i = $aSel[0] To 1 Step -1 ;Restore the selections after moving
+                If $aSel[$i] < $aCou - 1 Then
+                    If $slb = 0 Then
+                        _GUICtrlListBox_SetSel($hLB_ID, $aSel[$i] + 1, 1)
+                    Else
+                        _GUICtrlListBox_SetCurSel($hLB_ID, $aSel[$i] + 1)
+                    EndIf
+                EndIf
+            Next
+            Return $m
+    EndSelect
+    Return -1
+EndFunc   ;==>Listbox_ItemMoveUD
+
+
 

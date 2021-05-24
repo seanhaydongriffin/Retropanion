@@ -54,6 +54,7 @@ Func _WinSCP_Open()
     EndWith
 
     $oSession = ObjCreate("WinSCP.Session");
+	;$oSession.SessionLogPath = "D:\dwn\winscp_log.txt"
 	$oSession.Open($oSessionOptions)
 
 	if IsObj($oSession) = True Then
@@ -73,11 +74,61 @@ Func _WinSCP_Open()
 
 EndFunc
 
+Func _WinSCP_RemoveFile($remote_file_path)
+
+	$oSession.RemoveFile($remote_file_path)
+
+	if $_WinSCP_COM_error = True Then
+
+		Return False
+	EndIf
+
+	Return True
+
+EndFunc
+
+Func _WinSCP_GetFiles($remote_file_path, $local_file_path)
+
+	; Set TransferOptions
+	Local $oTransferOptions = ObjCreate("WinSCP.TransferOptions")
+	$oTransferOptions.TransferMode = $__eWSCP_TO_TransferMode_Binary
+
+	if IsObj($oSession) = False Then
+
+		Return False
+	EndIf
+
+	; Upload files: put @ScriptFullPath to the ROOT directory
+	Local $oTransferResult = $oSession.GetFiles($remote_file_path, $local_file_path, False, $oTransferOptions)
+
+	if $_WinSCP_COM_error = True Then
+
+		Return False
+	EndIf
+
+	; Throw on any error
+	$oTransferResult.Check
+
+	if $_WinSCP_COM_error = True Then
+
+		Return False
+	EndIf
+
+	; Print results
+	For $oTransfer In $oTransferResult.Transfers
+		ConsoleWrite("Upload of " & $oTransfer.FileName & " succeeded" & @CRLF)
+	Next
+
+	Return True
+
+EndFunc
+
 Func _WinSCP_PutFiles($local_file_path, $remote_file_path)
 
 	; Set TransferOptions
 	Local $oTransferOptions = ObjCreate("WinSCP.TransferOptions")
 	$oTransferOptions.TransferMode = $__eWSCP_TO_TransferMode_Binary
+	$oTransferOptions.PreserveTimestamp = 0
 
 	if IsObj($oSession) = False Then
 
@@ -108,6 +159,39 @@ Func _WinSCP_PutFiles($local_file_path, $remote_file_path)
 	Return True
 
 EndFunc
+
+
+
+
+Func _WinSCP_ExecuteCommand($command)
+
+	if IsObj($oSession) = False Then
+
+		Return False
+	EndIf
+
+	Local $oCommandExecutionResult = $oSession.ExecuteCommand($command)
+
+	if $_WinSCP_COM_error = True Then
+
+		Return False
+	EndIf
+
+	; Throw on any error
+	$oCommandExecutionResult.Check
+
+	if $_WinSCP_COM_error = True Then
+
+		Return False
+	EndIf
+
+	Return True
+
+EndFunc
+
+
+
+
 
 
 Func _WinSCP_ListDirectory_Directories($path)

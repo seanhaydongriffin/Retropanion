@@ -19,6 +19,7 @@
 #include "WinSCP.au3"
 #include <GDIPlus.au3>
 #include "GUIScrollbars_Ex.au3"
+#Include "_XMLDomWrapper2.au3"
 
 
 
@@ -163,7 +164,7 @@ Global $downloaded_images_path = "~/.emulationstation/downloaded_images"
 ; MAIN GUI
 
 
-Global $main_gui = GUICreate($app_name, 1000, 800, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU))
+Global $main_gui = GUICreate($app_name, 840, 720, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU))
 Global $tooltip = _GUIToolTip_Create(0) ; default style tooltip
 _GUIToolTip_SetMaxTipWidth($tooltip, 300)
 
@@ -217,7 +218,7 @@ _GUICtrlComboBox_AddString($system_combo, "Sony PlayStation 2")
 _GUICtrlComboBox_AddString($system_combo, "Sony PSP")
 _GUICtrlComboBox_SetCurSel($system_combo, 0)
 
-Global $tab = GUICtrlCreateTab(5, 30, 790, 740)
+Global $tab = GUICtrlCreateTab(5, 30, 840-10, 720-30-30)
 GUICtrlSetResizing(-1, $GUI_DOCKVCENTER + $GUI_DOCKBORDERS)
 
 Global $settings_tabitem = GUICtrlCreateTabItem("Settings")
@@ -369,45 +370,46 @@ Global $scrape_manual_join_art_label = GUICtrlCreateLabel("Art", 20, 180, 70, 20
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_manual_join_art_files_label = GUICtrlCreateLabel("0 Files", 180, 180, 70, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $scrape_manual_join_art_list = GUICtrlCreateList("", 20, 200, 200, 500, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
+Global $scrape_manual_join_art_list = GUICtrlCreateList("", 20, 200, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 GUICtrlSetLimit(-1, 500)
 Global $scrape_manual_join_rom_label = GUICtrlCreateLabel("Roms without Art", 240, 180, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_manual_join_rom_files_label = GUICtrlCreateLabel("0 Files", 400, 180, 70, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $scrape_manual_join_rom_list = GUICtrlCreateList("", 240, 200, 200, 500, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL, $LBS_EXTENDEDSEL))
+Global $scrape_manual_join_rom_list = GUICtrlCreateList("", 240, 200, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL, $LBS_EXTENDEDSEL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 GUICtrlSetLimit(-1, 500)
 
-Local $scrape_manual_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 720, 80, 40)
+Local $scrape_manual_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 640, 80, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_upload_button = GUICtrlCreateButton("Upload &Art", 240, 720, 80, 40)
+Local $scrape_manual_join_upload_button = GUICtrlCreateButton("Upload &Art", 240, 640, 80, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_down_button = GUICtrlCreateButton("&Down", 480, 720, 50, 40)
+Local $scrape_manual_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 330, 640, 100, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_up_button = GUICtrlCreateButton("&Up", 540, 720, 50, 40)
+Local $scrape_manual_join_down_button = GUICtrlCreateButton("&Down", 710, 640, 50, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 680, 720, 100, 40)
+Local $scrape_manual_join_up_button = GUICtrlCreateButton("&Up", 770, 640, 50, 40)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
-Global $scrape_manual_join_art_1_pic = GUICtrlCreatePic("", 480, 80, 220, 120)
+Global $scrape_manual_join_art_1_pic = GUICtrlCreatePic("", 480, 80, 220, 110)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKTOP + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_2_pic = GUICtrlCreatePic("", 480, 210, 220, 120)
+Global $scrape_manual_join_art_2_pic = GUICtrlCreatePic("", 480, 200, 220, 110)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_3_pic = GUICtrlCreatePic("", 480, 340, 220, 120)
+Global $scrape_manual_join_art_3_pic = GUICtrlCreatePic("", 480, 320, 220, 110)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_4_pic = GUICtrlCreatePic("", 480, 470, 220, 120)
+Global $scrape_manual_join_art_4_pic = GUICtrlCreatePic("", 480, 440, 220, 110)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_5_pic = GUICtrlCreatePic("", 480, 600, 220, 120)
+Global $scrape_manual_join_art_5_pic = GUICtrlCreatePic("", 480, 560, 220, 110)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKBOTTOM)
 GUICtrlSetState(-1, $GUI_HIDE)
 
 GUIStartGroup()
-Global $art_1_front = GUICtrlCreateRadio("Front", 705, 110, 60, 20)
+Global $art_1_front = GUICtrlCreateRadio("Front", 705, 120, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -415,20 +417,20 @@ Global $art_2_front = GUICtrlCreateRadio("Front", 705, 240, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_3_front = GUICtrlCreateRadio("Front", 705, 370, 60, 20)
+Global $art_3_front = GUICtrlCreateRadio("Front", 705, 360, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_4_front = GUICtrlCreateRadio("Front", 705, 500, 60, 20)
+Global $art_4_front = GUICtrlCreateRadio("Front", 705, 480, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_5_front = GUICtrlCreateRadio("Front", 705, 630, 60, 20)
+Global $art_5_front = GUICtrlCreateRadio("Front", 705, 600, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 GUIStartGroup()
-Global $art_1_back = GUICtrlCreateRadio("Back", 765, 110, 60, 20)
+Global $art_1_back = GUICtrlCreateRadio("Back", 765, 120, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -436,22 +438,32 @@ Global $art_2_back = GUICtrlCreateRadio("Back", 765, 240, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_3_back = GUICtrlCreateRadio("Back", 765, 370, 60, 20)
+Global $art_3_back = GUICtrlCreateRadio("Back", 765, 360, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_4_back = GUICtrlCreateRadio("Back", 765, 500, 60, 20)
+Global $art_4_back = GUICtrlCreateRadio("Back", 765, 480, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_5_back = GUICtrlCreateRadio("Back", 765, 630, 60, 20)
+Global $art_5_back = GUICtrlCreateRadio("Back", 765, 600, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
+
+GUICtrlCreateTabItem("Backup")
+
+GUICtrlCreateTabItem("System List Config")
+
+
+
+
+GUICtrlCreateTabItem("System Config")
+
 
 GUICtrlCreateTabItem("") ; end tabitem definition
 
-Global $status_input = GUICtrlCreateInput("Hint - hover mouse over controls for help", 10, 800 - 25, 800 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
+Global $status_input = GUICtrlCreateInput("Hint - hover mouse over controls for help", 10, 720 - 25, 800 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM + $GUI_DOCKHEIGHT + $GUI_DOCKLEFT + $GUI_DOCKRIGHT)
 
 Global $shift_up_dummy = GUICtrlCreateDummy()

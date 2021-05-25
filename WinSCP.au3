@@ -185,7 +185,7 @@ Func _WinSCP_ExecuteCommand($command)
 		Return False
 	EndIf
 
-	Return True
+	Return $oCommandExecutionResult.Output
 
 EndFunc
 

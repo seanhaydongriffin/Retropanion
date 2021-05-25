@@ -159,6 +159,7 @@ Local $alphanumeric_arr[36] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
 Local $iStyle = BitOR($TVS_EDITLABELS, $TVS_HASBUTTONS, $TVS_HASLINES, $TVS_LINESATROOT, $TVS_DISABLEDRAGDROP, $TVS_SHOWSELALWAYS, $TVS_CHECKBOXES)
 Global $current_gui
 Global $downloaded_images_path = "~/.emulationstation/downloaded_images"
+Global $result = 1
 
 ; MAIN GUI
 
@@ -452,16 +453,47 @@ GUICtrlSetState(-1, $GUI_UNCHECKED)
 
 GUICtrlCreateTabItem("Backup")
 
-GUICtrlCreateTabItem("System List Config")
 
-GUICtrlCreateGroup("System List Order", 30, 60, 140, 100)
-Local $system_list_config_reorder_button = GUICtrlCreateButton("ReOrder", 40, 80, 120, 40)
+
+GUICtrlCreateTabItem("Config")
+Local $boot_config_x = 20
+Local $boot_config_y = 100
+Local $systems_list_config_x = 20
+Local $systems_list_config_y = $boot_config_y + 280
+Local $system_config_x = 230
+Local $system_config_y = 60
+Local $game_config_x = 230
+Local $game_config_y = $boot_config_y + 280
+
+Local $config_refresh_button = GUICtrlCreateButton("Refresh", 20, 60, 100, 40)
+
+GUICtrlCreateGroup("Boot", $boot_config_x, $boot_config_y, 200, 260)
+
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+GUICtrlCreateGroup("Systems List", $systems_list_config_x, $systems_list_config_y, 200, 300)
+Local $system_list_config_reorder_button = GUICtrlCreateButton("ReOrder List", $systems_list_config_x + 20, $systems_list_config_y + 20, 120, 40)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+GUICtrlCreateGroup("System (n64)", $system_config_x, $system_config_y, 600, 300)
+;GUICtrlCreateLabel("Default emulator for n64", $system_config_x + 10, $system_config_y + 20, 180, 20)
+;Global $config_system_listview = GUICtrlCreateListView("Emulator Name|Video Mode|Default Emulator", $system_config_x + 10, $system_config_y + 40, 580, 240, $LVS_SHOWSELALWAYS)
+Global $config_system_listview = GUICtrlCreateListView("Emulator Name|Video Mode|Default Emulator", $system_config_x + 10, $system_config_y + 40, 580, 240)
+_GUICtrlListView_SetColumnWidth(-1, 0, 200)
+_GUICtrlListView_SetColumnWidth(-1, 1, 150)
+_GUICtrlListView_SetColumnWidth(-1, 2, 120)
+_GUICtrlListView_SetExtendedListViewStyle($config_system_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+GUICtrlCreateGroup("Game", $game_config_x, $game_config_y, 600, 300)
+;Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $game_config_x + 10, $game_config_y + 40, 580, 240, $LVS_SHOWSELALWAYS)
+Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $game_config_x + 10, $game_config_y + 40, 580, 240)
+_GUICtrlListView_SetColumnWidth(-1, 0, 200)
+_GUICtrlListView_SetColumnWidth(-1, 1, 200)
+_GUICtrlListView_SetExtendedListViewStyle($config_game_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 
-
-
-GUICtrlCreateTabItem("System Config")
 
 
 GUICtrlCreateTabItem("") ; end tabitem definition
@@ -605,9 +637,106 @@ While True
 
 
 
+		Case $config_refresh_button
+
+			$result = _WinSCP_Open()
+
+			if $result = False Then
+
+				GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
+			Else
+
+				GUICtrlSetData($status_input, "")
+
+				$result = _WinSCP_ExecuteCommand("cat /opt/retropie/configs/all/emulators.cfg")
+				Local $all_emulators_line_arr = StringSplit($result, @LF, 3)
+
+				$result = _WinSCP_ExecuteCommand("cat /opt/retropie/configs/n64/emulators.cfg")
+				Local $system_emulators_line_arr = StringSplit($result, @LF, 3)
+
+				$result = _WinSCP_ExecuteCommand("cat /opt/retropie/configs/all/videomodes.cfg")
+				Local $videomodes_line_arr = StringSplit($result, @LF, 3)
+
+				$result = _WinSCP_ExecuteCommand("/opt/retropie/supplementary/mesa-drm/modetest -c")
+				Local $modetest_line_arr = StringSplit($result, @LF, 3)
+				Local $modes_header_num = 99999
+				Local $video_mode_arr[0]
+
+				for $each_modetest_line in $modetest_line_arr
+
+					if StringCompare($each_modetest_line, "  modes:") = 0 Then
+
+						$modes_header_num = 1
+					EndIf
+
+					if $modes_header_num < 0 Then
+
+						Local $modetest_part_arr = StringSplit($each_modetest_line, " ", 3)
+
+						if StringRegExp($modetest_part_arr[2], "[a-z]+:") = 1 Then
+
+							ExitLoop
+						EndIf
+
+						_ArrayAdd($video_mode_arr, $modetest_part_arr[2] & " @ " & $modetest_part_arr[3] & " Hz")
+					EndIf
+
+					$modes_header_num = $modes_header_num - 1
+				Next
+
+				Local $default_emulator
+
+				_GUICtrlListView_DeleteAllItems($config_system_listview)
+				_GUICtrlListView_BeginUpdate($config_system_listview)
+
+				for $each_system_emulator_line in $system_emulators_line_arr
+
+					Local $system_emulator_part_arr = StringSplit($each_system_emulator_line, " = ", 3)
+
+					if StringCompare($system_emulator_part_arr[0], "default") = 0 Then
+
+						$default_emulator = StringReplace($system_emulator_part_arr[1], """", "")
+					Else
+
+						_GUICtrlListView_AddItem($config_system_listview, $system_emulator_part_arr[0])
+					EndIf
+				Next
+
+				_GUICtrlListView_SetItemText($config_system_listview, _GUICtrlListView_FindText($config_system_listview, $default_emulator, -1, False), "Yes", 2)
+
+				for $each_videomode_line in $videomodes_line_arr
+
+					Local $videomode_part_arr = StringSplit($each_videomode_line, " = ", 3)
+					$videomode_part_arr[1] = StringReplace($videomode_part_arr[1], """", "")
+					$videomode_part_arr[1] = StringReplace($videomode_part_arr[1], "87-", "")
+					Local $videomode_res = $video_mode_arr[Number($videomode_part_arr[1])]
+					_GUICtrlListView_SetItemText($config_system_listview, _GUICtrlListView_FindText($config_system_listview, $videomode_part_arr[0], -1, False), $videomode_res, 1)
+				Next
+
+				Local $g_bSortSense = False
+				_GUICtrlListView_SimpleSort($config_system_listview, $g_bSortSense, 0, False)
+				_GUICtrlListView_EndUpdate($config_system_listview)
+
+				_GUICtrlListView_DeleteAllItems($config_game_listview)
+				_GUICtrlListView_BeginUpdate($config_game_listview)
+
+				for $each_all_emulator_line in $all_emulators_line_arr
+
+					Local $all_emulator_part_arr = StringSplit($each_all_emulator_line, " = ", 3)
+					$all_emulator_part_arr[1] = StringReplace($all_emulator_part_arr[1], """", "")
+					Local $index = _GUICtrlListView_AddItem($config_game_listview, $all_emulator_part_arr[0])
+					_GUICtrlListView_AddSubItem($config_game_listview, $index, $all_emulator_part_arr[1], 1)
+				Next
+
+				_GUICtrlListView_SimpleSort($config_game_listview, $g_bSortSense, 0, False)
+				_GUICtrlListView_EndUpdate($config_game_listview)
+
+
+			EndIf
+
+
 		case $system_list_config_reorder_button
 
-			Local $result = 1
 			Local $systems_sorted_arr
 
 			$result = MsgBox(1+48+4096+256, $app_name, "Continuing will reorder ""es_systems.cfg"" on your RetroPie according to ""Seans Scraper Systems Sorted.txt""." & @CRLF & @CRLF & "You should backup ""es_systems.cfg"" before continuing." & @CRLF & @CRLF & "Continue?")
@@ -1089,7 +1218,7 @@ While True
 
 			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
-			Local $result = _WinSCP_Open()
+			$result = _WinSCP_Open()
 
 			if $result = False Then
 
@@ -1155,7 +1284,7 @@ While True
 
 			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
-			Local $result = _WinSCP_Open()
+			$result = _WinSCP_Open()
 
 			if $result = False Then
 
@@ -1237,7 +1366,7 @@ While True
 			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $msg = ' & $msg & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 			GUICtrlSetData($status_input, $msg)
 			ConsoleWrite("Putting file """ & $new_art_path & """ to ""/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg""" & @CRLF)
-			Local $result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
+			$result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
 
 			if $result = False Then
 
@@ -1472,7 +1601,7 @@ While True
 				Local $msg = "Copying to the RetroPie - " & $sFileName1 & "-full-cover.jpg ..."
 				ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $msg = ' & $msg & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 				GUICtrlSetData($status_input, $msg)
-				Local $result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
+				$result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
 
 				if $result = False Then
 
@@ -1531,7 +1660,7 @@ While True
 
 			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
-			Local $result = _WinSCP_Open()
+			$result = _WinSCP_Open()
 
 			if $result = False Then
 
@@ -1548,7 +1677,7 @@ While True
 
 			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
-			Local $result = _WinSCP_Open()
+			$result = _WinSCP_Open()
 
 			if $result = False Then
 
@@ -1760,7 +1889,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						for $i = 1 to StringLen($art_name)
 
 							Local $rom_name_search_text = StringLeft($art_name, $i)
-							Local $result = _GUICtrlListBox_SelectString($scrape_auto_join_rom_list, $rom_name_search_text)
+							$result = _GUICtrlListBox_SelectString($scrape_auto_join_rom_list, $rom_name_search_text)
 
 							if $result < 0 Then
 
@@ -1798,7 +1927,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						for $i = 1 to StringLen($rom_name)
 
 							Local $art_name_search_text = StringLeft($rom_name, $i)
-							Local $result = _GUICtrlListBox_SelectString($scrape_auto_join_art_list, $art_name_search_text)
+							$result = _GUICtrlListBox_SelectString($scrape_auto_join_art_list, $art_name_search_text)
 
 							if $result < 0 Then
 
@@ -1839,7 +1968,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						for $i = 1 to StringLen($art_name)
 
 							Local $rom_name_search_text = StringLeft($art_name, $i)
-							Local $result = _GUICtrlListBox_FindString($scrape_manual_join_rom_list, $rom_name_search_text)
+							$result = _GUICtrlListBox_FindString($scrape_manual_join_rom_list, $rom_name_search_text)
 ;							Local $result = _GUICtrlListBox_SelectString($scrape_manual_join_rom_list, $rom_name_search_text)
 
 							if $result < 0 Then
@@ -1991,7 +2120,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						for $i = 1 to StringLen($rom_name)
 
 							Local $art_name_search_text = StringLeft($rom_name, $i)
-							Local $result = _GUICtrlListBox_SelectString($scrape_manual_join_art_list, $art_name_search_text)
+							$result = _GUICtrlListBox_SelectString($scrape_manual_join_art_list, $art_name_search_text)
 
 							if $result < 0 Then
 
@@ -2196,6 +2325,28 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 
 
 			EndSwitch
+
+
+		Case GUICtrlGetHandle($config_game_listview)
+
+			Switch $iCode
+
+				Case $LVN_ITEMCHANGED
+
+					Local $arr = _GUICtrlListView_GetItemTextArray($config_game_listview)
+
+					if StringLen($arr[2]) > 0 Then
+
+						ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $arr[2] = ' & $arr[2] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+						_GUICtrlListView_SetItemSelected($config_system_listview, _GUICtrlListView_FindText($config_system_listview, $arr[2], -1, False))
+					EndIf
+
+;					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $LVN_ITEMCHANGED = ' & $LVN_ITEMCHANGED & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+
+
+			EndSwitch
+
 
 
 	EndSwitch

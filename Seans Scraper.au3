@@ -22,6 +22,7 @@
 #Include "_XMLDomWrapper2.au3"
 
 
+
 _GDIPlus_Startup()
 
 Local $app_name = "Seans Scraper"
@@ -234,7 +235,6 @@ Global $image_compression_quality_slider = GUICtrlCreateSlider(260, 60, 200, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 10, 1)
 GUICtrlSetData(-1, 10)
-
 Global $retropie_hostname_label = GUICtrlCreateLabel("RetroPie Hostname", 20, 80, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_hostname_input = GUICtrlCreateInput("retropie", 130, 80, 240, 20)
@@ -254,6 +254,8 @@ GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_download_path_label = GUICtrlCreateLabel("Download Path", 20, 160, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $retropie_download_path_input = GUICtrlCreateInput("D:\dwn", 130, 160, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Confirmation Prompts", 20, 180, 200, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 
 
@@ -451,7 +453,6 @@ GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_D
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 
-GUICtrlCreateTabItem("Backup")
 
 
 
@@ -467,12 +468,14 @@ Local $game_config_y = $boot_config_y + 280
 
 Local $config_refresh_button = GUICtrlCreateButton("Refresh", 20, 60, 100, 40)
 
-GUICtrlCreateGroup("Boot", $boot_config_x, $boot_config_y, 200, 260)
-
+GUICtrlCreateGroup("RetroPie", $boot_config_x, $boot_config_y, 200, 260)
+Local $config_boot_edit_config_button = GUICtrlCreateButton("Edit Boot Config", $boot_config_x + 20, $boot_config_y + 20, 120, 40)
+Local $config_reboot_button = GUICtrlCreateButton("Restart", $boot_config_x + 20, $boot_config_y + 70, 120, 40)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlCreateGroup("Systems List", $systems_list_config_x, $systems_list_config_y, 200, 300)
-Local $system_list_config_reorder_button = GUICtrlCreateButton("ReOrder List", $systems_list_config_x + 20, $systems_list_config_y + 20, 120, 40)
+GUICtrlCreateGroup("EmulationStation", $systems_list_config_x, $systems_list_config_y, 200, 300)
+Local $system_list_config_reorder_button = GUICtrlCreateButton("ReOrder Systems List", $systems_list_config_x + 20, $systems_list_config_y + 20, 120, 40)
+Local $config_restart_emulationstation_button = GUICtrlCreateButton("Restart", $systems_list_config_x + 20, $systems_list_config_y + 70, 120, 40)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlCreateGroup("System (n64)", $system_config_x, $system_config_y, 600, 300)
@@ -494,6 +497,7 @@ _GUICtrlListView_SetExtendedListViewStyle($config_game_listview, BitOR($LVS_EX_G
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 
+GUICtrlCreateTabItem("Backup")
 
 
 GUICtrlCreateTabItem("") ; end tabitem definition
@@ -513,6 +517,20 @@ Global $art_gui2 = GUICreate($app_name, 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, 
 Global $art_big_pic2 = GUICtrlCreatePic("", 0, 0, 1024, 576)
 Global $art_gui3 = GUICreate("Child", 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
 Global $art_big_pic3 = GUICtrlCreatePic("", 0, 0, 1024, 576) ;, 0, 0)
+
+Global $notepad_gui = GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+GUICtrlCreateGroup("RetroPie (/boot/config.txt)", 5, 5, 180, 40)
+Global $notepad_retropie_load_button = GUICtrlCreateButton("Load", 10, 20, 80, 20)
+Global $notepad_retropie_save_button = GUICtrlCreateButton("Save", 100, 20, 80, 20)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+GUICtrlCreateGroup("PC", 200, 5, 180, 40)
+Global $notepad_pc_open_button = GUICtrlCreateButton("Open", 205, 20, 80, 20)
+Global $notepad_pc_save_as_button = GUICtrlCreateButton("Save As", 295, 20, 80, 20)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+Global $notepad_edit = GUICtrlCreateEdit("", 10, 50, 620, 400)
+Global $notepad_status_input = GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
+
+
 Global $art_big_pic3_width
 Global $art_big_pic3_height
 Global $aFactors
@@ -635,9 +653,89 @@ While True
 				_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list))
 			EndIf
 
+		Case $config_boot_edit_config_button
+
+			GUISetState(@SW_DISABLE, $main_gui)
+			GUISetState(@SW_SHOW, $notepad_gui)
+			$current_gui = $notepad_gui
+
+		Case $config_reboot_button
+
+			GUICtrlSetData($status_input, "Restarting the RetroPie ...")
+			plink("sudo reboot")
+			GUICtrlSetData($status_input, "")
+
+		Case $config_restart_emulationstation_button
+
+			GUICtrlSetData($status_input, "Restarting EmulationStation ...")
+			plink("sudo touch /tmp/es-restart")
+			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
+			GUICtrlSetData($status_input, "")
+
+
+		Case $notepad_retropie_load_button
+
+			GUICtrlSetData($notepad_status_input, "Connecting to the RetroPie ...")
+
+			$result = _WinSCP_Open()
+
+			if $result = False Then
+
+				GUICtrlSetData($notepad_status_input, $_WinSCP_COM_error_description)
+			Else
+
+				GUICtrlSetData($notepad_status_input, "Reading /boot/config.txt from RetroPie ...")
+				$result = plink("cat /boot/config.txt", 2)
+				$result = StringStripCR($result)
+				$result = StringReplace($result, @LF, @CRLF)
+				GUICtrlSetData($notepad_edit, $result)
+				GUICtrlSetData($notepad_status_input, "")
+			EndIf
+
+
+		Case $notepad_retropie_save_button
+
+			$result = GUICtrlRead($notepad_edit)
+			$result = StringReplace($result, @CRLF, @LF)		; unix end of line characters
+			$result = StringReplace($result, """", "\x22")		; unix double quotes
+			$result = StringReplace($result, "'", "\x27")		; unix single quotes
+
+			; the following uses PLINK instead of WinSCP because WinSCP is unable to automate the editing of /boot/config.txt
+			;	the only method I have found to automate the editing of /boot/config.txt is via ed
+
+			Local $command_to_erase_config_dot_txt = "sudo ed /boot/config.txt <<'EOF'" & @LF & _
+						"1,$d" & @LF & _
+						"w" & @LF & _
+						"q" & @LF & _
+						"EOF" & @LF
+
+			Local $command_to_update_config_dot_txt = "sudo ed /boot/config.txt <<'EOF'" & @LF & _
+						"i" & @LF & _
+						$result & @LF & _
+						"." & @LF & _
+						"w" & @LF & _
+						"q" & @LF & _
+						"EOF" & @LF
+
+			GUICtrlSetData($notepad_status_input, "Erasing config.txt on the RetroPie ...")
+			plink($command_to_erase_config_dot_txt)
+			GUICtrlSetData($notepad_status_input, "Updating config.txt on the RetroPie ...")
+			plink($command_to_update_config_dot_txt)
+			GUICtrlSetData($notepad_status_input, "")
+
+		Case $notepad_pc_open_button
+
+			$result = FileOpenDialog($app_name, @ScriptDir, "Text files (*.txt)")
+
+
+		Case $notepad_pc_save_as_button
+
+			$result = FileSaveDialog($app_name, @ScriptDir, "Text files (*.txt)")
 
 
 		Case $config_refresh_button
+
+			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
 			$result = _WinSCP_Open()
 
@@ -648,16 +746,16 @@ While True
 
 				GUICtrlSetData($status_input, "")
 
-				$result = _WinSCP_ExecuteCommand("cat /opt/retropie/configs/all/emulators.cfg")
+				$result = plink("cat /opt/retropie/configs/all/emulators.cfg", 2)
 				Local $all_emulators_line_arr = StringSplit($result, @LF, 3)
 
-				$result = _WinSCP_ExecuteCommand("cat /opt/retropie/configs/n64/emulators.cfg")
+				$result = plink("cat /opt/retropie/configs/n64/emulators.cfg", 2)
 				Local $system_emulators_line_arr = StringSplit($result, @LF, 3)
 
-				$result = _WinSCP_ExecuteCommand("cat /opt/retropie/configs/all/videomodes.cfg")
+				$result = plink("cat /opt/retropie/configs/all/videomodes.cfg", 2)
 				Local $videomodes_line_arr = StringSplit($result, @LF, 3)
 
-				$result = _WinSCP_ExecuteCommand("/opt/retropie/supplementary/mesa-drm/modetest -c")
+				$result = plink("/opt/retropie/supplementary/mesa-drm/modetest -c", 2)
 				Local $modetest_line_arr = StringSplit($result, @LF, 3)
 				Local $modes_header_num = 99999
 				Local $video_mode_arr[0]
@@ -2597,5 +2695,20 @@ Func Listbox_ItemMoveUD($hLB_ID, $iDir = -1)
     Return -1
 EndFunc   ;==>Listbox_ItemMoveUD
 
+Func plink($command, $strip_whitespace_flag = 0)
 
+;	ShellExecuteWait("PLINK.EXE", " -ssh " & GUICtrlRead($retropie_hostname_input) & " -l " & GUICtrlRead($retropie_username_input) & " -pw " & GUICtrlRead($retropie_password_input) & " -batch " & $command, @ScriptDir, "", @SW_HIDE)
+
+	Local $iPID = Run("plink.exe -ssh " & GUICtrlRead($retropie_hostname_input) & " -l " & GUICtrlRead($retropie_username_input) & " -pw " & GUICtrlRead($retropie_password_input) & " -batch " & $command, @ScriptDir, @SW_HIDE, 7)
+    ProcessWaitClose($iPID)
+    Local $sOutput = StdoutRead($iPID)
+
+	if $strip_whitespace_flag > 0 Then
+
+		$sOutput = StringStripWS($sOutput, $strip_whitespace_flag)
+	EndIf
+
+	Return $sOutput
+
+EndFunc
 

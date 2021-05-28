@@ -1,0 +1,1 @@
+D:\dwn\nuhelp\NuHelp.exe "-Path:D:\dwn\Seans RetroPie Tools\chm" "-File:Introduction.html|Overview.html*Sean's RetroPie Tools|User Interface.html|Settings tab.html*User Interface|Scrape & Auto Join tab.html*-Settings tab|Scrape & Manual Join tab.html*-Scrape & Auto Join tab|Config tab.html*-Scrape & Manual Join tab|Backup tab.html*-Config tab" -SuccessBox:5000 -ErrorBox:5000

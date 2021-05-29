@@ -161,6 +161,7 @@ Local $iStyle = BitOR($TVS_EDITLABELS, $TVS_HASBUTTONS, $TVS_HASLINES, $TVS_LINE
 Global $current_gui
 Global $downloaded_images_path = "~/.emulationstation/downloaded_images"
 Global $default_emulator
+Global $all_roms_line_arr
 Global $result = 1
 
 ; MAIN GUI
@@ -465,7 +466,7 @@ Local $systems_list_config_y = $boot_config_y + 280
 Local $system_config_x = 230
 Local $system_config_y = 60
 Local $game_config_x = 230
-Local $game_config_y = $boot_config_y + 230
+Local $game_config_y = $boot_config_y + 210
 
 
 GUICtrlCreateGroup("RetroPie", $boot_config_x, $boot_config_y, 200, 260)
@@ -481,26 +482,32 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 Global $config_emulators_games_group = GUICtrlCreateGroup("Emulators && Games (3DO)", $system_config_x, $system_config_y, 600, 620)
 Global $config_emulators_games_reload_button = GUICtrlCreateButton("Reload from RetroPie", $system_config_x + 20, $system_config_y + 20, 180, 20)
-GUICtrlCreateLabel("Emulators", $system_config_x + 10, $system_config_y + 50, 100, 20)
+Global $config_emulators_label = GUICtrlCreateLabel("Emulators", $system_config_x + 10, $system_config_y + 50, 100, 20)
+_GUIToolTip_AddTool($tooltip, 0, "/opt/retropie/configs/all/videomodes.cfg", GUICtrlGetHandle($config_emulators_label))
 ;Global $config_system_listview = GUICtrlCreateListView("Emulator Name|Video Mode|Default Emulator", $system_config_x + 10, $system_config_y + 40, 580, 240, $LVS_SHOWSELALWAYS)
-Global $config_system_listview = GUICtrlCreateListView("Emulator Name|Video Mode|Default Emulator", $system_config_x + 10, $system_config_y + 70, 580, 210)
+Global $config_system_listview = GUICtrlCreateListView("Emulator Name|Video Mode|Default Emulator", $system_config_x + 10, $system_config_y + 70, 580, 190)
 _GUICtrlListView_SetColumnWidth(-1, 0, 200)
 _GUICtrlListView_SetColumnWidth(-1, 1, 150)
 _GUICtrlListView_SetColumnWidth(-1, 2, 120)
 _GUICtrlListView_SetExtendedListViewStyle($config_system_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
-GUICtrlCreateLabel("Games", $game_config_x + 10, $game_config_y + 20, 100, 20)
+Global $config_games_label = GUICtrlCreateLabel("Games", $game_config_x + 10, $game_config_y + 20, 100, 20)
+_GUIToolTip_AddTool($tooltip, 0, "/opt/retropie/configs/all/emulators.cfg", GUICtrlGetHandle($config_games_label))
 ;Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $game_config_x + 10, $game_config_y + 40, 580, 240, $LVS_SHOWSELALWAYS)
 Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $game_config_x + 10, $game_config_y + 40, 580, 240, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS))
 _GUICtrlListView_SetColumnWidth(-1, 0, 200)
 _GUICtrlListView_SetColumnWidth(-1, 1, 200)
 _GUICtrlListView_SetExtendedListViewStyle($config_game_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
-GUICtrlCreateGroup("RetroPie", $game_config_x + 10, $game_config_y + 290, 310, 45)
-Global $config_games_update_games_emulator_button = GUICtrlCreateButton("Update Games Emulator", $game_config_x + 20, $game_config_y + 305, 180, 20)
-Global $config_games_save_games_button = GUICtrlCreateButton("Save Games", $game_config_x + 220, $game_config_y + 305, 80, 20)
+GUICtrlCreateGroup("RetroPie", $game_config_x + 10, $game_config_y + 290, 410, 75)
+Global $config_games_update_games_emulator_button = GUICtrlCreateButton("Update Emulator to Games", $game_config_x + 20, $game_config_y + 305, 180, 20)
+Global $config_games_save_games_button = GUICtrlCreateButton("Save Games", $game_config_x + 210, $game_config_y + 305, 80, 20)
+Global $config_games_launch_game_button = GUICtrlCreateButton("Launch Game", $game_config_x + 300, $game_config_y + 305, 80, 20)
+_GUIToolTip_AddTool($tooltip, 0, "Only works if EmulationStation has been Quit", GUICtrlGetHandle($config_games_launch_game_button))
+Global $config_games_update_emulator_and_save_game_before_launch_game_checkbox = GUICtrlCreateCheckbox("Update Emulator to Game and Save before Launch", $game_config_x + 20, $game_config_y + 330, 260, 20)
+GUICtrlSetState(-1, $GUI_CHECKED)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-GUICtrlCreateGroup("PC", $game_config_x + 330, $game_config_y + 290, 250, 45)
-Global $config_games_open_button = GUICtrlCreateButton("Open", $game_config_x + 330 + 20, $game_config_y + 305, 80, 20)
-Global $config_games_save_as_button = GUICtrlCreateButton("Save As", $game_config_x + 430 + 20, $game_config_y + 305, 80, 20)
+GUICtrlCreateGroup("PC", $game_config_x + 430, $game_config_y + 290, 150, 45)
+Global $config_games_open_button = GUICtrlCreateButton("Open", $game_config_x + 430 + 20, $game_config_y + 305, 50, 20)
+Global $config_games_save_as_button = GUICtrlCreateButton("Save As", $game_config_x + 490 + 20, $game_config_y + 305, 60, 20)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
@@ -558,6 +565,8 @@ Global $systems_list_status_input = GUICtrlCreateInput("", 10, 480 - 25, 640 - 2
 Global $art_big_pic3_width
 Global $art_big_pic3_height
 Global $aFactors
+
+Enable_Emulators_and_Games($GUI_ENABLE)
 
 GUISetState(@SW_SHOW, $main_gui)
 $current_gui = $main_gui
@@ -747,12 +756,15 @@ While True
 
 		Case $config_emulators_games_reload_button
 
+			Enable_Config()
+			GUICtrlSetData($config_emulators_label, "Emulators")
+			GUICtrlSetData($config_games_label, "Games")
 			_GUICtrlListView_DeleteAllItems($config_system_listview)
 			_GUICtrlListView_DeleteAllItems($config_game_listview)
 
 			GUICtrlSetData($status_input, "Reading directory from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
 			$result = plink("ls /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/*.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws}", 2)
-			Local $all_roms_line_arr = StringSplit($result, @LF, 3)
+			$all_roms_line_arr = StringSplit($result, @LF, 3)
 
 			GUICtrlSetData($status_input, "Reading emulators.cfg from /opt/retropie/configs/all on the RetroPie ...")
 			$result = plink("cat /opt/retropie/configs/all/emulators.cfg", 2)
@@ -829,6 +841,7 @@ While True
 				Local $g_bSortSense = False
 				_GUICtrlListView_SimpleSort($config_system_listview, $g_bSortSense, 0, False)
 				_GUICtrlListView_EndUpdate($config_system_listview)
+				GUICtrlSetData($config_emulators_label, "Emulators (" & _GUICtrlListView_GetItemCount($config_system_listview) & ")")
 
 				GUICtrlSetData($status_input, "Updating Games ...")
 
@@ -872,54 +885,125 @@ While True
 
 				_GUICtrlListView_SimpleSort($config_game_listview, $g_bSortSense, 0, False)
 				_GUICtrlListView_EndUpdate($config_game_listview)
+				GUICtrlSetData($config_games_label, "Games (" & _GUICtrlListView_GetItemCount($config_game_listview) & ")")
+				Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
 				GUICtrlSetData($status_input, "Emulators & Games updated.")
 			EndIf
 
 		case $config_games_update_games_emulator_button
 
-			$selected_games = _GUICtrlListView_GetSelectedIndices($config_game_listview, true)
-			_ArrayDelete($selected_games, 0)
-
-			if UBound($selected_games) = 0 Then
-
-				GUICtrlSetData($status_input, "You must select at least one game to update.")
-			Else
-
-				Local $selected_emulator = _GUICtrlListView_GetItemText($config_system_listview, Number(_GUICtrlListView_GetSelectedIndices($config_system_listview)), 0)
-
-				for $each_game_index In $selected_games
-
-					_GUICtrlListView_SetItemText($config_game_listview, $each_game_index, $selected_emulator, 1)
-				Next
-			EndIf
+			update_games_emulator()
 
 		Case $config_games_save_games_button
 
-			$emulators_cfg_str = ""
+			save_games()
 
-			for $i = 0 to (_GUICtrlListView_GetItemCount($config_game_listview) - 1)
+		Case $config_games_launch_game_button
 
-				Local $game_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 0)
-				Local $emulator_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 1)
+			if GUICtrlRead($config_games_update_emulator_and_save_game_before_launch_game_checkbox) = $GUI_CHECKED Then
 
-				if StringCompare($emulator_name, $default_emulator) <> 0 Then
+				update_games_emulator()
+				save_games()
+			EndIf
 
-					if StringLen($emulators_cfg_str) > 0 Then
+			Local $selected_game = _GUICtrlListView_GetItemText($config_game_listview, Number(_GUICtrlListView_GetSelectedIndices($config_game_listview)), 0)
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $selected_game = ' & $selected_game & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-						$emulators_cfg_str = $emulators_cfg_str & @CRLF
-					EndIf
+			; find the rom that matches the game name from emulators.cfg
 
-					$emulators_cfg_str = $emulators_cfg_str & $game_name & " = """ & $emulator_name & """"
+			for $each_all_roms_line in $all_roms_line_arr
+
+				_PathSplit($each_all_roms_line, $sDrive1, $sDir1, $sFileName1, $sExtension1)
+				Local $short_rom_name = $roms_path_dict.Item(GUICtrlRead($system_combo)) & "_" & $sFileName1
+				$short_rom_name = StringReplace($short_rom_name, " ", "")
+				$short_rom_name = StringReplace($short_rom_name, "(", "")
+				$short_rom_name = StringReplace($short_rom_name, ")", "")
+				$short_rom_name = StringReplace($short_rom_name, ",", "")
+				$short_rom_name = StringReplace($short_rom_name, ".", "")
+				$short_rom_name = StringReplace($short_rom_name, "[", "")
+				$short_rom_name = StringReplace($short_rom_name, "]", "")
+				$short_rom_name = StringReplace($short_rom_name, "!", "")
+				$short_rom_name = StringReplace($short_rom_name, "'", "")
+
+				if StringCompare($short_rom_name, $selected_game) = 0 Then
+
+					; launch the rom
+
+					Local $rom_name_for_runcommand = $each_all_roms_line
+					$rom_name_for_runcommand = StringReplace($rom_name_for_runcommand, " ", "\ ")
+					$rom_name_for_runcommand = StringReplace($rom_name_for_runcommand, "(", "\(")
+					$rom_name_for_runcommand = StringReplace($rom_name_for_runcommand, ")", "\)")
+
+					Local $plink_cmd = "sudo /opt/retropie/supplementary/runcommand/runcommand2.sh 0 _SYS_ n64 """ & $rom_name_for_runcommand & """"
+					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $plink_cmd = ' & $plink_cmd & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+					GUICtrlSetData($status_input, "Launching game with """ & $plink_cmd & """ on the RetroPie ...")
+					$result = plink($plink_cmd, 2)
+
 				EndIf
+
 			Next
 
-			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $emulators_cfg_str = ' & $emulators_cfg_str & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-			GUICtrlSetData($status_input, "Erasing emulators.cfg on the RetroPie ...")
-			plink_delete_all_text_in_file("/opt/retropie/configs/all/emulators.cfg")
-			GUICtrlSetData($status_input, "Saving emulators.cfg to /opt/retropie/configs/all on the RetroPie ...")
-			plink_insert_text_in_file("/opt/retropie/configs/all/emulators.cfg", $emulators_cfg_str)
-			GUICtrlSetData($status_input, "Saved emulators.cfg to /opt/retropie/configs/all on the RetroPie.")
+
+
+		Case $config_games_open_button
+
+			$result = FileOpenDialog($app_name, @ScriptDir, "Config files (*.cfg)", 0, "Seans RetroPie Tools n64 emulators.cfg", $main_gui)
+
+			if @error = 0 Then
+
+				Enable_Config()
+				GUICtrlSetData($config_games_label, "Games")
+				_GUICtrlListView_DeleteAllItems($config_game_listview)
+
+				Local $emulators_cfg_arr
+				_FileReadToArray($result, $emulators_cfg_arr, 0, "=")
+
+				for $i = 0 to (UBound($emulators_cfg_arr) - 1)
+
+					$emulators_cfg_arr[$i][0] = StringStripWS($emulators_cfg_arr[$i][0], 3)
+					$emulators_cfg_arr[$i][1] = StringReplace($emulators_cfg_arr[$i][1], """", "")
+					$emulators_cfg_arr[$i][1] = StringStripWS($emulators_cfg_arr[$i][1], 3)
+				Next
+
+				_GUICtrlListView_BeginUpdate($config_game_listview)
+				_GUICtrlListView_AddArray($config_game_listview, $emulators_cfg_arr)
+
+				GUICtrlSetData($status_input, "Reading directory from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
+				$result = plink("ls /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/*.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws}", 2)
+				Local $all_roms_line_arr = StringSplit($result, @LF, 3)
+
+				for $each_all_roms_line in $all_roms_line_arr
+
+					_PathSplit($each_all_roms_line, $sDrive1, $sDir1, $sFileName1, $sExtension1)
+					$each_all_roms_line = $roms_path_dict.Item(GUICtrlRead($system_combo)) & "_" & $sFileName1
+					$each_all_roms_line = StringReplace($each_all_roms_line, " ", "")
+					$each_all_roms_line = StringReplace($each_all_roms_line, "(", "")
+					$each_all_roms_line = StringReplace($each_all_roms_line, ")", "")
+					$each_all_roms_line = StringReplace($each_all_roms_line, ",", "")
+					$each_all_roms_line = StringReplace($each_all_roms_line, ".", "")
+					$each_all_roms_line = StringReplace($each_all_roms_line, "[", "")
+					$each_all_roms_line = StringReplace($each_all_roms_line, "]", "")
+					$each_all_roms_line = StringReplace($each_all_roms_line, "!", "")
+					$each_all_roms_line = StringReplace($each_all_roms_line, "'", "")
+
+					$result = _GUICtrlListView_FindText($config_game_listview, $each_all_roms_line, -1, False)
+
+					if $result < 0 Then
+
+						Local $index = _GUICtrlListView_AddItem($config_game_listview, $each_all_roms_line)
+						_GUICtrlListView_AddSubItem($config_game_listview, $index, $default_emulator, 1)
+					EndIf
+				Next
+
+				_GUICtrlListView_SimpleSort($config_game_listview, $g_bSortSense, 0, False)
+				_GUICtrlListView_EndUpdate($config_game_listview)
+				Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
+				GUICtrlSetData($config_games_label, "Games (" & _GUICtrlListView_GetItemCount($config_game_listview) & ")")
+				GUICtrlSetData($status_input, "Games updated.")
+
+			EndIf
 
 		Case $config_games_save_as_button
 
@@ -927,6 +1011,7 @@ While True
 
 			if @error = 0 Then
 
+				Enable_Config()
 				$emulators_cfg_str = ""
 
 				for $i = 0 to (_GUICtrlListView_GetItemCount($config_game_listview) - 1)
@@ -950,6 +1035,7 @@ While True
 				GUICtrlSetData($status_input, "Saving " & $result & " ...")
 				FileWrite($result, $emulators_cfg_str)
 				GUICtrlSetData($status_input, "Saved " & $result & ".")
+				Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
 			EndIf
 
 		case $config_edit_systems_list_button
@@ -2891,6 +2977,76 @@ Func plink_insert_text_in_file($path, $text_to_insert)
 	plink($command)
 EndFunc
 
+Func Enable_Config($retropie_edit_boot_config_button = $GUI_DISABLE, $retropie_restart_button = $GUI_DISABLE, $retropie_shutdown_button = $GUI_DISABLE, $emulationstation_edit_systems_list_button = $GUI_DISABLE, $emulationstation_restart_button = $GUI_DISABLE, $reload_button = $GUI_DISABLE, $system_listview = $GUI_DISABLE, $game_listview = $GUI_DISABLE, $update_games_emulator_button = $GUI_DISABLE, $save_games_button = $GUI_DISABLE, $open_button = $GUI_DISABLE, $save_as_button = $GUI_DISABLE)
 
+	GUICtrlSetState($config_boot_edit_config_button, $retropie_edit_boot_config_button)
+	GUICtrlSetState($config_reboot_button, $retropie_restart_button)
+	GUICtrlSetState($config_shutdown_button, $retropie_shutdown_button)
+	GUICtrlSetState($config_edit_systems_list_button, $emulationstation_edit_systems_list_button)
+	GUICtrlSetState($config_restart_emulationstation_button, $emulationstation_restart_button)
 
+	Enable_Emulators_and_Games($reload_button, $system_listview, $game_listview, $update_games_emulator_button, $save_games_button, $open_button, $save_as_button)
+EndFunc
 
+Func Enable_Emulators_and_Games($reload_button = $GUI_DISABLE, $system_listview = $GUI_DISABLE, $game_listview = $GUI_DISABLE, $update_games_emulator_button = $GUI_DISABLE, $save_games_button = $GUI_DISABLE, $open_button = $GUI_DISABLE, $save_as_button = $GUI_DISABLE)
+
+	GUICtrlSetState($config_emulators_games_reload_button, $reload_button)
+	GUICtrlSetState($config_system_listview, $system_listview)
+	GUICtrlSetState($config_game_listview, $game_listview)
+	GUICtrlSetState($config_games_update_games_emulator_button, $update_games_emulator_button)
+	GUICtrlSetState($config_games_save_games_button, $save_games_button)
+	GUICtrlSetState($config_games_open_button, $open_button)
+	GUICtrlSetState($config_games_save_as_button, $save_as_button)
+EndFunc
+
+Func update_games_emulator()
+
+	$selected_games = _GUICtrlListView_GetSelectedIndices($config_game_listview, true)
+	_ArrayDelete($selected_games, 0)
+
+	if UBound($selected_games) = 0 Then
+
+		GUICtrlSetData($status_input, "You must select at least one game to update.")
+	Else
+
+		Local $selected_emulator = _GUICtrlListView_GetItemText($config_system_listview, Number(_GUICtrlListView_GetSelectedIndices($config_system_listview)), 0)
+
+		for $each_game_index In $selected_games
+
+			_GUICtrlListView_SetItemText($config_game_listview, $each_game_index, $selected_emulator, 1)
+		Next
+	EndIf
+
+EndFunc
+
+Func save_games()
+
+	Enable_Config()
+	$emulators_cfg_str = ""
+
+	for $i = 0 to (_GUICtrlListView_GetItemCount($config_game_listview) - 1)
+
+		Local $game_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 0)
+		Local $emulator_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 1)
+
+		if StringCompare($emulator_name, $default_emulator) <> 0 Then
+
+			if StringLen($emulators_cfg_str) > 0 Then
+
+				$emulators_cfg_str = $emulators_cfg_str & @CRLF
+			EndIf
+
+			$emulators_cfg_str = $emulators_cfg_str & $game_name & " = """ & $emulator_name & """"
+		EndIf
+	Next
+
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $emulators_cfg_str = ' & $emulators_cfg_str & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+	GUICtrlSetData($status_input, "Erasing emulators.cfg on the RetroPie ...")
+	plink_delete_all_text_in_file("/opt/retropie/configs/all/emulators.cfg")
+	GUICtrlSetData($status_input, "Saving emulators.cfg to /opt/retropie/configs/all on the RetroPie ...")
+	plink_insert_text_in_file("/opt/retropie/configs/all/emulators.cfg", $emulators_cfg_str)
+	GUICtrlSetData($status_input, "Saved emulators.cfg to /opt/retropie/configs/all on the RetroPie.")
+	Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
+
+EndFunc

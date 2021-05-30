@@ -321,7 +321,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Local $scrape_auto_join_upload_button = GUICtrlCreateButton("Upload &Art", 440, 550, 180, 40)
 GUICtrlSetState(-1, $GUI_DEFBUTTON)
 Local $scrape_auto_join_rotate_art_button = GUICtrlCreateButton("Split Back && Front Art and R&otate", 440, 600, 180, 40)
-Local $scrape_auto_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 680, 480, 100, 40)
+Local $scrape_auto_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist ...", 680, 480, 100, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 
 Global $scrape_auto_join_art_1_pic = GUICtrlCreatePic("", 20, 540, 384, 216)
@@ -478,10 +478,13 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateGroup("EmulationStation", $systems_list_config_x, $systems_list_config_y, 200, 300)
 Local $config_edit_systems_list_button = GUICtrlCreateButton("Edit Systems List", $systems_list_config_x + 20, $systems_list_config_y + 20, 120, 40)
 Local $config_restart_emulationstation_button = GUICtrlCreateButton("Restart", $systems_list_config_x + 20, $systems_list_config_y + 70, 120, 40)
+;Local $config_shutdown_emulationstation_button = GUICtrlCreateButton("Shutdown", $systems_list_config_x + 20, $systems_list_config_y + 120, 120, 40)
+Local $config_quit_emulationstation_button = GUICtrlCreateButton("Quit", $systems_list_config_x + 20, $systems_list_config_y + 120, 120, 40)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 Global $config_emulators_games_group = GUICtrlCreateGroup("Emulators && Games (3DO)", $system_config_x, $system_config_y, 600, 620)
 Global $config_emulators_games_reload_button = GUICtrlCreateButton("Reload from RetroPie", $system_config_x + 20, $system_config_y + 20, 180, 20)
+Global $config_emulators_games_open_wiki_page_button = GUICtrlCreateButton("Open Wiki page", $system_config_x + 210, $system_config_y + 20, 100, 20)
 Global $config_emulators_label = GUICtrlCreateLabel("Emulators", $system_config_x + 10, $system_config_y + 50, 100, 20)
 _GUIToolTip_AddTool($tooltip, 0, "/opt/retropie/configs/all/videomodes.cfg", GUICtrlGetHandle($config_emulators_label))
 ;Global $config_system_listview = GUICtrlCreateListView("Emulator Name|Video Mode|Default Emulator", $system_config_x + 10, $system_config_y + 40, 580, 240, $LVS_SHOWSELALWAYS)
@@ -498,8 +501,7 @@ _GUICtrlListView_SetColumnWidth(-1, 0, 200)
 _GUICtrlListView_SetColumnWidth(-1, 1, 200)
 _GUICtrlListView_SetExtendedListViewStyle($config_game_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
 GUICtrlCreateGroup("RetroPie", $game_config_x + 10, $game_config_y + 290, 410, 75)
-Global $config_games_update_games_emulator_button = GUICtrlCreateButton("Update Emulator to Games", $game_config_x + 20, $game_config_y + 305, 180, 20)
-Global $config_games_save_games_button = GUICtrlCreateButton("Save Games", $game_config_x + 210, $game_config_y + 305, 80, 20)
+Global $config_games_link_games_to_emulator_and_save_button = GUICtrlCreateButton("Link Games to Emulator and Save", $game_config_x + 20, $game_config_y + 305, 180, 20)
 Global $config_games_launch_game_button = GUICtrlCreateButton("Launch Game", $game_config_x + 300, $game_config_y + 305, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "Only works if EmulationStation has been Quit", GUICtrlGetHandle($config_games_launch_game_button))
 Global $config_games_update_emulator_and_save_game_before_launch_game_checkbox = GUICtrlCreateCheckbox("Update Emulator to Game and Save before Launch", $game_config_x + 20, $game_config_y + 330, 260, 20)
@@ -532,6 +534,20 @@ Global $art_gui2 = GUICreate($app_name, 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, 
 Global $art_big_pic2 = GUICtrlCreatePic("", 0, 0, 1024, 576)
 Global $art_gui3 = GUICreate("Child", 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
 Global $art_big_pic3 = GUICtrlCreatePic("", 0, 0, 1024, 576) ;, 0, 0)
+
+Global $gameslist_gui = GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+GUICtrlCreateGroup("RetroPie (/opt/retropie/configs/all/emulationstation/gamelists/n64/gamelist.xml)", 5, 5, 430, 40)
+Global $gameslist_load_button = GUICtrlCreateButton("Load", 10, 20, 80, 20)
+Global $gameslist_save_button = GUICtrlCreateButton("Save", 100, 20, 80, 20)
+Global $gameslist_restart_emulationstation_checkbox = GUICtrlCreateCheckbox("Restart EmulationStation after Save", 190, 20, 200, 20)
+GUICtrlSetState(-1, $GUI_CHECKED)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+GUICtrlCreateGroup("PC", 450, 5, 180, 40)
+Global $gameslist_open_button = GUICtrlCreateButton("Open", 455, 20, 80, 20)
+Global $gameslist_save_as_button = GUICtrlCreateButton("Save As", 545, 20, 80, 20)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+Global $gameslist_edit = GUICtrlCreateEdit("", 10, 50, 620, 400)
+Global $gameslist_status_input = GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 
 Global $boot_config_gui = GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
 GUICtrlCreateGroup("RetroPie (/boot/config.txt)", 5, 5, 180, 40)
@@ -721,6 +737,18 @@ While True
 			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
 			GUICtrlSetData($status_input, "")
 
+;		Case $config_shutdown_emulationstation_button
+
+;			GUICtrlSetData($status_input, "Shutting down EmulationStation ...")
+;			plink("sudo touch /tmp/es-shutdown")
+;			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
+;			GUICtrlSetData($status_input, "")
+
+		Case $config_quit_emulationstation_button
+
+			GUICtrlSetData($status_input, "Quitting EmulationStation ...")
+			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
+			GUICtrlSetData($status_input, "")
 
 		Case $boot_config_load_button
 
@@ -890,12 +918,13 @@ While True
 				GUICtrlSetData($status_input, "Emulators & Games updated.")
 			EndIf
 
-		case $config_games_update_games_emulator_button
+		Case $config_emulators_games_open_wiki_page_button
+
+			ShellExecute("https://github.com/seanhaydongriffin/Seans-RetroPie-Tools/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
+
+		case $config_games_link_games_to_emulator_and_save_button
 
 			update_games_emulator()
-
-		Case $config_games_save_games_button
-
 			save_games()
 
 		Case $config_games_launch_game_button
@@ -927,17 +956,18 @@ While True
 
 				if StringCompare($short_rom_name, $selected_game) = 0 Then
 
-					; launch the rom
-
 					Local $rom_name_for_runcommand = $each_all_roms_line
 					$rom_name_for_runcommand = StringReplace($rom_name_for_runcommand, " ", "\ ")
 					$rom_name_for_runcommand = StringReplace($rom_name_for_runcommand, "(", "\(")
 					$rom_name_for_runcommand = StringReplace($rom_name_for_runcommand, ")", "\)")
 
+					; quitting emulationstation (otherwise the game runs underneath emulationstation) and launching the rom
+
+					GUICtrlSetData($status_input, "Quitting EmulationStation and Launching """ & $sFileName1 & $sExtension1 & """ ... (to restart EmulationStation click RetroPie Restart)")
+					plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
+
 					Local $plink_cmd = "sudo /opt/retropie/supplementary/runcommand/runcommand2.sh 0 _SYS_ n64 """ & $rom_name_for_runcommand & """"
 					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $plink_cmd = ' & $plink_cmd & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-
-					GUICtrlSetData($status_input, "Launching game with """ & $plink_cmd & """ on the RetroPie ...")
 					$result = plink($plink_cmd, 2)
 
 				EndIf
@@ -1980,20 +2010,40 @@ While True
 
 		Case $scrape_auto_join_upload_gamelist_button
 
-			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
+			GUISetState(@SW_DISABLE, $main_gui)
+			GUISetState(@SW_SHOW, $gameslist_gui)
+			$current_gui = $gameslist_gui
 
-			$result = _WinSCP_Open()
+			$result = CreateGamelist()
 
-			if $result = False Then
+			GUICtrlSetData($gameslist_edit, $result)
+			GUICtrlSetData($gameslist_status_input, "")
 
-				GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
-			Else
+		Case $gameslist_save_button
 
-				; Refresh gamelist.xml on RetroPie
-				CreateGamelistOnRetroPie()
+			Local $gamelist_filepath = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\gamelist.xml"
+
+			if FileExists($gamelist_filepath) = True Then
+
+				FileDelete($gamelist_filepath)
 			EndIf
 
-			GUICtrlSetData($status_input, "")
+			$xml = StringReplace(GUICtrlRead($gameslist_edit), @CRLF, @LF)			; unix end of line characters
+			FileWrite($gamelist_filepath, $xml)
+
+			Local $msg = "Saving """ & $gamelist_filepath & """ to ""/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml"""
+			ConsoleWrite($msg & @CRLF)
+			GUICtrlSetData($gameslist_status_input, $msg)
+			pscp($gamelist_filepath, "/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
+			GUICtrlSetData($gameslist_status_input, "Saved """ & $gamelist_filepath & """ to the RetroPie")
+
+			if GUICtrlRead($gameslist_restart_emulationstation_checkbox) = $GUI_CHECKED Then
+
+				GUICtrlSetData($gameslist_status_input, "Restarting EmulationStation ...")
+				plink("sudo touch /tmp/es-restart")
+				plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
+				GUICtrlSetData($gameslist_status_input, "")
+			EndIf
 
 		Case $scrape_manual_join_upload_gamelist_button
 
@@ -2233,10 +2283,10 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						_GUICtrlListBox_SetTopIndex($scrape_auto_join_rom_list, $selected_index - 11)
 					EndIf
 
-					if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg") = True Then
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg") = True Then
 
 						GUICtrlSetState($scrape_auto_join_art_1_pic, $GUI_SHOW)
-						GUICtrlSetImage($scrape_auto_join_art_1_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg")
+						GUICtrlSetImage($scrape_auto_join_art_1_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg")
 					Else
 
 						GUICtrlSetState($scrape_auto_join_art_1_pic, $GUI_HIDE)
@@ -2759,6 +2809,46 @@ EndFunc
 
 
 
+Func CreateGamelist()
+
+	; Create gamelist.xml
+
+	GUICtrlSetData($status_input, "Creating gamelist.xml ...")
+
+	$result = plink("(cd /opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *-full-cover.jpg)", 2)
+	Local $art_filename_arr = StringSplit($result, @LF, 3)
+	_ArraySort($art_filename_arr)
+
+	$result = plink("(cd /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws})", 2)
+	Local $rom_filename_arr = StringSplit($result, @LF, 3)
+	_ArraySort($rom_filename_arr)
+
+	Local $xml = ""
+	$xml = $xml & "<?xml version=""1.0""?>" & @CRLF
+	$xml = $xml & "<gameList>" & @CRLF
+
+	for $i = 0 to (UBound($rom_filename_arr) - 1)
+
+		_PathSplit($rom_filename_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
+
+		$xml = $xml & "	<game>" & @CRLF
+		$xml = $xml & "		<path>./" & $sFileName1 & $sExtension1 & "</path>" & @CRLF
+		$xml = $xml & "		<name>" & $sFileName1 & "</name>" & @CRLF
+		$xml = $xml & "		<image>" & $downloaded_images_path & "/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg</image>" & @CRLF
+
+		if _ArrayBinarySearch($art_filename_arr, $sFileName1 & "-full-cover.jpg") < 0 Then
+
+			$xml = $xml & "		<hidden>true</hidden>" & @CRLF
+		EndIf
+
+		$xml = $xml & "	</game>" & @CRLF
+	Next
+
+	$xml = $xml & "</gameList>"
+	Return $xml
+
+EndFunc
+
 Func CreateGamelistOnRetroPie()
 
 	; Create gamelist.xml
@@ -2806,6 +2896,9 @@ Func CreateGamelistOnRetroPie()
 
 	FileWriteLine($hFileOpen, "</gameList>")
 	FileClose($hFileOpen)
+
+	$result = FileRead($gamelist_filepath)
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $result = ' & $result & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
 ;	FileWrite($gamelist_filepath, $xml)
 
@@ -2928,6 +3021,17 @@ Func Listbox_ItemMoveUD($hLB_ID, $iDir = -1)
     Return -1
 EndFunc   ;==>Listbox_ItemMoveUD
 
+Func pscp($source_file_path, $target_file_path)
+
+	$cmd = "pscp.exe -l " & GUICtrlRead($retropie_username_input) & " -pw " & GUICtrlRead($retropie_password_input) & " """ & $source_file_path & """ " & GUICtrlRead($retropie_hostname_input) & ":""" & $target_file_path & """"
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $cmd = ' & $cmd & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+	Local $iPID = Run($cmd, @ScriptDir, @SW_HIDE, 7)
+    ProcessWaitClose($iPID)
+    Local $sOutput = StdoutRead($iPID)
+
+EndFunc
+
+
 Func plink($command, $strip_whitespace_flag = 0)
 
 
@@ -2993,8 +3097,7 @@ Func Enable_Emulators_and_Games($reload_button = $GUI_DISABLE, $system_listview 
 	GUICtrlSetState($config_emulators_games_reload_button, $reload_button)
 	GUICtrlSetState($config_system_listview, $system_listview)
 	GUICtrlSetState($config_game_listview, $game_listview)
-	GUICtrlSetState($config_games_update_games_emulator_button, $update_games_emulator_button)
-	GUICtrlSetState($config_games_save_games_button, $save_games_button)
+	GUICtrlSetState($config_games_link_games_to_emulator_and_save_button, $update_games_emulator_button)
 	GUICtrlSetState($config_games_open_button, $open_button)
 	GUICtrlSetState($config_games_save_as_button, $save_as_button)
 EndFunc

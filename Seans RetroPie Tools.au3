@@ -633,7 +633,7 @@ Global $systems_list_custom_order_reorder_button = GUICtrlCreateButton("ReOrder"
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $systems_list_status_input = GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 
-Global $compare_games_to_wiki_gui = GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+Global $compare_games_to_wiki_gui = GUICreate($app_name, 1024, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
 GUICtrlCreateGroup("RetroPie (/opt/retropie/configs/all/emulationstation/gamelists/n64/gamelist.xml)", 5, 5, 430, 40)
 Global $compare_games_to_wiki_load_button = GUICtrlCreateButton("Load", 10, 20, 80, 20)
 Global $compare_games_to_wiki_save_button = GUICtrlCreateButton("Save", 100, 20, 80, 20)
@@ -644,15 +644,9 @@ GUICtrlCreateGroup("PC", 450, 5, 180, 40)
 Global $compare_games_to_wiki_open_button = GUICtrlCreateButton("Open", 455, 20, 80, 20)
 Global $compare_games_to_wiki_save_as_button = GUICtrlCreateButton("Save As", 545, 20, 80, 20)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Local $compare_games_to_wiki_ie = _IECreateEmbedded()
-ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : @error = ' & @error & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-GUICtrlCreateObj($compare_games_to_wiki_ie, 10, 50, 620, 400)
-ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : @error = ' & @error & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+Global $compare_games_to_wiki_ie = _IECreateEmbedded()
+GUICtrlCreateObj($compare_games_to_wiki_ie, 10, 50, 1004, 400)
 Global $compare_games_to_wiki_status_input = GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
-
-$html = FileRead("D:\dwn\fred2.html")
-_IENavigate($compare_games_to_wiki_ie, "about:blank")
-_IEDocWriteHTML($compare_games_to_wiki_ie, $html)
 
 Global $art_big_pic3_width
 Global $art_big_pic3_height
@@ -785,10 +779,170 @@ While True
 			GUISetState(@SW_SHOW, $compare_games_to_wiki_gui)
 			$current_gui = $compare_games_to_wiki_gui
 
-			;$result = CreateGamelist()
-
-			;GUICtrlSetData($gameslist_edit, $result)
 			GUICtrlSetData($compare_games_to_wiki_status_input, "")
+
+			; convert the wiki games data into a RetroPie emulator.cfg formatted file
+
+			Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/Seans-RetroPie-Tools/wiki/N64-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
+			ProcessWaitClose($iPID)
+			Local $html = StdoutRead($iPID)
+
+			Local $arr = StringRegExp($html, "(?s)<th>Game</th>(?U)(.*)</tr>", 3)
+			$arr[0] = StringStripWS($arr[0], 3)
+			Local $wiki_emulator = StringSplit($arr[0], @LF, 3)
+
+			for $i = 0 to (UBound($wiki_emulator) - 1)
+
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], "<th>", "")
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], "</th>", "")
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], "Â¹", "")
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], "Â²", "")
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], "Â³", "")
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], "â´", "")
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], "âµ", "")
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], "â¶", "")
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], ")", "")
+				$wiki_emulator[$i] = StringReplace($wiki_emulator[$i], "(", "-")
+				$wiki_emulator[$i] = StringStripWS($wiki_emulator[$i], 8)
+			Next
+
+			Local $html_arr = StringSplit($html, @LF, 3)
+			Local $found_game_table = False
+			Local $searching_for_game_name = False
+			Local $searching_for_game_emulator = False
+			Local $emulator_index = -1
+			Local $wiki_game_emulator_str = ""
+			Local $game_name = ""
+			Local $emulator_name = ""
+
+			for $i = 0 to (UBound($html_arr) - 1)
+
+				if StringCompare($html_arr[$i], "<th>Game</th>") = 0 Then
+
+					$found_game_table = True
+				EndIf
+
+				if $found_game_table = True Then
+
+					if StringCompare($html_arr[$i], "<tr>") = 0 Then
+
+						$searching_for_game_name = True
+					EndIf
+
+					Local $arr = StringRegExp($html_arr[$i], "<td>(?U)(.+?)</td>", 3)
+
+					if $searching_for_game_name = True and UBound($arr) > 0 Then
+
+						$searching_for_game_name = False
+						$game_name = $arr[0]
+						$searching_for_game_emulator = True
+						$emulator_index = -2
+
+						; convert game name (from the Wiki) to a short rom name
+
+						$game_name = $roms_path_dict.Item(GUICtrlRead($system_combo)) & "_" & $game_name
+						$game_name = StringReplace($game_name, " ", "")
+						$game_name = StringReplace($game_name, "(", "")
+						$game_name = StringReplace($game_name, ")", "")
+						$game_name = StringReplace($game_name, ",", "")
+						$game_name = StringReplace($game_name, ".", "")
+						$game_name = StringReplace($game_name, "[", "")
+						$game_name = StringReplace($game_name, "]", "")
+						$game_name = StringReplace($game_name, "!", "")
+						$game_name = StringReplace($game_name, "'", "")
+
+						for $j = StringLen($game_name) to 1 Step -1
+
+							Local $rom_name_search_text = StringLeft($game_name, $j)
+							$result = _GUICtrlListView_FindText($config_game_listview, $rom_name_search_text, -1, True)
+
+							if $result > -1 Then
+
+								$game_name = _GUICtrlListView_GetItemText($config_game_listview, $result)
+								ExitLoop
+							EndIf
+						Next
+					EndIf
+
+					if $searching_for_game_emulator = True Then
+
+						$emulator_index = $emulator_index + 1
+
+						if StringCompare($html_arr[$i], "<td><strong>best</strong></td>") = 0 Then
+
+							if StringLen($wiki_game_emulator_str) > 0 Then
+
+								$wiki_game_emulator_str = $wiki_game_emulator_str & @CRLF
+							EndIf
+
+							$wiki_game_emulator_str = $wiki_game_emulator_str & $game_name & " = """ & $wiki_emulator[$emulator_index] & """"
+							$searching_for_game_emulator = False
+						EndIf
+					EndIf
+				EndIf
+
+			Next
+
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $wiki_game_emulator_str = ' & $wiki_game_emulator_str & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+			Local $wiki_emulators_cfg_file_path = @ScriptDir & "\wiki_emulators.cfg"
+
+			if FileExists($wiki_emulators_cfg_file_path) = True Then
+
+				FileDelete($wiki_emulators_cfg_file_path)
+			EndIf
+
+			FileWrite($wiki_emulators_cfg_file_path, $wiki_game_emulator_str)
+
+			; convert the games list into a RetroPie emulator.cfg formatted file
+
+			$gameslist_emulators_str = ""
+
+			for $i = 0 to (_GUICtrlListView_GetItemCount($config_game_listview) - 1)
+
+				Local $game_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 0)
+				Local $emulator_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 1)
+
+				if StringLen($gameslist_emulators_str) > 0 Then
+
+					$gameslist_emulators_str = $gameslist_emulators_str & @CRLF
+				EndIf
+
+				$gameslist_emulators_str = $gameslist_emulators_str & $game_name & " = """ & $emulator_name & """"
+			Next
+
+			Local $gameslist_emulators_cfg_file_path = @ScriptDir & "\gameslist_emulators.cfg"
+
+			if FileExists($gameslist_emulators_cfg_file_path) = True Then
+
+				FileDelete($gameslist_emulators_cfg_file_path)
+			EndIf
+
+			FileWrite($gameslist_emulators_cfg_file_path, $gameslist_emulators_str)
+
+			Local $winmerge_output_file_path = @ScriptDir & "\emulators_cfg_diff.html"
+
+			$cmd = "WinMergeU.exe"
+			$cmd_params = """" & $wiki_emulators_cfg_file_path & """ """ & $gameslist_emulators_cfg_file_path & """ -minimize -noninteractive -u -or """ & $winmerge_output_file_path & """"
+			$full_cmd = $cmd & " " & $cmd_params
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $full_cmd = ' & $full_cmd & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+			ShellExecuteWait($cmd, $cmd_params, "c:\Program Files\WinMerge\WinMergeU.exe", "", @SW_HIDE)
+
+			$html = FileRead($winmerge_output_file_path)
+			$html = StringReplace($html, "table {margin: 0; border: 1px solid #a0a0a0; box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);}", "html * {font-size: 12px !important; font-family: Arial !important;}" & @CRLF & "table {margin: 0; border: 1px solid #a0a0a0; box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15); display: block; overflow-x: auto; white-space: nowrap;}")
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $html = ' & $html & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+			_IENavigate($compare_games_to_wiki_ie, "about:blank")
+			_IEDocWriteHTML($compare_games_to_wiki_ie, $html)
+
+
+;Exit
+
+			;for $i = 0 to (UBound($arr) - 1) step 2
+
+			;	$arr[$i + 1] = StringRegExpReplace($arr[$i + 1], '\\|/|:|\*|\?|\"|\<|\>|\|', "")
+
+
 
 
 

@@ -1,3 +1,4 @@
+;#RequireAdmin
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_UseUpx=y
@@ -161,6 +162,7 @@ Local $alphanumeric_arr[36] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
 Local $iStyle = BitOR($TVS_EDITLABELS, $TVS_HASBUTTONS, $TVS_HASLINES, $TVS_LINESATROOT, $TVS_DISABLEDRAGDROP, $TVS_SHOWSELALWAYS, $TVS_CHECKBOXES)
 Global $current_gui
 Global $downloaded_images_path = "~/.emulationstation/downloaded_images"
+Global $wiki_emulators_cfg_file_path = @ScriptDir & "\wiki_emulators.cfg"
 Global $default_emulator
 Global $all_roms_line_arr
 Global $result = 1
@@ -580,8 +582,8 @@ GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM + $GUI_DOCKHEIGHT + $GUI_DOCKLEFT + $GUI_
 
 Global $shift_up_dummy = GUICtrlCreateDummy()
 Global $shift_down_dummy = GUICtrlCreateDummy()
-Local $aAccelKeys[2][2] = [["+{UP}", $shift_up_dummy], ["+{DOWN}", $shift_down_dummy]]
-GUISetAccelerators($aAccelKeys)
+Local $main_aAccelKeys[2][2] = [["+{UP}", $shift_up_dummy], ["+{DOWN}", $shift_down_dummy]]
+GUISetAccelerators($main_aAccelKeys, $main_gui)
 
 
 Global $art_gui = GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
@@ -633,20 +635,15 @@ Global $systems_list_custom_order_reorder_button = GUICtrlCreateButton("ReOrder"
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Global $systems_list_status_input = GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 
-Global $compare_games_to_wiki_gui = GUICreate($app_name, 1024, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
-GUICtrlCreateGroup("RetroPie (/opt/retropie/configs/all/emulationstation/gamelists/n64/gamelist.xml)", 5, 5, 430, 40)
-Global $compare_games_to_wiki_load_button = GUICtrlCreateButton("Load", 10, 20, 80, 20)
-Global $compare_games_to_wiki_save_button = GUICtrlCreateButton("Save", 100, 20, 80, 20)
-Global $compare_games_to_wiki_restart_emulationstation_checkbox = GUICtrlCreateCheckbox("Restart EmulationStation after Save", 190, 20, 200, 20)
-GUICtrlSetState(-1, $GUI_CHECKED)
-GUICtrlCreateGroup("", -99, -99, 1, 1)
-GUICtrlCreateGroup("PC", 450, 5, 180, 40)
-Global $compare_games_to_wiki_open_button = GUICtrlCreateButton("Open", 455, 20, 80, 20)
-Global $compare_games_to_wiki_save_as_button = GUICtrlCreateButton("Save As", 545, 20, 80, 20)
-GUICtrlCreateGroup("", -99, -99, 1, 1)
+Global $compare_games_to_wiki_gui = GUICreate($app_name & " - Compare Game List to Wiki page", 1024, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+Global $compare_games_to_wiki_accept_button = GUICtrlCreateButton("Accept Wiki page game list (left side)", 10, 5, 200, 40)
 Global $compare_games_to_wiki_ie = _IECreateEmbedded()
 GUICtrlCreateObj($compare_games_to_wiki_ie, 10, 50, 1004, 400)
 Global $compare_games_to_wiki_status_input = GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
+
+Global $compare_games_to_wiki_dummy = GUICtrlCreateDummy()
+Local $compare_aAccelKeys[1][2] = [["{Esc}", $compare_games_to_wiki_dummy]]
+GUISetAccelerators($compare_aAccelKeys, $compare_games_to_wiki_gui)
 
 Global $art_big_pic3_width
 Global $art_big_pic3_height
@@ -773,19 +770,48 @@ While True
 			EndIf
 
 
+		Case $compare_games_to_wiki_dummy
+
+			GUISetState(@SW_ENABLE, $main_gui)
+			GUISetState(@SW_HIDE, $current_gui)
+			$current_gui = $main_gui
+
+
+		Case $compare_games_to_wiki_accept_button
+
+
+			Local $gamelist_arr
+			_FileReadToArray($wiki_emulators_cfg_file_path, $gamelist_arr, 4, " = ")
+
+			for $i = 0 to (UBound($gamelist_arr) - 1)
+
+				$gamelist_arr[$i][1] = StringReplace($gamelist_arr[$i][1], """", "")
+				;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $gamelist_arr[$i][0] = ' & $gamelist_arr[$i][0] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+				;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $gamelist_arr[$i][1] = ' & $gamelist_arr[$i][1] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+			Next
+
+			_GUICtrlListView_DeleteAllItems($config_game_listview)
+			_GUICtrlListView_AddArray($config_game_listview, $gamelist_arr)
+
+			GUISetState(@SW_ENABLE, $main_gui)
+			GUISetState(@SW_HIDE, $current_gui)
+			$current_gui = $main_gui
+
+
 		Case $config_wiki_compare_button
 
 			GUISetState(@SW_DISABLE, $main_gui)
+			_IENavigate($compare_games_to_wiki_ie, "about:blank")
 			GUISetState(@SW_SHOW, $compare_games_to_wiki_gui)
 			$current_gui = $compare_games_to_wiki_gui
 
-			GUICtrlSetData($compare_games_to_wiki_status_input, "")
-
 			; convert the wiki games data into a RetroPie emulator.cfg formatted file
 
+			GUICtrlSetData($compare_games_to_wiki_status_input, "Reading https://github.com/seanhaydongriffin/Seans-RetroPie-Tools/wiki/N64-Emulator-Game-Compatibility")
 			Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/Seans-RetroPie-Tools/wiki/N64-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
 			ProcessWaitClose($iPID)
 			Local $html = StdoutRead($iPID)
+			GUICtrlSetData($compare_games_to_wiki_status_input, "")
 
 			Local $arr = StringRegExp($html, "(?s)<th>Game</th>(?U)(.*)</tr>", 3)
 			$arr[0] = StringStripWS($arr[0], 3)
@@ -811,7 +837,7 @@ While True
 			Local $searching_for_game_name = False
 			Local $searching_for_game_emulator = False
 			Local $emulator_index = -1
-			Local $wiki_game_emulator_str = ""
+			Local $wiki_game_emulator_arr[0]
 			Local $game_name = ""
 			Local $emulator_name = ""
 
@@ -826,6 +852,12 @@ While True
 
 					if StringCompare($html_arr[$i], "<tr>") = 0 Then
 
+						if $searching_for_game_emulator = True Then
+
+							_ArrayAdd($wiki_game_emulator_arr, $game_name & " = """ & $default_emulator & """")
+						EndIf
+
+						$searching_for_game_emulator = False
 						$searching_for_game_name = True
 					EndIf
 
@@ -854,11 +886,51 @@ While True
 						for $j = StringLen($game_name) to 1 Step -1
 
 							Local $rom_name_search_text = StringLeft($game_name, $j)
-							$result = _GUICtrlListView_FindText($config_game_listview, $rom_name_search_text, -1, True)
+							Local $game_name_match[0]
+							Local $find_text_from_index = -1
 
-							if $result > -1 Then
+							While True
 
-								$game_name = _GUICtrlListView_GetItemText($config_game_listview, $result)
+								$result = _GUICtrlListView_FindText($config_game_listview, $rom_name_search_text, $find_text_from_index, True, False)
+
+								if $result > -1 Then
+
+									_ArrayAdd($game_name_match, _GUICtrlListView_GetItemText($config_game_listview, $result))
+									$find_text_from_index = $result
+								Else
+
+									ExitLoop
+								EndIf
+							WEnd
+
+							; if only a single game name from the Wiki is matching
+
+							if UBound($game_name_match) = 1 Then
+
+								$game_name = $game_name_match[0]
+								ExitLoop
+							EndIf
+
+							; if multiple game names from the Wiki are matching
+
+							if UBound($game_name_match) > 1 Then
+
+								; find the game name that is the closest match (lowest number of differences)
+
+								Local $least_num_diffs = 9999
+
+								for $k = 0 to (UBound($game_name_match) - 1)
+
+									$num_diffs = _Typos($rom_name_search_text, $game_name_match[$k])
+
+									if $num_diffs < $least_num_diffs Then
+
+										$least_num_diffs = $num_diffs
+										$game_name = $game_name_match[$k]
+										ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $game_name = ' & $game_name & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+									EndIf
+								Next
+
 								ExitLoop
 							EndIf
 						Next
@@ -870,29 +942,20 @@ While True
 
 						if StringCompare($html_arr[$i], "<td><strong>best</strong></td>") = 0 Then
 
-							if StringLen($wiki_game_emulator_str) > 0 Then
-
-								$wiki_game_emulator_str = $wiki_game_emulator_str & @CRLF
-							EndIf
-
-							$wiki_game_emulator_str = $wiki_game_emulator_str & $game_name & " = """ & $wiki_emulator[$emulator_index] & """"
+							_ArrayAdd($wiki_game_emulator_arr, $game_name & " = """ & $wiki_emulator[$emulator_index] & """")
 							$searching_for_game_emulator = False
 						EndIf
 					EndIf
 				EndIf
-
 			Next
-
-			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $wiki_game_emulator_str = ' & $wiki_game_emulator_str & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-
-			Local $wiki_emulators_cfg_file_path = @ScriptDir & "\wiki_emulators.cfg"
 
 			if FileExists($wiki_emulators_cfg_file_path) = True Then
 
 				FileDelete($wiki_emulators_cfg_file_path)
 			EndIf
 
-			FileWrite($wiki_emulators_cfg_file_path, $wiki_game_emulator_str)
+			_ArraySort($wiki_game_emulator_arr)
+			FileWrite($wiki_emulators_cfg_file_path, StringStripWS(_ArrayToString($wiki_game_emulator_arr, @CRLF), 3))
 
 			; convert the games list into a RetroPie emulator.cfg formatted file
 
@@ -927,13 +990,14 @@ While True
 			$full_cmd = $cmd & " " & $cmd_params
 			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $full_cmd = ' & $full_cmd & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
+			GUICtrlSetData($compare_games_to_wiki_status_input, "Comparing " & $wiki_emulators_cfg_file_path & " to " & $gameslist_emulators_cfg_file_path)
 			ShellExecuteWait($cmd, $cmd_params, "c:\Program Files\WinMerge\WinMergeU.exe", "", @SW_HIDE)
 
 			$html = FileRead($winmerge_output_file_path)
 			$html = StringReplace($html, "table {margin: 0; border: 1px solid #a0a0a0; box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);}", "html * {font-size: 12px !important; font-family: Arial !important;}" & @CRLF & "table {margin: 0; border: 1px solid #a0a0a0; box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15); display: block; overflow-x: auto; white-space: nowrap;}")
-			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $html = ' & $html & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-			_IENavigate($compare_games_to_wiki_ie, "about:blank")
+;			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $html = ' & $html & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 			_IEDocWriteHTML($compare_games_to_wiki_ie, $html)
+			GUICtrlSetData($compare_games_to_wiki_status_input, "")
 
 
 ;Exit
@@ -3473,13 +3537,10 @@ EndFunc
 Func update_games_emulator()
 
 	$selected_games = _GUICtrlListView_GetSelectedIndices($config_game_listview, true)
-	_ArrayDelete($selected_games, 0)
 
-	if UBound($selected_games) = 0 Then
+	if $selected_games[0] > 0 Then
 
-		GUICtrlSetData($status_input, "You must select at least one game to update.")
-	Else
-
+		_ArrayDelete($selected_games, 0)
 		Local $selected_emulator = _GUICtrlListView_GetItemText($config_system_listview, Number(_GUICtrlListView_GetSelectedIndices($config_system_listview)), 0)
 
 		for $each_game_index In $selected_games

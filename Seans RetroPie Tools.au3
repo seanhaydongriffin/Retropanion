@@ -1,8 +1,8 @@
-;#RequireAdmin
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Compression=4
 #AutoIt3Wrapper_UseUpx=y
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
+;#RequireAdmin
 #include <AutoItConstants.au3>
 #include <GUIConstants.au3>
 #include <GUIConstantsEx.au3>
@@ -27,7 +27,7 @@
 
 _GDIPlus_Startup()
 
-Local $app_name = "Seans RetroPie Tools"
+Global $app_name = "Seans RetroPie Tools"
 
 ; Fuzzy match rom filenames to artwork from RF Generation
 
@@ -150,7 +150,24 @@ $roms_path_dict.Add("Sony PlayStation", 						"psx")
 $roms_path_dict.Add("Sony PlayStation 2", 						"")
 $roms_path_dict.Add("Sony PSP", 								"psp")
 
+; Create the app data folder
 
+Global $app_data_dir = @AppDataDir & "\" & $app_name
+
+if FileExists($app_data_dir) = False Then
+
+	DirCreate($app_data_dir)
+EndIf
+
+Global $ini_filename = $app_data_dir & ".ini"
+Global $log_filename = $app_data_dir & ".log"
+
+; Erase the log
+
+if FileExists($log_filename) = true Then
+
+	FileDelete($log_filename)
+EndIf
 
 Local $local_path = "F:\RetroPie"
 Local $ImageMagick_path = "C:\Program Files\ImageMagick-7.0.11-Q16-HDRI"
@@ -162,7 +179,7 @@ Local $alphanumeric_arr[36] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
 Local $iStyle = BitOR($TVS_EDITLABELS, $TVS_HASBUTTONS, $TVS_HASLINES, $TVS_LINESATROOT, $TVS_DISABLEDRAGDROP, $TVS_SHOWSELALWAYS, $TVS_CHECKBOXES)
 Global $current_gui
 Global $downloaded_images_path = "~/.emulationstation/downloaded_images"
-Global $wiki_emulators_cfg_file_path = @ScriptDir & "\wiki_emulators.cfg"
+Global $wiki_emulators_cfg_file_path = $app_data_dir & "\wiki_emulators.cfg"
 Global $default_emulator
 Global $all_roms_line_arr
 Global $result = 1
@@ -666,12 +683,12 @@ if FileExists($download_path & "\Box_Full") = False Then
 EndIf
 
 
-if FileExists(@ScriptDir & "\" & $app_name & ".txt") = True Then
+if FileExists($app_data_dir & "\" & $app_name & ".txt") = True Then
 
 	; load the tree
 
 	Local $tree_file_arr
-	_FileReadToArray(@ScriptDir & "\" & $app_name & ".txt", $tree_file_arr, 0)
+	_FileReadToArray($app_data_dir & "\" & $app_name & ".txt", $tree_file_arr, 0)
 	Local $tree_parent_item
 
 	_GUICtrlTreeView_BeginUpdate($idTreeView)
@@ -748,8 +765,8 @@ While True
 			wend
 
 
-			FileDelete(@ScriptDir & "\" & $app_name & ".txt")
-			FileWrite(@ScriptDir & "\" & $app_name & ".txt", $tree_file_str)
+			FileDelete($app_data_dir & "\" & $app_name & ".txt")
+			FileWrite($app_data_dir & "\" & $app_name & ".txt", $tree_file_str)
 #ce
 
 			GUISetState(@SW_ENABLE, $main_gui)
@@ -974,7 +991,7 @@ While True
 				$gameslist_emulators_str = $gameslist_emulators_str & $game_name & " = """ & $emulator_name & """"
 			Next
 
-			Local $gameslist_emulators_cfg_file_path = @ScriptDir & "\gameslist_emulators.cfg"
+			Local $gameslist_emulators_cfg_file_path = $app_data_dir & "\gameslist_emulators.cfg"
 
 			if FileExists($gameslist_emulators_cfg_file_path) = True Then
 
@@ -983,12 +1000,13 @@ While True
 
 			FileWrite($gameslist_emulators_cfg_file_path, $gameslist_emulators_str)
 
-			Local $winmerge_output_file_path = @ScriptDir & "\emulators_cfg_diff.html"
+			Local $winmerge_output_file_path = $app_data_dir & "\emulators_cfg_diff.html"
 
 			$cmd = "WinMergeU.exe"
 			$cmd_params = """" & $wiki_emulators_cfg_file_path & """ """ & $gameslist_emulators_cfg_file_path & """ -minimize -noninteractive -u -or """ & $winmerge_output_file_path & """"
 			$full_cmd = $cmd & " " & $cmd_params
 			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $full_cmd = ' & $full_cmd & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+			_FileWriteLog($log_filename, $full_cmd)
 
 			GUICtrlSetData($compare_games_to_wiki_status_input, "Comparing " & $wiki_emulators_cfg_file_path & " to " & $gameslist_emulators_cfg_file_path)
 			ShellExecuteWait($cmd, $cmd_params, "c:\Program Files\WinMerge\WinMergeU.exe", "", @SW_HIDE)
@@ -1086,12 +1104,12 @@ While True
 
 		Case $boot_config_open_button
 
-			$result = FileOpenDialog($app_name, @ScriptDir, "Text files (*.txt)")
+			$result = FileOpenDialog($app_name, $app_data_dir, "Text files (*.txt)")
 
 
 		Case $boot_config_save_as_button
 
-			$result = FileSaveDialog($app_name, @ScriptDir, "Text files (*.txt)")
+			$result = FileSaveDialog($app_name, $app_data_dir, "Text files (*.txt)")
 
 
 		Case $config_emulators_games_reload_button
@@ -1291,7 +1309,7 @@ While True
 
 		Case $config_games_open_button
 
-			$result = FileOpenDialog($app_name, @ScriptDir, "Config files (*.cfg)", 0, "Seans RetroPie Tools n64 emulators.cfg", $main_gui)
+			$result = FileOpenDialog($app_name, $app_data_dir, "Config files (*.cfg)", 0, "Seans RetroPie Tools n64 emulators.cfg", $main_gui)
 
 			if @error = 0 Then
 
@@ -1349,7 +1367,7 @@ While True
 
 		Case $config_games_save_as_button
 
-			$result = FileSaveDialog($app_name, @ScriptDir, "Config files (*.cfg)", 0, "Seans RetroPie Tools n64 emulators.cfg", $main_gui)
+			$result = FileSaveDialog($app_name, $app_data_dir, "Config files (*.cfg)", 0, "Seans RetroPie Tools n64 emulators.cfg", $main_gui)
 
 			if @error = 0 Then
 
@@ -2571,15 +2589,15 @@ While True
 
 			$winscp_script = $winscp_script	& "exit" & @CRLF
 
-			FileDelete(@ScriptDir & "\" & $app_name & ".log")
-			FileDelete(@ScriptDir & "\" & $app_name & ".log.1")
-			FileDelete(@ScriptDir & "\" & $app_name & ".txt")
-			FileWrite(@ScriptDir & "\" & $app_name & ".txt", $winscp_script)
+			FileDelete($app_data_dir & "\" & $app_name & ".log")
+			FileDelete($app_data_dir & "\" & $app_name & ".log.1")
+			FileDelete($app_data_dir & "\" & $app_name & ".txt")
+			FileWrite($app_data_dir & "\" & $app_name & ".txt", $winscp_script)
 
 			; run the winscp backup script
 ;			ShellExecuteWait("C:\Program Files (x86)\WinSCP\WinSCP.exe", "/console /logsize=1*1M /log=""" & @ScriptDir & "\" & $app_name & ".log"" /ini=nul /script=""" & @ScriptDir & "\" & $app_name & ".txt""", @ScriptDir)
 ;			ShellExecuteWait("C:\Program Files (x86)\WinSCP\WinSCP.com", "/logsize=1*1M /log=""" & @ScriptDir & "\" & $app_name & ".log"" /ini=nul /script=""" & @ScriptDir & "\" & $app_name & ".txt""", @ScriptDir)
-			Run(@ComSpec & ' /k ""C:\Program Files (x86)\WinSCP\WinSCP.com" /log="' & @ScriptDir & '\' & $app_name & '.log" /loglevel=2 /ini=nul /script="' & @ScriptDir & '\' & $app_name & '.txt""', @ScriptDir)
+			Run(@ComSpec & ' /k ""C:\Program Files (x86)\WinSCP\WinSCP.com" /log="' & $app_data_dir & '\' & $app_name & '.log" /loglevel=2 /ini=nul /script="' & $app_data_dir & '\' & $app_name & '.txt""', @ScriptDir)
 
 
 

@@ -159,8 +159,8 @@ if FileExists($app_data_dir) = False Then
 	DirCreate($app_data_dir)
 EndIf
 
-Global $ini_filename = $app_data_dir & ".ini"
-Global $log_filename = $app_data_dir & ".log"
+Global $ini_filename = $app_data_dir & "\" & $app_name & ".ini"
+Global $log_filename = $app_data_dir & "\" & $app_name & ".log"
 
 ; Erase the log
 
@@ -194,7 +194,7 @@ _GUIToolTip_SetMaxTipWidth($tooltip, 300)
 Global $system_label = GUICtrlCreateLabel("System", 20, 5, 80, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
-Global $system_combo = GUICtrlCreateCombo("", 90, 5, 250, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+Global $system_combo = GUICtrlCreateCombo("", 70, 5, 250, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUICtrlComboBox_AddString($system_combo, "3DO")
 _GUICtrlComboBox_AddString($system_combo, "Amstrad CPC 464")
@@ -240,6 +240,7 @@ _GUICtrlComboBox_AddString($system_combo, "Sony PlayStation")
 _GUICtrlComboBox_AddString($system_combo, "Sony PlayStation 2")
 _GUICtrlComboBox_AddString($system_combo, "Sony PSP")
 _GUICtrlComboBox_SetCurSel($system_combo, 0)
+Global $system_open_docs_page_button = GUICtrlCreateButton("Open Docs page", 350, 5, 100, 20)
 
 Global $tab = GUICtrlCreateTab(5, 30, 840-10, 720-30-30)
 GUICtrlSetResizing(-1, $GUI_DOCKVCENTER + $GUI_DOCKBORDERS)
@@ -344,7 +345,7 @@ Local $scrape_auto_join_rotate_art_button = GUICtrlCreateButton("Split Back && F
 Local $scrape_auto_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist ...", 680, 480, 100, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 
-Global $scrape_auto_join_art_1_pic = GUICtrlCreatePic("", 20, 540, 384, 216)
+Global $scrape_auto_join_art_1_pic = GUICtrlCreatePic("", 20, 540, 384, 120)
 GUICtrlSetState(-1, $GUI_HIDE)
 
 GUICtrlCreateTabItem("Scrape + Manual Join")
@@ -605,6 +606,7 @@ GUISetAccelerators($main_aAccelKeys, $main_gui)
 
 Global $art_gui = GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
 Global $art_big_pic = GUICtrlCreatePic("", 0, 0, 640, 480)
+;Global $art_gui2 = GUICreate($app_name, 1024, 576, -1, -1, BitOr($GUI_SS_DEFAULT_GUI, $WS_SIZEBOX), $WS_EX_MDICHILD, $main_gui)
 Global $art_gui2 = GUICreate($app_name, 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
 Global $art_big_pic2 = GUICtrlCreatePic("", 0, 0, 1024, 576)
 Global $art_gui3 = GUICreate("Child", 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
@@ -668,11 +670,16 @@ Global $aFactors
 
 Enable_Emulators_and_Games($GUI_ENABLE)
 
+
+
 GUISetState(@SW_SHOW, $main_gui)
 $current_gui = $main_gui
 GUIRegisterMsg($WM_NOTIFY, "WM_NOTIFY")
 GUIRegisterMsg($WM_COMMAND, "WM_COMMAND")
 _TipDisplayLen(30000)
+
+_GUICtrlComboBox_SelectString($system_combo, IniRead($ini_filename, "Global", "System", "3DO"))
+_GUICtrlTab_SetCurFocus($tab, Number(IniRead($ini_filename, "Global", "Tab", 1)))
 
 
 
@@ -785,6 +792,19 @@ While True
 
 				_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list))
 			EndIf
+
+
+;		Case $GUI_EVENT_RESIZED
+
+;			if $current_gui = $art_gui2 Then
+
+;				Local $pos = WinGetPos($current_gui)
+;				GUICtrlSetPos($art_big_pic2, 0, 0, $pos[2], $pos[3])
+;				GUICtrlSetSizeAndImage($art_big_pic2, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)) & "-full-cover.jpg", $pos[2], -1, True)
+;			EndIf
+
+
+
 
 
 		Case $compare_games_to_wiki_dummy
@@ -1667,7 +1687,9 @@ While True
 
 		case $scrape_auto_join_art_1_pic
 
-			GUICtrlSetImage($art_big_pic2, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)) & "-full-cover.jpg")
+
+
+			GUICtrlSetSizeAndImage($art_big_pic2, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)) & "-full-cover.jpg", 1024, -1, True, True)
 			GUISetState(@SW_DISABLE, $main_gui)
 			GUISetState(@SW_SHOW, $art_gui2)
 			$current_gui = $art_gui2
@@ -2375,6 +2397,11 @@ While True
 				GUICtrlSetData($gameslist_status_input, "")
 			EndIf
 
+			GUISetState(@SW_ENABLE, $main_gui)
+			GUISetState(@SW_HIDE, $current_gui)
+			$current_gui = $main_gui
+
+
 		Case $scrape_manual_join_upload_gamelist_button
 
 			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
@@ -2703,6 +2730,9 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
                 Case $CBN_SELCHANGE
 
 					GUICtrlSetData($config_emulators_games_group, "Emulators && Games (" & GUICtrlRead($system_combo) & ")")
+					IniWrite($ini_filename, "Global", "System", GUICtrlRead($system_combo))
+					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : GUICtrlRead($system_combo) = ' & GUICtrlRead($system_combo) & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $ini_filename = ' & $ini_filename & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 			EndSwitch
 
         Case GUICtrlGetHandle($scrape_auto_join_art_list)
@@ -2736,7 +2766,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg") = True Then
 
 						GUICtrlSetState($scrape_auto_join_art_1_pic, $GUI_SHOW)
-						GUICtrlSetImage($scrape_auto_join_art_1_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg")
+						GUICtrlSetSizeAndImage($scrape_auto_join_art_1_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg", -1, 120)
 					Else
 
 						GUICtrlSetState($scrape_auto_join_art_1_pic, $GUI_HIDE)
@@ -3154,6 +3184,7 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($scrape_manual_join_upload_button, $GUI_DEFBUTTON)
 					EndIf
 
+					IniWrite($ini_filename, "Global", "Tab", _GUICtrlTab_GetCurSel($tab))
 
 			EndSwitch
 
@@ -3614,5 +3645,96 @@ Func DirCreateSafe($path)
 			Exit
 		EndIf
 	EndIf
+EndFunc
+
+Func GUICtrlSetSizeAndImage($ctrl, $image_file_path, $ctrl_width = -1, $ctrl_height = -1, $center_position = False, $resize_gui = False)
+
+	Local $hImage =  _GDIPlus_ImageLoadFromFile($image_file_path)
+	Local $image_width = _GDIPlus_ImageGetWidth($hImage)
+	Local $image_height = _GDIPlus_ImageGetHeight($hImage)
+	_GDIPlus_ImageDispose($hImage)
+
+	if $resize_gui = True Then
+
+		Local $gui_width = @DesktopWidth
+		Local $gui_height = @DesktopHeight
+		if $image_width < @DesktopWidth Then $gui_width = $image_width
+		if $image_height < @DesktopHeight Then $gui_height = $image_height
+
+		Local $iGuiXPos = (@DesktopWidth/2)-$gui_width/2
+		Local $iGuiYPos = (@DesktopHeight/2)-$gui_height/2
+
+		WinMove(_WinAPI_GetParent(GUICtrlGetHandle($ctrl)), "", $iGuiXPos, $iGuiYPos, $gui_width, $gui_height)
+		GUICtrlSetPos($ctrl, 0, 0, $gui_width, $gui_height)
+
+		if $ctrl_width > -1 Then $ctrl_width = $gui_width
+		if $ctrl_height > -1 Then $ctrl_height = $gui_height
+	EndIf
+
+	Local $new_ctrl_width = $ctrl_width
+	Local $new_ctrl_height = $ctrl_height
+	$ctrl_pos = ControlGetPos(_WinAPI_GetParent(GUICtrlGetHandle($ctrl)), "", $ctrl)
+
+	if $ctrl_width = -1 Then
+
+		$new_ctrl_width = $ctrl_pos[2]
+	EndIf
+
+	if $ctrl_height = -1 Then
+
+		$new_ctrl_height = $ctrl_pos[3]
+	EndIf
+
+	;calculate image dimension which fits into defined area ($ctrl_width x $ctrl_height)
+
+	If $image_width < $new_ctrl_width And $image_height < $new_ctrl_height Then
+
+		$image_left = Default
+		$image_top = Default
+
+		if $center_position = True Then
+
+			$image_left = $new_ctrl_width / 2 - $image_width / 2
+			$image_top = $new_ctrl_height / 2 - $image_height / 2
+		endif
+
+		GUICtrlSetPos($ctrl, $image_left, $image_top, $image_width, $image_height)
+		ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $image_width = ' & $image_width & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+		ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $image_height = ' & $image_height & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+	Else
+;		If $image_width > $image_height Then
+		if $ctrl_width > -1 Then
+			$f = $image_width / $new_ctrl_width
+			$w = $image_width / $f
+			$h = $image_height / $f
+		EndIf
+
+		if $ctrl_height > -1 Then
+		;Else
+			$f = $image_height / $new_ctrl_height
+			$w = $image_width / $f
+			$h = $image_height / $f
+		EndIf
+
+		$image_left = Default
+		$image_top = Default
+
+		if $center_position = True Then
+
+			$image_left = $new_ctrl_width / 2 - $w / 2
+			$image_top = $new_ctrl_height / 2 - $h / 2
+		endif
+
+		GUICtrlSetPos($ctrl, $image_left, $image_top, $w, $h)
+		ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $w = ' & $w & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+		ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $h = ' & $h & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+	EndIf
+
+	GUICtrlSetImage($ctrl, $image_file_path)
+
+;	$ctrl_pos = ControlGetPos($main_gui, "", $ctrl)
+;	_ArrayDisplay($ctrl_pos)
+
 EndFunc
 

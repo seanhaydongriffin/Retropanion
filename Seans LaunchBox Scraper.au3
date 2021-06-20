@@ -29,6 +29,7 @@ $system_dict.Add("APF M1000 / MP1000", "68")
 $system_dict.Add("Apple II / Apple III", "111")
 $system_dict.Add("Apple IIGS", "112")
 $system_dict.Add("Apple Macintosh", "17")
+$system_dict.Add("Arcade", "5")
 $system_dict.Add("Atari 2600", "6")
 $system_dict.Add("Atari 5200", "7")
 $system_dict.Add("Atari 7800", "8")
@@ -267,10 +268,10 @@ $system_dict.Add("XaviX XaviXPORT", "170")
 
 if $CmdLine[0] < 1 Then
 
-	ConsoleWrite("usage: " & $app_name & " ""system"" [page / start_page] [end_page]" & @CRLF)
+	ConsoleWrite("usage: " & $app_name & " ""system"" [metadata|images] [page / start_page] [end_page]" & @CRLF)
 	ConsoleWrite("  example: """ & $app_name & """ ""Nintendo SNES / Super Famicom""" & @CRLF)
-	ConsoleWrite("  example: """ & $app_name & """ ""Nintendo SNES / Super Famicom"" 1" & @CRLF)
-	ConsoleWrite("  example: """ & $app_name & """ ""Nintendo SNES / Super Famicom"" 1 3" & @CRLF)
+	ConsoleWrite("  example: """ & $app_name & """ ""Nintendo SNES / Super Famicom"" metadata 1" & @CRLF)
+	ConsoleWrite("  example: """ & $app_name & """ ""Nintendo SNES / Super Famicom"" images 1 3" & @CRLF)
 
 	Exit
 EndIf
@@ -279,18 +280,26 @@ EndIf
 ; pull all artwork from Atarimania
 
 Local $system = $CmdLine[1]  ;"Nintendo SNES / Super Famicom"
-Local $page_start_page = 0
+
+Local $mode
 
 if $CmdLine[0] >= 2 Then
 
-	$page_start_page = $CmdLine[2]
+	$mode = $CmdLine[2]
+EndIf
+
+Local $page_start_page = 0
+
+if $CmdLine[0] >= 3 Then
+
+	$page_start_page = $CmdLine[3]
 EndIf
 
 Local $end_page = 0
 
-if $CmdLine[0] >= 3 Then
+if $CmdLine[0] >= 4 Then
 
-	$end_page = $CmdLine[3]
+	$end_page = $CmdLine[4]
 EndIf
 
 Local $emulator_folder = "D:\dwn\" & StringRegExpReplace(StringRegExpReplace($system, '[:"?*\/<>| ]', "_"), '_+', "_")
@@ -319,6 +328,11 @@ if FileExists($emulator_folder & "\Box_Full") = False Then
 	DirCreate($emulator_folder & "\Box_Full")
 EndIf
 
+if FileExists($emulator_folder & "\Metadata") = False Then
+
+	DirCreate($emulator_folder & "\Metadata")
+EndIf
+
 ; get the number of pages available
 
 if $page_start_page = 0 and $end_page = 0 Then
@@ -334,45 +348,135 @@ EndIf
 
 for $page_num = $page_start_page to $end_page
 
-	Local $iPID = Run('curl.exe -s -k https://gamesdb.launchbox-app.com/platforms/games/' & $system_dict.Item($system) & '|' & $page_num, @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
-	ProcessWaitClose($iPID)
-	Local $html = StdoutRead($iPID)
-	Local $url_arr = StringRegExp($html, "        <a class=""list-item"" href=""(?U)(.*)"">", 3)
-	Local $name_arr = StringRegExp($html, "                    <h3>(?U)(.*)</h3>", 3)
+	Switch $mode
 
-	if UBound($url_arr) < 1 Then
+		Case "metadata"
 
-		ExitLoop
-	EndIf
+			Local $iPID = Run('curl.exe -s -k https://gamesdb.launchbox-app.com/platforms/games/' & $system_dict.Item($system) & '|' & $page_num, @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
+			ProcessWaitClose($iPID)
+			Local $html = StdoutRead($iPID)
+			Local $url_arr = StringRegExp($html, "        <a class=""list-item"" href=""(?U)(.*)"">", 3)
+			Local $name_arr = StringRegExp($html, "                    <h3>(?U)(.*)</h3>", 3)
 
-	for $i = 0 to (UBound($url_arr) - 1)
+			if UBound($url_arr) < 1 Then
 
-		$name_arr[$i] = StringRegExpReplace($name_arr[$i], '\\|/|:|\*|\?|\"|\<|\>|\|', "")
-
-		Local $iPID = Run('curl.exe -s -k https://gamesdb.launchbox-app.com/' & StringReplace($url_arr[$i], "/details/", "/images/"), @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
-		ProcessWaitClose($iPID)
-		Local $html = StdoutRead($iPID)
-		Local $arr2 = StringRegExp($html, "            <a style=""text-decoration: none !important;"" href=""(?U)(.*)"" data-gameimagekey=""(?U).*"" data-toggle=""lightbox"" data-gallery=""gallery"" data-title=""(?U)(.*)""", 3)
-
-		for $j = 0 to (UBound($arr2) - 1) Step 2
-
-			if StringInStr($arr2[$j + 1], "Box - Front") > 0 or StringInStr($arr2[$j + 1], "Box - Back") > 0 Then
-
-				ConsoleWrite("Found " & $arr2[$j + 1] & @CRLF)
-
-				; find the next available filename
-
-				Local $game_art_num = 1
-
-				While FileExists($emulator_folder & "\Box\" & $name_arr[$i] & "-" & $game_art_num & ".*") = True
-
-					$game_art_num = $game_art_num + 1
-				WEnd
-
-				_PathSplit($arr2[$j + 0], $sDrive1, $sDir1, $sFileName1, $sExtension1)
-				InetGet($arr2[$j + 0], $emulator_folder & "\Box\" & $name_arr[$i] & "-" & $game_art_num & $sExtension1)
+				ExitLoop
 			EndIf
-		Next
-	Next
+
+			for $i = 0 to (UBound($url_arr) - 1)
+
+				Local $metadata_xml = "<?xml version=""1.0""?>" & @CRLF & "<gameList>" & @CRLF & "	<game>"
+
+				$name_arr[$i] = StringRegExpReplace($name_arr[$i], '\\|/|:|\*|\?|\"|\<|\>|\|', "")
+				$metadata_xml = $metadata_xml & @CRLF & "		<name>" & $name_arr[$i] & "</name>"
+
+				Local $iPID = Run('curl.exe -s -k https://gamesdb.launchbox-app.com/' & $url_arr[$i], @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
+				ProcessWaitClose($iPID)
+				Local $html = StdoutRead($iPID)
+
+				Local $release_date_arr = StringRegExp($html, "(?s)<td class=""row-header"">Release Date<\/td>.*?<span class=""view"">(.*?)<\/span>", 3)
+
+				if @error = 0 Then
+
+					$release_date_arr[0] = StringRegExpReplace($release_date_arr[0], "</?\w+((\s+\w+(\s*=\s*(?:"""".*?""""|'.*?'|[^'"""">\s]+))?)+\s*|\s*)/?>", "")
+					$release_date_arr[0] = StringStripWS($release_date_arr[0], 3)
+					$metadata_xml = $metadata_xml & @CRLF & "		<releasedate>" & $release_date_arr[0] & "</releasedate>"
+				EndIf
+
+				Local $developers_arr = StringRegExp($html, "(?s)<td class=""row-header"">Developers<\/td>.*?<span class=""view"">(.*?)<\/span>", 3)
+
+				if @error = 0 Then
+
+					$developers_arr[0] = StringRegExpReplace($developers_arr[0], "</?\w+((\s+\w+(\s*=\s*(?:"""".*?""""|'.*?'|[^'"""">\s]+))?)+\s*|\s*)/?>", "")
+					$developers_arr[0] = StringStripWS($developers_arr[0], 3)
+					$metadata_xml = $metadata_xml & @CRLF & "		<developer>" & $developers_arr[0] & "</developer>"
+				EndIf
+
+				Local $publishers_arr = StringRegExp($html, "(?s)<td class=""row-header"">Publishers<\/td>.*?<span class=""view"">(.*?)<\/span>", 3)
+
+				if @error = 0 Then
+
+					$publishers_arr[0] = StringRegExpReplace($publishers_arr[0], "</?\w+((\s+\w+(\s*=\s*(?:"""".*?""""|'.*?'|[^'"""">\s]+))?)+\s*|\s*)/?>", "")
+					$publishers_arr[0] = StringStripWS($publishers_arr[0], 3)
+					$metadata_xml = $metadata_xml & @CRLF & "		<publisher>" & $publishers_arr[0] & "</publisher>"
+				EndIf
+
+				Local $genres_arr = StringRegExp($html, "(?s)<td class=""row-header"">Genres<\/td>.*?<span class=""view"">(.*?)<\/span>", 3)
+
+				if @error = 0 Then
+
+					$genres_arr[0] = StringRegExpReplace($genres_arr[0], "</?\w+((\s+\w+(\s*=\s*(?:"""".*?""""|'.*?'|[^'"""">\s]+))?)+\s*|\s*)/?>", "")
+					$genres_arr[0] = StringStripWS($genres_arr[0], 3)
+					$metadata_xml = $metadata_xml & @CRLF & "		<genre>" & $genres_arr[0] & "</genre>"
+				EndIf
+
+				Local $max_players_arr = StringRegExp($html, "(?s)<td class=""row-header"">Max Players<\/td>.*?<span class=""view"">(.*?)<\/span>", 3)
+
+				if @error = 0 Then
+
+					Local $players = $max_players_arr[0]
+
+					Local $cooperative_arr = StringRegExp($html, "(?s)<td class=""row-header"">Cooperative<\/td>.*?<span class=""view"">(.*?)<\/span>", 3)
+
+					if @error = 0 And StringCompare($cooperative_arr[0], "Yes") = 0 Then
+
+						$players = $players & " co-op"
+					EndIf
+
+					$metadata_xml = $metadata_xml & @CRLF & "		<players>" & $players & "</players>"
+				EndIf
+
+				$metadata_xml = $metadata_xml & @CRLF & "	</game>" & @CRLF & "</gameList>"
+
+				FileDelete($emulator_folder & "\Metadata\" & $name_arr[$i] & ".xml")
+				FileWrite($emulator_folder & "\Metadata\" & $name_arr[$i] & ".xml", $metadata_xml)
+
+				ConsoleWrite("Found """ & $name_arr[$i] & """ metadata" & @CRLF)
+
+			Next
+
+		Case "images"
+
+			Local $iPID = Run('curl.exe -s -k https://gamesdb.launchbox-app.com/platforms/games/' & $system_dict.Item($system) & '|' & $page_num, @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
+			ProcessWaitClose($iPID)
+			Local $html = StdoutRead($iPID)
+			Local $url_arr = StringRegExp($html, "        <a class=""list-item"" href=""(?U)(.*)"">", 3)
+			Local $name_arr = StringRegExp($html, "                    <h3>(?U)(.*)</h3>", 3)
+
+			if UBound($url_arr) < 1 Then
+
+				ExitLoop
+			EndIf
+
+			for $i = 0 to (UBound($url_arr) - 1)
+
+				$name_arr[$i] = StringRegExpReplace($name_arr[$i], '\\|/|:|\*|\?|\"|\<|\>|\|', "")
+
+				Local $iPID = Run('curl.exe -s -k https://gamesdb.launchbox-app.com/' & StringReplace($url_arr[$i], "/details/", "/images/"), @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
+				ProcessWaitClose($iPID)
+				Local $html = StdoutRead($iPID)
+				Local $arr2 = StringRegExp($html, "            <a style=""text-decoration: none !important;"" href=""(?U)(.*)"" data-gameimagekey=""(?U).*"" data-toggle=""lightbox"" data-gallery=""gallery"" data-title=""(?U)(.*)""", 3)
+
+				for $j = 0 to (UBound($arr2) - 1) Step 2
+
+					if StringInStr($arr2[$j + 1], "Box - Front") > 0 or StringInStr($arr2[$j + 1], "Box - Back") > 0 Then
+
+						ConsoleWrite("Found " & $arr2[$j + 1] & @CRLF)
+
+						; find the next available filename
+
+						Local $game_art_num = 1
+
+						While FileExists($emulator_folder & "\Box\" & $name_arr[$i] & "-" & $game_art_num & ".*") = True
+
+							$game_art_num = $game_art_num + 1
+						WEnd
+
+						_PathSplit($arr2[$j + 0], $sDrive1, $sDir1, $sFileName1, $sExtension1)
+						InetGet($arr2[$j + 0], $emulator_folder & "\Box\" & $name_arr[$i] & "-" & $game_art_num & $sExtension1)
+					EndIf
+				Next
+			Next
+	EndSwitch
 Next
 

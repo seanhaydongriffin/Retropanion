@@ -186,6 +186,7 @@ Global $downloaded_images_path = "~/.emulationstation/downloaded_images"
 Global $wiki_emulators_cfg_file_path = $app_data_dir & "\wiki_emulators.cfg"
 Global $default_emulator
 Global $all_roms_line_arr
+Global $gamelist_xml_dom
 Global $result = 1
 
 ; MAIN GUI
@@ -377,24 +378,24 @@ GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 
 Local $scrape_metadata_refresh_button = GUICtrlCreateButton("&Refresh", 20, 640, 80, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_metadata_update_metadata_button = GUICtrlCreateButton("Update &Metadata", 240, 640, 80, 40)
+Local $scrape_metadata_update_gamelist_button = GUICtrlCreateButton("Update &Gamelist", 240, 640, 80, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 Local $scrape_metadata_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 330, 640, 100, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
 GUICtrlCreateGroup("Mismatching Metadata Type", 460, 200, 200, 150)
 Global $scrape_metadata_release_date_checkbox = GUICtrlCreateCheckbox("Release Date", 480, 220, 120, 20)
-GUICtrlSetState(-1, $GUI_CHECKED)
+GUICtrlSetState(-1, $GUI_UNCHECKED)
 Global $scrape_metadata_developer_checkbox = GUICtrlCreateCheckbox("Developer", 480, 240, 120, 20)
-GUICtrlSetState(-1, $GUI_CHECKED)
+GUICtrlSetState(-1, $GUI_UNCHECKED)
 Global $scrape_metadata_publisher_checkbox = GUICtrlCreateCheckbox("Publisher", 480, 260, 120, 20)
-GUICtrlSetState(-1, $GUI_CHECKED)
+GUICtrlSetState(-1, $GUI_UNCHECKED)
 Global $scrape_metadata_genre_checkbox = GUICtrlCreateCheckbox("Genre", 480, 280, 120, 20)
-GUICtrlSetState(-1, $GUI_CHECKED)
+GUICtrlSetState(-1, $GUI_UNCHECKED)
 Global $scrape_metadata_players_checkbox = GUICtrlCreateCheckbox("Players", 480, 300, 120, 20)
 GUICtrlSetState(-1, $GUI_CHECKED)
 
-Global $scrape_metadata_listview = GUICtrlCreateListView("Metadata Name|Scraped|RetroPie", 460, 370, 260, 200)
+Global $scrape_metadata_listview = GUICtrlCreateListView("Metadata Name|Scraped|RetroPie", 460, 370, 350, 200)
 _GUICtrlListView_SetColumnWidth(-1, 0, 110)
 _GUICtrlListView_SetColumnWidth(-1, 1, 100)
 _GUICtrlListView_SetColumnWidth(-1, 2, 100)
@@ -403,6 +404,11 @@ _GUICtrlListView_AddItem(-1, "Developer", 0)
 _GUICtrlListView_AddItem(-1, "Publisher", 0)
 _GUICtrlListView_AddItem(-1, "Genre", 0)
 _GUICtrlListView_AddItem(-1, "Players", 0)
+Global $scrape_metadata_imagelist = _GUIImageList_Create(16, 16)
+_GUIImageList_Add($scrape_metadata_imagelist, _GUICtrlListView_CreateSolidBitMap($scrape_metadata_listview, $COLOR_WHITE, 16, 16))
+_GUIImageList_Add($scrape_metadata_imagelist, _GUICtrlListView_CreateSolidBitMap($scrape_metadata_listview, $COLOR_GREEN, 16, 16))
+_GUIImageList_Add($scrape_metadata_imagelist, _GUICtrlListView_CreateSolidBitMap($scrape_metadata_listview, $COLOR_RED, 16, 16))
+_GUICtrlListView_SetImageList($scrape_metadata_listview, $scrape_metadata_imagelist, 1)
 
 
 GUICtrlCreateTabItem("Scrape Images with Auto Join")
@@ -1699,7 +1705,7 @@ While True
 
 			Local $mismatched_rom_filename_arr[0][11]
 
-			Local $gamelist_xml_dom = _XMLLoadXML(FileRead($gamelist_filepath), "")
+			$gamelist_xml_dom = _XMLLoadXML(FileRead($gamelist_filepath), "")
 
 			; find roms that aren't in gamelist.xml
 
@@ -1757,6 +1763,24 @@ While True
 				_GUICtrlListBox_InsertString($scrape_metadata_art_list, $metadata_name)
 			Next
 
+
+		case $scrape_metadata_update_gamelist_button
+
+			Local $game_name = _GUICtrlListBox_GetText($scrape_metadata_rom_list, _GUICtrlListBox_GetCurSel($scrape_metadata_rom_list))
+
+			if StringCompare(_GUICtrlListView_GetItemText($scrape_metadata_listview, 4, 1), _GUICtrlListView_GetItemText($scrape_metadata_listview, 4, 2)) <> 0 Then
+
+				_XMLUpdateField($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../players", _GUICtrlListView_GetItemText($scrape_metadata_listview, 4, 1))
+			EndIf
+
+			RefreshMetadataListview()
+
+		case $scrape_metadata_upload_gamelist_button
+
+			Local $gamelist2_filepath = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\gamelist2.xml"
+
+			FileDelete($gamelist2_filepath)
+			_XMLSaveXML($gamelist_xml_dom, $gamelist2_filepath)
 
 
 
@@ -3079,10 +3103,11 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
                 Case $LBN_SELCHANGE ; Sent when the user cancels the selection in a list box
 
 					Local $art_name = _GUICtrlListBox_GetText($scrape_metadata_art_list, _GUICtrlListBox_GetCurSel($scrape_metadata_art_list))
+					Local $selected_index = -1
 
 					if GUICtrlRead($scrape_metadata_match_metadata_to_roms_radio) = $GUI_CHECKED Then
 
-						Local $selected_index = 0
+						$selected_index = 0
 						GUICtrlUnselect($scrape_metadata_rom_list)
 
 						for $i = 1 to StringLen($art_name)
@@ -3103,18 +3128,52 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						_GUICtrlListBox_SetTopIndex($scrape_metadata_rom_list, $selected_index - 11)
 					EndIf
 
-					Local $metadata_name = _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list))
-					Local $metadata_xml_dom = _XMLLoadXML(FileRead($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Metadata\" & $metadata_name & ".xml"), "")
+					RefreshMetadataListview($selected_index)
+			EndSwitch
 
-					_GUICtrlListView_SetItemText($scrape_metadata_listview, 0, _XMLGetValue($metadata_xml_dom, "/gameList/game/releasedate"), 1)
-					_GUICtrlListView_SetItemText($scrape_metadata_listview, 1, _XMLGetValue($metadata_xml_dom, "/gameList/game/developer"), 1)
-					_GUICtrlListView_SetItemText($scrape_metadata_listview, 2, _XMLGetValue($metadata_xml_dom, "/gameList/game/publisher"), 1)
-					_GUICtrlListView_SetItemText($scrape_metadata_listview, 3, _XMLGetValue($metadata_xml_dom, "/gameList/game/genre"), 1)
-					_GUICtrlListView_SetItemText($scrape_metadata_listview, 4, _XMLGetValue($metadata_xml_dom, "/gameList/game/players"), 1)
+
+        Case GUICtrlGetHandle($scrape_metadata_rom_list)
+
+			Switch $iCode
+
+                Case $LBN_SELCHANGE ; Sent when the user cancels the selection in a list box
+					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $LBN_SELCHANGE = ' & $LBN_SELCHANGE & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+					if GUICtrlRead($scrape_metadata_match_roms_to_metadata_radio) = $GUI_CHECKED Then
+
+						Local $rom_name = _GUICtrlListBox_GetText($scrape_metadata_rom_list, _GUICtrlListBox_GetCurSel($scrape_metadata_rom_list))
+						Local $selected_index = 0
+
+						for $i = 1 to StringLen($rom_name)
+
+							Local $art_name_search_text = StringLeft($rom_name, $i)
+							$result = _GUICtrlListBox_SelectString($scrape_metadata_art_list, $art_name_search_text)
+
+							if $result < 0 Then
+
+								ExitLoop
+							EndIf
+
+							$selected_index = $result
+						Next
+
+						_GUICtrlListBox_SetCurSel($scrape_metadata_art_list, $selected_index)
+						_GUICtrlListBox_SetTopIndex($scrape_metadata_art_list, $selected_index - 11)
+						Local $art_name = _GUICtrlListBox_GetText($scrape_metadata_art_list, $selected_index)
+
+					EndIf
+
+
+					Local $game_name = _GUICtrlListBox_GetText($scrape_metadata_rom_list, _GUICtrlListBox_GetCurSel($scrape_metadata_rom_list))
+
+					_GUICtrlListView_SetItemText($scrape_metadata_listview, 0, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../releasedate"), 2)
+					_GUICtrlListView_SetItemText($scrape_metadata_listview, 1, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../developer"), 2)
+					_GUICtrlListView_SetItemText($scrape_metadata_listview, 2, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../publisher"), 2)
+					_GUICtrlListView_SetItemText($scrape_metadata_listview, 3, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../genre"), 2)
+					_GUICtrlListView_SetItemText($scrape_metadata_listview, 4, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../players"), 2)
 
 
 			EndSwitch
-
 
 
 
@@ -4347,3 +4406,122 @@ Func ReloadEmulatorsAndGamesConfig()
 	Next
 
 EndFunc
+
+Func RefreshMetadataListview($selected_index = -1)
+
+	if $selected_index = -1 Then
+
+		$selected_index = _GUICtrlListBox_GetCurSel($scrape_metadata_rom_list)
+	EndIf
+
+	Local $game_name = _GUICtrlListBox_GetText($scrape_metadata_rom_list, $selected_index)
+
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 0, "-", 2)
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 1, "-", 2)
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 2, "-", 2)
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 3, "-", 2)
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 4, "-", 2)
+
+	if GUICtrlRead($scrape_metadata_release_date_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 0, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../releasedate"), 2)
+	EndIf
+
+	if GUICtrlRead($scrape_metadata_developer_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 1, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../developer"), 2)
+	EndIf
+
+	if GUICtrlRead($scrape_metadata_publisher_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 2, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../publisher"), 2)
+	EndIf
+
+	if GUICtrlRead($scrape_metadata_genre_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 3, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../genre"), 2)
+	EndIf
+
+	if GUICtrlRead($scrape_metadata_players_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 4, _XMLGetValue($gamelist_xml_dom, "/gameList/*/name[text()='" & $game_name & "']/../players"), 2)
+	EndIf
+
+	Local $metadata_name = _GUICtrlListBox_GetText($scrape_metadata_art_list, _GUICtrlListBox_GetCurSel($scrape_metadata_art_list))
+	Local $metadata_xml_dom = _XMLLoadXML(FileRead($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Metadata\" & $metadata_name & ".xml"), "")
+
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 0, "-", 1)
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 1, "-", 1)
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 2, "-", 1)
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 3, "-", 1)
+	_GUICtrlListView_SetItemText($scrape_metadata_listview, 4, "-", 1)
+
+	if GUICtrlRead($scrape_metadata_release_date_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 0, _XMLGetValue($metadata_xml_dom, "/gameList/game/releasedate"), 1)
+
+		if StringCompare(_GUICtrlListView_GetItemText($scrape_metadata_listview, 0, 1), _GUICtrlListView_GetItemText($scrape_metadata_listview, 0, 2)) = 0 Then
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 0, 0)
+		Else
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 0, 2)
+		EndIf
+	EndIf
+
+	if GUICtrlRead($scrape_metadata_developer_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 1, _XMLGetValue($metadata_xml_dom, "/gameList/game/developer"), 1)
+
+		if StringCompare(_GUICtrlListView_GetItemText($scrape_metadata_listview, 1, 1), _GUICtrlListView_GetItemText($scrape_metadata_listview, 1, 2)) = 0 Then
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 1, 0)
+		Else
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 1, 2)
+		EndIf
+	EndIf
+
+	if GUICtrlRead($scrape_metadata_publisher_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 2, _XMLGetValue($metadata_xml_dom, "/gameList/game/publisher"), 1)
+
+		if StringCompare(_GUICtrlListView_GetItemText($scrape_metadata_listview, 2, 1), _GUICtrlListView_GetItemText($scrape_metadata_listview, 2, 2)) = 0 Then
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 2, 0)
+		Else
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 2, 2)
+		EndIf
+	EndIf
+
+	if GUICtrlRead($scrape_metadata_genre_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 3, _XMLGetValue($metadata_xml_dom, "/gameList/game/genre"), 1)
+
+		if StringCompare(_GUICtrlListView_GetItemText($scrape_metadata_listview, 3, 1), _GUICtrlListView_GetItemText($scrape_metadata_listview, 3, 2)) = 0 Then
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 3, 0)
+		Else
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 3, 2)
+		EndIf
+	EndIf
+
+	if GUICtrlRead($scrape_metadata_players_checkbox) = $GUI_CHECKED Then
+
+		_GUICtrlListView_SetItemText($scrape_metadata_listview, 4, _XMLGetValue($metadata_xml_dom, "/gameList/game/players"), 1)
+
+		if StringCompare(_GUICtrlListView_GetItemText($scrape_metadata_listview, 4, 1), _GUICtrlListView_GetItemText($scrape_metadata_listview, 4, 2)) = 0 Then
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 4, 0)
+		Else
+
+			_GUICtrlListView_SetItemImage($scrape_metadata_listview, 4, 2)
+		EndIf
+	EndIf
+
+
+
+EndFunc
+

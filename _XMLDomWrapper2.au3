@@ -463,6 +463,17 @@ EndFunc   ;==>_XMLGetXML
 
 
 
+Func _XMLGetDocXML($objDoc)
+	If not IsObj($objDoc) then
+		_XMLError("No object passed to function _XMLGetField")
+		Return SetError(1,2,-1)
+	EndIf
+
+		Return $objDoc.xml
+		;_XMLError("Error Selecting Node(s): " & $strXPath & $xmlerr)
+	Return SetError(1,0,-1)
+EndFunc   ;==>_XMLGetXML
+
 
 
 
@@ -1036,7 +1047,7 @@ EndFunc   ;==>_XMLCreateRootNodeWAttr
 ; Author(s):		Stephen Podhajecki <gehossafats@netmdc.com>
 ; Return Value(s)			on error set error to 1 and returns -1
 ;===============================================================================
-Func _XMLCreateChildNode($strXPath, $strNode, $strData = "", $strNameSpc = "")
+Func _XMLCreateChildNode($objDoc, $strXPath, $strNode, $strData = "", $strNameSpc = "")
 	If not IsObj($objDoc) then
 		_XMLError("No object passed to function _XMLCreateChildNode")
 		Return SetError(1,16,-1)
@@ -1053,11 +1064,13 @@ Func _XMLCreateChildNode($strXPath, $strNode, $strData = "", $strNameSpc = "")
 				EndIf
 				;ConsoleWrite("$strNameSpc=" & $strNameSpc & @LF)
 				$objChild = $objDoc.createNode ($NODE_ELEMENT, $strNode, $strNameSpc)
+				;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $objChild = ' & $objChild & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 				If $strData <> "" Then $objChild.text = $strData
 				$objParent.appendChild ($objChild)
+				;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $objParent.appendChild = ' & $objParent.appendChild & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 				_AddFormat($objDoc, $objParent)
 			Next
-			If ($bXMLAUTOSAVE = True) Then $objDoc.save ($strFile)
+			;If ($bXMLAUTOSAVE = True) Then $objDoc.save ($strFile)
 			$objParent = ""
 			$objChild = ""
 			Return 1
@@ -1065,6 +1078,41 @@ Func _XMLCreateChildNode($strXPath, $strNode, $strData = "", $strNameSpc = "")
 	_XMLError("Error creating child node: " & $strNode & @CRLF & $strXPath & " does not exist." & @CRLF)
 	Return SetError(1,0,-1)
 EndFunc   ;==>_XMLCreateChildNode
+
+
+Func _XMLCreateChildNodes($objDoc, $strXPath, $child1_strNode, $child2_strNode, $child2_strData = "", $strNameSpc = "")
+	If not IsObj($objDoc) then
+		_XMLError("No object passed to function _XMLCreateChildNode")
+		Return SetError(1,16,-1)
+	EndIf
+	Local $objParent, $objChild1, $objChild2, $objNodeList
+		$objNodeList = $objDoc.selectNodes ($strXPath)
+		If IsObj($objNodeList) And $objNodeList.length > 0 Then
+			For $objParent In $objNodeList
+				If Not ($objParent.hasChildNodes ()) Then
+					_AddFormat($objDoc, $objParent)
+				EndIf
+				If $strNameSpc = "" Then
+					If Not ($objParent.namespaceURI = 0 Or $objParent.namespaceURI = "") Then $strNameSpc = $objParent.namespaceURI
+				EndIf
+				$objChild1 = $objDoc.createNode ($NODE_ELEMENT, $child1_strNode, $strNameSpc)
+				$objChild2 = $objDoc.createNode ($NODE_ELEMENT, $child2_strNode, $strNameSpc)
+				If $child2_strData <> "" Then $objChild2.text = $child2_strData
+				$objParent.appendChild ($objChild1)
+				$objChild1.appendChild ($objChild2)
+				_AddFormat($objDoc, $objParent)
+			Next
+			;If ($bXMLAUTOSAVE = True) Then $objDoc.save ($strFile)
+			$objParent = ""
+			$objChild1 = ""
+			Return 1
+		EndIf
+;	_XMLError("Error creating child node: " & $strNode & @CRLF & $strXPath & " does not exist." & @CRLF)
+	Return SetError(1,0,-1)
+EndFunc   ;==>_XMLCreateChildNode
+
+
+
 ;===============================================================================
 ; Function Name:	_XMLCreateChildNodeWAttr
 ; Description:		Create a child node(s) under the specified XPath Node with attributes.
@@ -1723,11 +1771,12 @@ EndFunc   ;==>_XMLUDFVersion
 ; Author(s):		Stephen Podhajecki <gehossafats at netmdc dot com>
 ; Note(s):
 ;===============================================================================
-Func _XMLTransform($oXMLDoc="", $Style = "", $szNewDoc = "")
-	If $oXMLDoc = "" Then
-		$oXMLDoc = $objDoc
-	EndIf
-	If not IsObj($oXMLDoc) then
+;Func _XMLTransform($oXMLDoc="", $Style = "", $szNewDoc = "")
+Func _XMLTransform($objDoc, $Style = "", $szNewDoc = "")
+	;If $oXMLDoc = "" Then
+	;	$oXMLDoc = $objDoc
+	;EndIf
+	If not IsObj($objDoc) then
 		_XMLError("No object passed to function _XMLSetAttrib")
 		Return SetError(1,29,-1)
 	EndIf
@@ -1749,34 +1798,35 @@ Func _XMLTransform($oXMLDoc="", $Style = "", $szNewDoc = "")
 	$xslt.stylesheet = $xslDoc
 	$xslProc = $xslt.createProcessor ()
 	$xslProc.input = $objDoc
-	$oXMLDoc.transformNodeToObject ($xslDoc, $xmldoc)
-	If $oXMLDoc.parseError.errorCode <> 0 Then
-		_XMLError("_XMLTransform:" & @LF & "Error Transforming NodeToObject: " & $oXMLDoc.parseError.reason)
+	$objDoc.transformNodeToObject ($xslDoc, $xmldoc)
+	If $objDoc.parseError.errorCode <> 0 Then
+		_XMLError("_XMLTransform:" & @LF & "Error Transforming NodeToObject: " & $objDoc.parseError.reason)
 		$bIndented = False
 	Else
 		$bIndented = True
 	EndIf
-	If $bIndented Then
-		If $szNewDoc <> "" Then
-			$xmldoc.save ($szNewDoc)
-			If $xmldoc.parseError.errorCode <> 0 Then
-				_XMLError("_XMLTransform:" & @LF & "Error Saving: " & $xmldoc.parseError.reason)
-				$bIndented = False
-			EndIf
-		Else
-			$xmldoc.save ($strFile)
-			$oXMLDoc.Load ($strFile)
-			If $oXMLDoc.parseError.errorCode <> 0 Then
-				_XMLError("_XMLTransform:" & @LF & "Error Saving: " & $oXMLDoc.parseError.reason)
-				$bIndented = False
-			EndIf
-		EndIf
-	EndIf
+;	If $bIndented Then
+;		If $szNewDoc <> "" Then
+;			$xmldoc.save ($szNewDoc)
+;			If $xmldoc.parseError.errorCode <> 0 Then
+;				_XMLError("_XMLTransform:" & @LF & "Error Saving: " & $xmldoc.parseError.reason)
+;				$bIndented = False
+;			EndIf
+;		Else
+;			$xmldoc.save ($strFile)
+;			$oXMLDoc.Load ($strFile)
+;			If $oXMLDoc.parseError.errorCode <> 0 Then
+;				_XMLError("_XMLTransform:" & @LF & "Error Saving: " & $oXMLDoc.parseError.reason)
+;				$bIndented = False
+;			EndIf
+;		EndIf
+;	EndIf
 	$xslProc = 0
 	$xslt = 0
 	$xslDoc = 0
-	$xmldoc = 0
-	Return $bIndented
+	;$xmldoc = 0
+	;Return $bIndented
+	Return $xmldoc
 EndFunc   ;==>_XMLTransform
 ;===============================================================================
 ; Function Name:	_GetDefaultStyleSheet
@@ -1824,7 +1874,7 @@ Func _AddFormat($objDoc, $objParent = "")
 	Else
 		$objDoc.documentElement.appendChild ($objFormat)
 	EndIf
-			If ($bXMLAUTOSAVE = True) Then $objDoc.save ($strFile)
+			;If ($bXMLAUTOSAVE = True) Then $objDoc.save ($strFile)
 EndFunc   ;==>_AddFormat
 ;===============================================================================
 ; Function Name:	_XMLSetAutoSave

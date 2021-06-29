@@ -2938,25 +2938,39 @@ While True
 
 			FileDelete(@ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Neogeo only).dat")
 			FileDelete(@ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Neogeo only) updated.dat")
-;			FileDelete(@ScriptDir & "\fred.dat")
+			FileDelete(@ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Arcade only).dat")
+			FileDelete(@ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Arcade only) updated.dat")
 			FileDelete(@ScriptDir & "\clrmamepro_source\*.*")
 			FileDelete(@ScriptDir & "\clrmamepro_destination\*.*")
 
+			; get the latest ClrMame Pro DAT files
 
-			; get the latest ClrMame Pro DAT file
-
+			GUICtrlSetData($status_input, "Downloading FinalBurn Neo (ClrMame Pro XML, Neogeo only).dat")
 			InetGet("https://github.com/libretro/FBNeo/raw/master/dats/FinalBurn%20Neo%20(ClrMame%20Pro%20XML%2C%20Neogeo%20only).dat", @ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Neogeo only).dat")
+			GUICtrlSetData($status_input, "Downloading FinalBurn Neo (ClrMame Pro XML, Arcade only).dat")
+			InetGet("https://github.com/libretro/FBNeo/raw/master/dats/FinalBurn%20Neo%20(ClrMame%20Pro%20XML%2C%20Arcade%20only).dat", @ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Arcade only).dat")
+			GUICtrlSetData($status_input, "")
 
-
-
-
-			Local $rom_filename_arr[1]
-
+;			Local $rom_filename_arr[1]
 			Local $rom_name = _GUICtrlListBox_GetText($rebuild_roms_roms_list, _GUICtrlListBox_GetCurSel($rebuild_roms_roms_list))
-			$rom_filename_arr[0] = $rom_name
+;			$rom_filename_arr[0] = $rom_name
 
 			;_FileReadToArray(@ScriptDir & "\my_neogeo_dat.dat", $rom_filename_arr)
 
+
+			$result = rebuild_roms(@ScriptDir, "FinalBurn Neo (ClrMame Pro XML, Neogeo only).dat", $rom_name)
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $result = ' & $result & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+			if $result = False Then
+
+				$result = rebuild_roms(@ScriptDir, "FinalBurn Neo (ClrMame Pro XML, Arcade only).dat", $rom_name)
+				ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $result = ' & $result & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+			EndIf
+
+
+
+
+#cs
 			Local $xml_dom = _XMLLoadXML(FileRead(@ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Neogeo only).dat"), "", -1, False)
 			Local $num_nodes = _XMLGetNodeCount($xml_dom, "/datafile/game")
 
@@ -3080,6 +3094,7 @@ While True
 			Next
 
 			ProcessClose("cmpro64.exe")
+#ce
 
 
 		Case $backup_mirror_button
@@ -4931,3 +4946,178 @@ Func msWordXML_Beautify($s)
 
 	Return $sOut
 EndFunc   ;==>msWordXML_Beautify
+
+
+Func rebuild_roms($dat_file_path, $dat_file_name, $rom_filename)
+
+	; $dat_file_name = "\FinalBurn Neo (ClrMame Pro XML, Neogeo only).dat"
+
+	Local $dat_file_name_updated = StringReplace($dat_file_name, ".dat", " updated.dat")
+	Local $dat_file_path_updated = $dat_file_path & "\" & $dat_file_name_updated
+	$dat_file_path = $dat_file_path & "\" & $dat_file_name
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $dat_file_path = ' & $dat_file_path & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+	Local $xml_dom = _XMLLoadXML(FileRead($dat_file_path), "", -1, False)
+	Local $num_nodes = _XMLGetNodeCount($xml_dom, "/datafile/game")
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $num_nodes = ' & $num_nodes & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+	Local $rom_found = False
+
+	for $i = 1 to $num_nodes
+
+		Local $game_name = _XMLGetAttrib($xml_dom, "/datafile/game[" & $i & "]", "name")
+		ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $game_name = ' & $game_name & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+		;if _ArraySearch($rom_filename_arr, $game_name & ".zip") < 0 Then
+		if StringCompare($rom_filename, $game_name & ".zip") = 0 Then
+
+			$rom_found = True
+		Else
+
+			_XMLDeleteNode($xml_dom, "/datafile/game[" & $i & "]")
+			$i = $i - 1
+			$num_nodes = $num_nodes - 1
+		EndIf
+
+		if $i > $num_nodes Then
+
+			ExitLoop
+		EndIf
+	Next
+
+	if $rom_found = False Then
+
+		return False
+	EndIf
+
+	Local $clrmamepro_dat_xml = _XMLGetDocXML($xml_dom)
+	$clrmamepro_dat_xml = msWordXML_Beautify($clrmamepro_dat_xml)
+	FileDelete($dat_file_path_updated)
+	FileWrite($dat_file_path_updated, $clrmamepro_dat_xml)
+
+
+	;_XMLSaveXML($xml_dom, @ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Neogeo only) updated.dat")
+	;_XMLSaveXML($xml_dom, @ScriptDir & "\fred.dat")
+
+
+	; download roms to rebuild and bios
+
+	GUICtrlSetData($status_input, "Downloading neogeo.zip")
+	pscp_download("/home/pi/RetroPie/BIOS/neogeo.zip", @ScriptDir & "\clrmamepro_source\neogeo.zip")
+	GUICtrlSetData($status_input, "Downloading " & $rom_filename)
+	pscp_download("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $rom_filename, @ScriptDir & "\clrmamepro_source\" & $rom_filename)
+
+
+	Local $clrmamepro_dat_filename = $dat_file_name_updated
+	Local $clrmamepro_path = "C:\Program Files\clrmamepro"
+	Local $clrmamepro_ini_path = $clrmamepro_path & "\cmpro.ini"
+	Local $clrmamepro_dat_dirname = @ScriptDir & "\"
+	Local $clrmamepro_welcome_win_title = "[TITLE:cmpro64; CLASS:#32770]"
+	Local $clrmamepro_profiler_win_title = "[TITLE:>Profiler<; CLASS:#32770]"
+	Local $clrmamepro_profiler_selected_entries_1_win_title = "[TITLE:>Profiler< [Selected Entries: 1]; CLASS:#32770]"
+	Local $clrmamepro_open_win_title = "[TITLE:Open; CLASS:#32770]"
+	Local $clrmamepro_where_do_you_want_to_put_the_dats_win_title = "[TITLE:Where do you want to put the dat(s)?; CLASS:#32770]"
+	Local $clrmamepro_no_settings_found_win_title = "[TITLE:No Settings Found; CLASS:#32770]"
+	Local $clrmamepro_clrmamepro_win_title = "[TITLE:>clrmamepro<; CLASS:#32770]"
+	Local $clrmamepro_scanner_win_title = "[REGEXPTITLE:Scanner | .*; CLASS:#32770]"
+	Local $clrmamepro_advanced_scanner_options_win_title = "[TITLE:Advanced Scanner Options; CLASS:#32770]"
+	Local $clrmamepro_rebuilder_win_title = "[REGEXPTITLE:Rebuilder | .*; CLASS:#32770]"
+	Local $clrmamepro_advanced_rebuilder_options_win_title = "[TITLE:Advanced Rebuilder Options; CLASS:#32770]"
+	Local $clrmamepro_statistics_win_title = "[REGEXPTITLE:Statistics | .*; CLASS:#32770]"
+	Local $clrmamepro_rebuilding_sets_win_title = "[TITLE:Rebuilding Sets; CLASS:#32770]"
+	Local $clrmamepro_datfile_problem_win_title = "[TITLE:DatFile Problem; CLASS:#32770]"
+
+	GUICtrlSetData($status_input, "Initialising ClrMame Pro")
+	FileDelete($clrmamepro_path & "\datfiles\*.dat")
+	FileDelete($clrmamepro_path & "\settings\*.cmp")
+	FileDelete($clrmamepro_path & "\profiler.cache")
+	FileDelete($clrmamepro_path & "\profiler.xml")
+	FileDelete($clrmamepro_ini_path)
+	IniWrite($clrmamepro_ini_path, "CMPRO SETTINGS", "Dir_ProfilerAddDatFileFolder", $clrmamepro_dat_dirname)
+	ProcessClose("cmpro64.exe")
+
+	GUICtrlSetData($status_input, "Automating ClrMame Pro")
+	ShellExecute("cmpro64.exe", "", "C:\Program Files\clrmamepro")
+
+	WinWait($clrmamepro_welcome_win_title)
+	WinClose($clrmamepro_welcome_win_title)
+
+	WinWait($clrmamepro_profiler_win_title)
+	ControlClick($clrmamepro_profiler_win_title, "", "[TEXT:&Add DatFile...]")
+
+	WinWait($clrmamepro_open_win_title)
+	Sleep(500)
+	ControlSetText($clrmamepro_open_win_title, "", "[CLASS:Edit; INSTANCE:1]", $clrmamepro_dat_filename)
+	ControlClick($clrmamepro_open_win_title, "", "[TEXT:&Open]")
+
+	WinWait($clrmamepro_where_do_you_want_to_put_the_dats_win_title)
+	ControlClick($clrmamepro_where_do_you_want_to_put_the_dats_win_title, "", "[TEXT:OK]")
+
+	WinWait($clrmamepro_profiler_win_title)
+	Local $clrmamepro_profiler_listview_handle = ControlGetHandle($clrmamepro_profiler_win_title, "", "[CLASS:SysListView32; INSTANCE:1]")
+	_GUICtrlListView_SetItemSelected($clrmamepro_profiler_listview_handle, 0)
+
+	WinWait($clrmamepro_profiler_selected_entries_1_win_title)
+	ControlClick($clrmamepro_profiler_selected_entries_1_win_title, "", "[TEXT:&Load / Update]")
+
+	WinWait($clrmamepro_no_settings_found_win_title)
+	ControlClick($clrmamepro_no_settings_found_win_title, "", "[TEXT:&Default]")
+	; Illegal backup root folder detected. Using the default backup root folder from now on.
+	WinWait($clrmamepro_welcome_win_title)
+	WinClose($clrmamepro_welcome_win_title)
+	; Illegal download root folder detected. Using the default download root folder from now on.
+	WinWait($clrmamepro_welcome_win_title)
+	WinClose($clrmamepro_welcome_win_title)
+
+	for $i = 1 to 15
+
+		Sleep(1000)
+
+		if WinExists($clrmamepro_datfile_problem_win_title) = True Then
+
+			ControlClick($clrmamepro_datfile_problem_win_title, "", "[TEXT:OK TO ALL]")
+		Else
+
+			ExitLoop
+		EndIf
+	Next
+
+	WinWait($clrmamepro_clrmamepro_win_title)
+	ControlClick($clrmamepro_clrmamepro_win_title, "", "[TEXT:S&canner]")
+	WinWait($clrmamepro_scanner_win_title)
+	ControlClick($clrmamepro_scanner_win_title, "", "[TEXT:N&on-Merged Sets]")
+	ControlClick($clrmamepro_scanner_win_title, "", 14542)
+	ControlClick($clrmamepro_scanner_win_title, "", "[TEXT:Ad&vanced...]")
+	WinWait($clrmamepro_advanced_scanner_options_win_title)
+	ControlClick($clrmamepro_advanced_scanner_options_win_title, "", "[TEXT:Separate B&IOS sets]")
+	WinClose($clrmamepro_advanced_scanner_options_win_title)
+	WinClose($clrmamepro_scanner_win_title)
+	WinWait($clrmamepro_clrmamepro_win_title)
+	ControlClick($clrmamepro_clrmamepro_win_title, "", "[TEXT:&Rebuilder]")
+	WinWait($clrmamepro_rebuilder_win_title)
+	ControlSetText($clrmamepro_rebuilder_win_title, "", "[CLASS:ComboBox; INSTANCE:1]", @ScriptDir & "\clrmamepro_source")
+	ControlSetText($clrmamepro_rebuilder_win_title, "", "[CLASS:ComboBox; INSTANCE:2]", @ScriptDir & "\clrmamepro_destination")
+	ControlClick($clrmamepro_rebuilder_win_title, "", "[TEXT:N&on-Merged Sets]")
+	ControlClick($clrmamepro_rebuilder_win_title, "", "[TEXT:Ad&vanced...]")
+	WinWait($clrmamepro_advanced_rebuilder_options_win_title)
+	ControlClick($clrmamepro_advanced_rebuilder_options_win_title, "", "[TEXT:Separate B&IOS sets]")
+	WinClose($clrmamepro_advanced_rebuilder_options_win_title)
+	WinWait($clrmamepro_rebuilder_win_title)
+	ControlClick($clrmamepro_rebuilder_win_title, "", "[TEXT:Re&build...]")
+	Sleep(5000)
+
+	for $i = 1 to 120
+
+		if WinExists($clrmamepro_rebuilding_sets_win_title) = False Then
+
+			ExitLoop
+		EndIf
+
+		Sleep(500)
+	Next
+
+	ProcessClose("cmpro64.exe")
+
+	return True
+
+
+EndFunc
+

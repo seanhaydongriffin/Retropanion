@@ -320,6 +320,24 @@ if @error = 0 Then
 EndIf
 
 
+GUICtrlCreateTabItem("ROMs")
+
+GUICtrlCreateGroup("ROMs", 20, 140, 250, 500)
+
+Global $rebuild_roms_roms_list = GUICtrlCreateList("", 30, 170, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
+GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
+GUICtrlSetLimit(-1, 500)
+
+Local $rebuild_roms_refresh_button = GUICtrlCreateButton("&Get Data", 30, 590, 80, 40)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+
+Global $rebuild_roms_rebuild_button = GUICtrlCreateButton("Rebuild / Repair", 120, 590, 110, 40)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+
+
+
+
 GUICtrlCreateTabItem("Scrape Metadata")
 
 Global $scrape_metadata_websites_label = GUICtrlCreateLabel("Website(s)", 20, 60, 70, 20)
@@ -691,22 +709,6 @@ Global $config_games_open_button = GUICtrlCreateButton("Open", $game_config_x + 
 Global $config_games_save_as_button = GUICtrlCreateButton("Save As", $game_config_x + 490 + 20, $game_config_y + 305, 60, 20)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-
-
-GUICtrlCreateTabItem("Rebuild ROMs")
-
-Global $rebuild_roms_roms_label = GUICtrlCreateLabel("ROMs", 20, 180, 70, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $rebuild_roms_roms_list = GUICtrlCreateList("", 20, 200, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
-GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
-GUICtrlSetLimit(-1, 500)
-
-Local $rebuild_roms_refresh_button = GUICtrlCreateButton("&Get Data", 20, 640, 80, 40)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-
-Global $rebuild_roms_rebuild_button = GUICtrlCreateButton("Rebuild", 200, 305, 180, 20)
-
-
 
 
 GUICtrlCreateTabItem("Backup")
@@ -1957,20 +1959,20 @@ While True
 
 			GUICtrlSetPos($scrape_manual_join_art_label, 20, 180, 100, 20)
 			GUICtrlSetPos($scrape_manual_join_art_files_label, 180, 180, 70, 20)
-			GUICtrlSetPos($scrape_manual_join_art_list, 20, 200, 200, 500)
+			GUICtrlSetPos($scrape_manual_join_art_list, 20, 200, 200, 420)
 			GUICtrlSetPos($scrape_manual_join_rom_label, 240, 180, 100, 20)
 			GUICtrlSetPos($scrape_manual_join_rom_files_label, 400, 180, 70, 20)
-			GUICtrlSetPos($scrape_manual_join_rom_list, 240, 200, 200, 500)
+			GUICtrlSetPos($scrape_manual_join_rom_list, 240, 200, 200, 420)
 
 
 		case $scrape_manual_join_match_roms_to_art_radio
 
 			GUICtrlSetPos($scrape_manual_join_rom_label, 20, 180, 100, 20)
 			GUICtrlSetPos($scrape_manual_join_rom_files_label, 180, 180, 70, 20)
-			GUICtrlSetPos($scrape_manual_join_rom_list, 20, 200, 200, 500)
+			GUICtrlSetPos($scrape_manual_join_rom_list, 20, 200, 200, 420)
 			GUICtrlSetPos($scrape_manual_join_art_label, 240, 180, 100, 20)
 			GUICtrlSetPos($scrape_manual_join_art_files_label, 400, 180, 70, 20)
-			GUICtrlSetPos($scrape_manual_join_art_list, 240, 200, 200, 500)
+			GUICtrlSetPos($scrape_manual_join_art_list, 240, 200, 200, 420)
 
 
 
@@ -2357,14 +2359,131 @@ While True
 
 		Case $scrape_manual_join_refresh_button
 
+
 			_GUICtrlListBox_ResetContent($scrape_manual_join_art_list)
 			_GUICtrlListBox_ResetContent($scrape_manual_join_rom_list)
-			Local $gamelist_filepath = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\gamelist.xml"
+;			Local $gamelist_filepath = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\gamelist.xml"
+
+;			$result = MsgBox(4+32+256+8192, $app_name, "A gamelist already exists on your computer (date-time)." & @CRLF & @CRLF & "Do you wish to overwrite this with the RetroPie?")
+
+;			if $result = 6 Then
+
+;				GUICtrlSetData($status_input, "Downloading /opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
+;				pscp_download("/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml", $gamelist_filepath)
+;				GUICtrlSetData($status_input, "Downloaded " & $gamelist_filepath)
+;			EndIf
+
+			GUICtrlSetData($status_input, "Getting rom list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)))
+			$result = plink("(cd /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws})", 2)
+			Local $rom_filename_arr = StringSplit($result, @LF, 3)
+			_ArraySort($rom_filename_arr)
+			;_ArrayDisplay($rom_filename_arr)
+			GUICtrlSetData($status_input, "")
+
+			; gamelist XML to array mapping:
+			;	[n][0] = path
+			;	[n][1] = name
+			;	[n][2] = desc
+			;	[n][3] = image
+			;	[n][4] = releasedate
+			;	[n][5] = developer
+			;	[n][6] = publisher
+			;	[n][7] = genre
+			;	[n][8] = players
+			;	[n][9] = playcount
+			;	[n][10] = lastplayed
+
+;			Local $mismatched_rom_filename_arr[0][11]
+
+;			$gamelist_xml_dom = _XMLLoadXML(FileRead($gamelist_filepath), "")
+
+			; find roms that aren't in gamelist.xml
+
+;			for $i = 0 to (UBound($rom_filename_arr) - 1)
+
+;				ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $rom_filename_arr[$i] = ' & $rom_filename_arr[$i] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+;				Local $game_path_value = _XMLGetValue($gamelist_xml_dom, "/gameList/*/path[text()='./" & $rom_filename_arr[$i] & "']")
+;				ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $game_path_value = ' & $game_path_value & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+;				if StringLen($game_path_value) = 0 Then
+
+;					_ArrayAdd($mismatched_rom_filename_arr, "./" & $rom_filename_arr[$i] & "|" & $rom_filename_arr[$i] & "|||||||||")
+;				EndIf
+;			Next
+
+;_ArrayDisplay($mismatched_rom_filename_arr)
+
+			; find metadata in gamelist.xml games that mismatches the scraped metadata
+
+			; populate the roms list
+
+;			Local $tmp_roms_list_arr[0]
+;			Local $gamelist_num_nodes = _XMLGetNodeCount($gamelist_xml_dom, "/gameList/game")
+;			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $gamelist_num_nodes = ' & $gamelist_num_nodes & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+;			for $i = 0 to (UBound($mismatched_rom_filename_arr) - 1)
+
+;				_ArrayAdd($tmp_roms_list_arr, $mismatched_rom_filename_arr[$i][1])
+;			Next
+
+;			for $i = 1 to $gamelist_num_nodes
+
+;				Local $game_name = _XMLGetValue($gamelist_xml_dom, "/gameList/game[" & $i & "]/name")
+;				_ArrayAdd($tmp_roms_list_arr, $game_name)
+
+;			Next
+
+;			_ArraySort($tmp_roms_list_arr)
+
+			_GUICtrlListBox_BeginUpdate($scrape_manual_join_rom_list)
+
+;			for $i = 0 to (UBound($tmp_roms_list_arr) - 1)
+			for $i = 0 to (UBound($rom_filename_arr) - 1)
+
+				_GUICtrlListBox_InsertString($scrape_manual_join_rom_list, $rom_filename_arr[$i])
+			Next
+
+			_GUICtrlListBox_EndUpdate($scrape_manual_join_rom_list)
+
+;			Local $arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Metadata", "*.xml", 1, 0, 1)
+			;_ArrayDisplay($arr)
+			;Exit
+;			Local $num_files = 0
+
+;			for $i = 1 to $arr[0]
+
+;				Local $metadata_name = StringReplace($arr[$i], ".xml", "")
+;				_GUICtrlListBox_InsertString($scrape_metadata_scraped_data_list, $metadata_name)
+;			Next
+
+;			_GUICtrlListBox_SetCurSel($scrape_metadata_scraped_data_list, 0)
+;			GUICtrlSetState($scrape_metadata_scraped_data_list, $GUI_FOCUS)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;			_GUICtrlListBox_ResetContent($scrape_manual_join_art_list)
+;			_GUICtrlListBox_ResetContent($scrape_manual_join_rom_list)
+;			Local $gamelist_filepath = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\gamelist.xml"
 
 			Local $arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box", "*.jpg;*.png", 1, 0, 1)
 			;_ArrayDisplay($arr)
 			;Exit
 			Local $num_files = 0
+
+			_GUICtrlListBox_BeginUpdate($scrape_manual_join_art_list)
 
 			for $i = 1 to $arr[0]
 
@@ -2372,7 +2491,7 @@ While True
 
 				; if there are at least 2 images for this artwork
 
-				if $i < $arr[0] And (StringInStr($arr[$i + 1], "-2.jpg") > 0 or StringInStr($arr[$i + 1], "-2.png") > 0) Then
+				;if $i < $arr[0] And (StringInStr($arr[$i + 1], "-2.jpg") > 0 or StringInStr($arr[$i + 1], "-2.png") > 0) Then
 
 					if _GUICtrlListBox_FindString($scrape_manual_join_art_list, $art_name, True) < 0 Then
 
@@ -2380,46 +2499,48 @@ While True
 						$num_files = $num_files + 1
 						GUICtrlSetData($scrape_manual_join_art_files_label, $num_files & " Files")
 					EndIf
-				EndIf
+				;EndIf
 
 			Next
 
-			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
+			_GUICtrlListBox_EndUpdate($scrape_manual_join_art_list)
 
-			$result = _WinSCP_Open()
+;			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
-			if $result = False Then
+;			$result = _WinSCP_Open()
 
-				GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
-			Else
+;			if $result = False Then
 
-				GUICtrlSetData($status_input, "")
+;				GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
+;			Else
 
-				Local $art_filename_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "-full-cover.jpg")
-				_ArraySort($art_filename_arr)
-				Local $rom_filename_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".bin|.zip|.lha|.a52|.a78|.j64|.lnx|.rom|.nes|.mgw|.gba|.love|.7z|.n64|.z64|.nds|.iso|.32x|.sfc|.smc|.vec|.ws")
-				_ArraySort($rom_filename_arr)
+;				GUICtrlSetData($status_input, "")
+
+;				Local $art_filename_arr = _WinSCP_ListDirectory_Files("/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), "-full-cover.jpg")
+;				_ArraySort($art_filename_arr)
+;				Local $rom_filename_arr = _WinSCP_ListDirectory_Files("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)), ".bin|.zip|.lha|.a52|.a78|.j64|.lnx|.rom|.nes|.mgw|.gba|.love|.7z|.n64|.z64|.nds|.iso|.32x|.sfc|.smc|.vec|.ws")
+;				_ArraySort($rom_filename_arr)
 				;_ArrayDisplay($rom_filename_arr)
 
-				_GUICtrlListBox_BeginUpdate($scrape_manual_join_rom_list)
+;				_GUICtrlListBox_BeginUpdate($scrape_manual_join_rom_list)
 
-				Local $num_roms_without_art = 0
+;				Local $num_roms_without_art = 0
 
-				for $i = 0 to (UBound($rom_filename_arr) - 1)
+;				for $i = 0 to (UBound($rom_filename_arr) - 1)
 ;					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $i = ' & $i & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-					_PathSplit($rom_filename_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
+;					_PathSplit($rom_filename_arr[$i], $sDrive1, $sDir1, $sFileName1, $sExtension1)
 
-					if _ArrayBinarySearch($art_filename_arr, $sFileName1 & "-full-cover.jpg") < 0 Then
+;					if _ArrayBinarySearch($art_filename_arr, $sFileName1 & "-full-cover.jpg") < 0 Then
 
-						_GUICtrlListBox_InsertString($scrape_manual_join_rom_list, $rom_filename_arr[$i])
-						$num_roms_without_art = $num_roms_without_art + 1
-						GUICtrlSetData($scrape_manual_join_rom_files_label, $num_roms_without_art & " Files")
-					EndIf
-				Next
+;						_GUICtrlListBox_InsertString($scrape_manual_join_rom_list, $rom_filename_arr[$i])
+;						$num_roms_without_art = $num_roms_without_art + 1
+;						GUICtrlSetData($scrape_manual_join_rom_files_label, $num_roms_without_art & " Files")
+;					EndIf
+;				Next
 
-				_GUICtrlListBox_EndUpdate($scrape_manual_join_rom_list)
-			EndIf
+;				_GUICtrlListBox_EndUpdate($scrape_manual_join_rom_list)
+;			EndIf
 
 
 		Case $scrape_auto_join_upload_button
@@ -2528,7 +2649,7 @@ While True
 					_GUICtrlListBox_SetCurSel($scrape_manual_join_art_list, $curr_index)
 	;				FileMove($old_art_path, $new_art_path, 1)
 
-					for $i = 1 to 5
+					for $i = 1 to 10
 
 						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-" & $i & ".jpg") = True Then
 
@@ -2680,9 +2801,15 @@ While True
 	;			ShellExecuteWait("magick.exe", "-quality 80% """ & $new_art_path & """ -resize ""1920x1080>"" """ & $new_art_compressed_path & """", $ImageMagick_path, "", @SW_HIDE)
 
 				; resize back and front art to be the same (1920x1080), join together and output to Box_Full at quality 80%
-				ShellExecuteWait("magick.exe", """" & $left_art_path & """ """ & $right_art_path & """ -resize ""1920x1080"" +append -resize ""1920x1080>"" -quality 80% """ & $new_art_path & """", $ImageMagick_path, "", @SW_HIDE)
 
+				if StringCompare($left_art_path, $right_art_path) = 0 Then
 
+;					ShellExecuteWait("magick.exe", """" & $left_art_path & """ -resize ""1920x1080>"" -quality 80% """ & $new_art_path & """", $ImageMagick_path, "", @SW_HIDE)
+					ShellExecuteWait("magick.exe", """" & $left_art_path & """ -resize ""1920x1080"" -quality 80% """ & $new_art_path & """", $ImageMagick_path, "", @SW_HIDE)
+				Else
+
+					ShellExecuteWait("magick.exe", """" & $left_art_path & """ """ & $right_art_path & """ -resize ""1920x1080"" +append -resize ""1920x1080>"" -quality 80% """ & $new_art_path & """", $ImageMagick_path, "", @SW_HIDE)
+				EndIf
 
 				Local $filesize = FileGetSize($new_art_path)
 				Local $filesize_compressed = FileGetSize($new_art_compressed_path)
@@ -2699,15 +2826,17 @@ While True
 				; upload the joined art to the RetroPie
 				;	it's assumed the WinSCP connection is still open from the Refresh button above
 
-				Local $msg = "Copying to the RetroPie - " & $sFileName1 & "-full-cover.jpg ..."
+				Local $msg = "Saving to the RetroPie - " & $sFileName1 & "-full-cover.jpg ..."
 				ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $msg = ' & $msg & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 				GUICtrlSetData($status_input, $msg)
-				$result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
+				;$result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
+				pscp_upload($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
+				GUICtrlSetData($status_input, "Saved """ & $sFileName1 & "-full-cover.jpg"" to the RetroPie")
 
-				if $result = False Then
+;				if $result = False Then
 
-					GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
-				Else
+;					GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
+;				Else
 
 					Local $num_rom_files = Number(StringReplace(GUICtrlRead($scrape_manual_join_rom_files_label), " Files", ""))
 					;Local $rom_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_manual_join_rom_list)
@@ -2715,7 +2844,7 @@ While True
 					_GUICtrlListBox_DeleteString($scrape_manual_join_rom_list, $selected_indices[$index_num])
 					$num_rom_files = $num_rom_files - 1
 					GUICtrlSetData($scrape_manual_join_rom_files_label, $num_rom_files & " Files")
-				EndIf
+;				EndIf
 			Next
 
 			Local $num_art_files = Number(StringReplace(GUICtrlRead($scrape_manual_join_art_files_label), " Files", ""))
@@ -2745,16 +2874,18 @@ While True
 ;				EndIf
 			EndIf
 
-			if GUICtrlRead($scrape_manual_join_match_roms_to_art_radio) = $GUI_CHECKED Then
-
-				GUICtrlSetState($scrape_manual_join_rom_list, $GUI_ENABLE)
-				;_GUICtrlListBox_ClickItem($scrape_manual_join_rom_list, $rom_list_selected_index)
-			EndIf
-
 			GUICtrlSetData($status_input, "")
 			GUICtrlSetState($scrape_manual_join_art_list, $GUI_ENABLE)
 			GUICtrlSetState($scrape_manual_join_rom_list, $GUI_ENABLE)
 			GUICtrlSetState($scrape_manual_join_upload_button, $GUI_ENABLE)
+
+			if GUICtrlRead($scrape_manual_join_match_roms_to_art_radio) = $GUI_CHECKED Then
+
+				;GUICtrlSetState($scrape_manual_join_rom_list, $GUI_ENABLE)
+				GUICtrlSetState($scrape_manual_join_rom_list, $GUI_FOCUS)
+				_GUICtrlListBox_SetCaretIndex($scrape_manual_join_rom_list, $selected_indices[1])
+				_GUICtrlListBox_ClickItem($scrape_manual_join_rom_list, $selected_indices[1])
+			EndIf
 
 
 		Case $scrape_auto_join_upload_gamelist_button
@@ -2902,6 +3033,9 @@ While True
 			EndIf
 
 
+		Case $art_1_front, $art_2_front, $art_3_front, $art_4_front, $art_5_front, $art_1_back, $art_2_back, $art_3_back, $art_4_back, $art_5_back
+
+			GUICtrlSetState($scrape_manual_join_art_list, $GUI_FOCUS)
 
 
 
@@ -3539,20 +3673,27 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						_GUICtrlListBox_SetTopIndex($scrape_manual_join_rom_list, $selected_index - 11)
 					EndIf
 
-					if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.*") = True Then
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.*") = True Then
 
 						GUICtrlSetState($scrape_manual_join_art_1_pic, $GUI_SHOW)
 						GUICtrlSetState($art_1_front, $GUI_SHOW)
 						GUICtrlSetState($art_1_front, $GUI_CHECKED)
 						GUICtrlSetState($art_1_back, $GUI_SHOW)
-						GUICtrlSetState($art_1_back, $GUI_UNCHECKED)
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.jpg") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.*") = True Then
 
-							GUICtrlSetImage($scrape_manual_join_art_1_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.jpg")
+							GUICtrlSetState($art_1_back, $GUI_UNCHECKED)
 						Else
 
-							GUICtrlSetImagePNG($scrape_manual_join_art_1_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.png")
+							GUICtrlSetState($art_1_back, $GUI_CHECKED)
+						EndIf
+
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.jpg") = True Then
+
+							GUICtrlSetImage($scrape_manual_join_art_1_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.jpg")
+						Else
+
+							GUICtrlSetImagePNG($scrape_manual_join_art_1_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.png")
 						EndIf
 					Else
 
@@ -3563,7 +3704,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($art_1_back, $GUI_UNCHECKED)
 					EndIf
 
-					if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.*") = True Then
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.*") = True Then
 
 						GUICtrlSetState($scrape_manual_join_art_2_pic, $GUI_SHOW)
 						GUICtrlSetState($art_2_front, $GUI_SHOW)
@@ -3571,12 +3712,12 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($art_2_back, $GUI_SHOW)
 						GUICtrlSetState($art_2_back, $GUI_CHECKED)
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.jpg") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.jpg") = True Then
 
-							GUICtrlSetImage($scrape_manual_join_art_2_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.jpg")
+							GUICtrlSetImage($scrape_manual_join_art_2_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.jpg")
 						Else
 
-							GUICtrlSetImagePNG($scrape_manual_join_art_2_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.png")
+							GUICtrlSetImagePNG($scrape_manual_join_art_2_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.png")
 						EndIf
 					Else
 
@@ -3587,7 +3728,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($art_2_back, $GUI_UNCHECKED)
 					EndIf
 
-					if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.*") = True Then
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.*") = True Then
 
 						GUICtrlSetState($scrape_manual_join_art_3_pic, $GUI_SHOW)
 						GUICtrlSetState($art_3_front, $GUI_SHOW)
@@ -3595,12 +3736,12 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($art_3_back, $GUI_SHOW)
 						GUICtrlSetState($art_3_back, $GUI_UNCHECKED)
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.jpg") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.jpg") = True Then
 
-							GUICtrlSetImage($scrape_manual_join_art_3_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.jpg")
+							GUICtrlSetImage($scrape_manual_join_art_3_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.jpg")
 						Else
 
-							GUICtrlSetImagePNG($scrape_manual_join_art_3_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.png")
+							GUICtrlSetImagePNG($scrape_manual_join_art_3_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.png")
 						EndIf
 					Else
 
@@ -3611,7 +3752,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($art_3_back, $GUI_UNCHECKED)
 					EndIf
 
-					if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.*") = True Then
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.*") = True Then
 
 						GUICtrlSetState($scrape_manual_join_art_4_pic, $GUI_SHOW)
 						GUICtrlSetState($art_4_front, $GUI_SHOW)
@@ -3619,12 +3760,12 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($art_4_back, $GUI_SHOW)
 						GUICtrlSetState($art_4_back, $GUI_UNCHECKED)
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.jpg") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.jpg") = True Then
 
-							GUICtrlSetImage($scrape_manual_join_art_4_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.jpg")
+							GUICtrlSetImage($scrape_manual_join_art_4_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.jpg")
 						Else
 
-							GUICtrlSetImagePNG($scrape_manual_join_art_4_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.png")
+							GUICtrlSetImagePNG($scrape_manual_join_art_4_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.png")
 						EndIf
 					Else
 
@@ -3635,7 +3776,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($art_4_back, $GUI_UNCHECKED)
 					EndIf
 
-					if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.*") = True Then
+					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.*") = True Then
 
 						GUICtrlSetState($scrape_manual_join_art_5_pic, $GUI_SHOW)
 						GUICtrlSetState($art_5_front, $GUI_SHOW)
@@ -3643,12 +3784,12 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						GUICtrlSetState($art_5_back, $GUI_SHOW)
 						GUICtrlSetState($art_5_back, $GUI_UNCHECKED)
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.jpg") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.jpg") = True Then
 
-							GUICtrlSetImage($scrape_manual_join_art_5_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.jpg")
+							GUICtrlSetImage($scrape_manual_join_art_5_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.jpg")
 						Else
 
-							GUICtrlSetImagePNG($scrape_manual_join_art_5_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.png")
+							GUICtrlSetImagePNG($scrape_manual_join_art_5_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.png")
 						EndIf
 					Else
 
@@ -3692,20 +3833,27 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 						_GUICtrlListBox_SetTopIndex($scrape_manual_join_art_list, $selected_index - 11)
 						Local $art_name = _GUICtrlListBox_GetText($scrape_manual_join_art_list, $selected_index)
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.*") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.*") = True Then
 
 							GUICtrlSetState($scrape_manual_join_art_1_pic, $GUI_SHOW)
 							GUICtrlSetState($art_1_front, $GUI_SHOW)
 							GUICtrlSetState($art_1_front, $GUI_CHECKED)
 							GUICtrlSetState($art_1_back, $GUI_SHOW)
-							GUICtrlSetState($art_1_back, $GUI_UNCHECKED)
 
-							if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.jpg") = True Then
+							if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.*") = True Then
 
-								GUICtrlSetImage($scrape_manual_join_art_1_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.jpg")
+								GUICtrlSetState($art_1_back, $GUI_UNCHECKED)
 							Else
 
-								GUICtrlSetImagePNG($scrape_manual_join_art_1_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.png")
+								GUICtrlSetState($art_1_back, $GUI_CHECKED)
+							EndIf
+
+							if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.jpg") = True Then
+
+								GUICtrlSetImage($scrape_manual_join_art_1_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.jpg")
+							Else
+
+								GUICtrlSetImagePNG($scrape_manual_join_art_1_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.png")
 							EndIf
 						Else
 
@@ -3716,7 +3864,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 							GUICtrlSetState($art_1_back, $GUI_UNCHECKED)
 						EndIf
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.*") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.*") = True Then
 
 							GUICtrlSetState($scrape_manual_join_art_2_pic, $GUI_SHOW)
 							GUICtrlSetState($art_2_front, $GUI_SHOW)
@@ -3724,12 +3872,12 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 							GUICtrlSetState($art_2_back, $GUI_SHOW)
 							GUICtrlSetState($art_2_back, $GUI_CHECKED)
 
-							if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.jpg") = True Then
+							if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.jpg") = True Then
 
-								GUICtrlSetImage($scrape_manual_join_art_2_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.jpg")
+								GUICtrlSetImage($scrape_manual_join_art_2_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.jpg")
 							Else
 
-								GUICtrlSetImagePNG($scrape_manual_join_art_2_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.png")
+								GUICtrlSetImagePNG($scrape_manual_join_art_2_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-2.png")
 							EndIf
 						Else
 
@@ -3740,7 +3888,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 							GUICtrlSetState($art_2_back, $GUI_UNCHECKED)
 						EndIf
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.*") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.*") = True Then
 
 							GUICtrlSetState($scrape_manual_join_art_3_pic, $GUI_SHOW)
 							GUICtrlSetState($art_3_front, $GUI_SHOW)
@@ -3748,12 +3896,12 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 							GUICtrlSetState($art_3_back, $GUI_SHOW)
 							GUICtrlSetState($art_3_back, $GUI_UNCHECKED)
 
-							if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.jpg") = True Then
+							if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.jpg") = True Then
 
-								GUICtrlSetImage($scrape_manual_join_art_3_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.jpg")
+								GUICtrlSetImage($scrape_manual_join_art_3_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.jpg")
 							Else
 
-								GUICtrlSetImagePNG($scrape_manual_join_art_3_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.png")
+								GUICtrlSetImagePNG($scrape_manual_join_art_3_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-3.png")
 							EndIf
 						Else
 
@@ -3764,7 +3912,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 							GUICtrlSetState($art_3_back, $GUI_UNCHECKED)
 						EndIf
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.*") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.*") = True Then
 
 							GUICtrlSetState($scrape_manual_join_art_4_pic, $GUI_SHOW)
 							GUICtrlSetState($art_4_front, $GUI_SHOW)
@@ -3772,12 +3920,12 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 							GUICtrlSetState($art_4_back, $GUI_SHOW)
 							GUICtrlSetState($art_4_back, $GUI_UNCHECKED)
 
-							if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.jpg") = True Then
+							if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.jpg") = True Then
 
-								GUICtrlSetImage($scrape_manual_join_art_4_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.jpg")
+								GUICtrlSetImage($scrape_manual_join_art_4_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.jpg")
 							Else
 
-								GUICtrlSetImagePNG($scrape_manual_join_art_4_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.png")
+								GUICtrlSetImagePNG($scrape_manual_join_art_4_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-4.png")
 							EndIf
 						Else
 
@@ -3788,7 +3936,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 							GUICtrlSetState($art_4_back, $GUI_UNCHECKED)
 						EndIf
 
-						if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.*") = True Then
+						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.*") = True Then
 
 							GUICtrlSetState($scrape_manual_join_art_5_pic, $GUI_SHOW)
 							GUICtrlSetState($art_5_front, $GUI_SHOW)
@@ -3796,12 +3944,12 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 							GUICtrlSetState($art_5_back, $GUI_SHOW)
 							GUICtrlSetState($art_5_back, $GUI_UNCHECKED)
 
-							if FileExists($download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.jpg") = True Then
+							if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.jpg") = True Then
 
-								GUICtrlSetImage($scrape_manual_join_art_5_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.jpg")
+								GUICtrlSetImage($scrape_manual_join_art_5_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.jpg")
 							Else
 
-								GUICtrlSetImagePNG($scrape_manual_join_art_5_pic, $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.png")
+								GUICtrlSetImagePNG($scrape_manual_join_art_5_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-5.png")
 							EndIf
 						Else
 

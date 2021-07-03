@@ -25,6 +25,10 @@
 #Include "_XMLDomWrapper2.au3"
 
 
+
+
+
+
 _GDIPlus_Startup()
 
 
@@ -196,10 +200,11 @@ Global $main_gui = GUICreate($app_name, 840, 720, -1, -1, BitOR($WS_MINIMIZEBOX,
 Global $tooltip = _GUIToolTip_Create(0) ; default style tooltip
 _GUIToolTip_SetMaxTipWidth($tooltip, 300)
 
-Global $system_label = GUICtrlCreateLabel("System", 20, 5, 80, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-_GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
-Global $system_combo = GUICtrlCreateCombo("", 70, 5, 250, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+GUICtrlCreateGroup("System", 5, 0, 350, 40)
+;Global $system_label = GUICtrlCreateLabel("System", 20, 5, 80, 20)
+;GUICtrlSetResizing(-1, $GUI_DOCKALL)
+;_GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
+Global $system_combo = GUICtrlCreateCombo("", 10, 15, 250, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUICtrlComboBox_AddString($system_combo, "3DO")
 _GUICtrlComboBox_AddString($system_combo, "Amstrad CPC 464")
@@ -246,10 +251,38 @@ _GUICtrlComboBox_AddString($system_combo, "Sony PlayStation")
 _GUICtrlComboBox_AddString($system_combo, "Sony PlayStation 2")
 _GUICtrlComboBox_AddString($system_combo, "Sony PSP")
 _GUICtrlComboBox_SetCurSel($system_combo, 0)
-Global $system_open_docs_page_button = GUICtrlCreateButton("Open Docs page", 350, 5, 100, 20)
-Global $system_open_wiki_page_button = GUICtrlCreateButton("Open Wiki page", 460, 5, 100, 20)
+Global $system_open_docs_page_button = GUICtrlCreateButton("Open Docs page", 270, 10, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\open docs page.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Open the RetroPie Docs page for this system", GUICtrlGetHandle(-1))
+Global $system_open_wiki_page_button = GUICtrlCreateButton("Open Wiki page", 300, 10, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\open wiki page.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Open the Wiki page for this system", GUICtrlGetHandle(-1))
+GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-Global $tab = GUICtrlCreateTab(5, 30, 840-10, 720-30-30)
+GUICtrlCreateGroup("Display Device", 360, 0, 200, 40)
+Global $display_device_name_combo = GUICtrlCreateCombo("", 370, 15, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+GUICtrlCreateGroup("EmulationStation", 580, 0, 100, 40)
+Local $config_restart_emulationstation_button = GUICtrlCreateButton("Restart", 590, 15, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\restart.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Restart EmulationStation", GUICtrlGetHandle(-1))
+;Local $config_shutdown_emulationstation_button = GUICtrlCreateButton("Shutdown", $systems_list_config_x + 20, $systems_list_config_y + 120, 120, 40)
+Local $config_quit_emulationstation_button = GUICtrlCreateButton("Quit", 620, 15, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\exit.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Quit EmulationStation", GUICtrlGetHandle(-1))
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+GUICtrlCreateGroup("RetroPie", 700, 0, 100, 40)
+Global $config_reboot_button = GUICtrlCreateButton("Restart", 710, 15, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\restart.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Restart RetroPie", GUICtrlGetHandle(-1))
+Global $config_shutdown_button = GUICtrlCreateButton("Shutdown", 740, 15, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\shutdown.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Shutdown RetroPie", GUICtrlGetHandle(-1))
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+Global $tab = GUICtrlCreateTab(5, 40, 840-10, 720-30-30)
 GUICtrlSetResizing(-1, $GUI_DOCKVCENTER + $GUI_DOCKBORDERS)
 
 Global $settings_tabitem = GUICtrlCreateTabItem("Settings")
@@ -265,39 +298,51 @@ Global $image_compression_quality_slider = GUICtrlCreateSlider(260, 60, 200, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 10, 1)
 GUICtrlSetData(-1, 10)
-Global $retropie_hostname_label = GUICtrlCreateLabel("RetroPie Hostname", 20, 80, 100, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_hostname_input = GUICtrlCreateInput("retropie", 130, 80, 240, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_username_label = GUICtrlCreateLabel("RetroPie Username", 20, 100, 100, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_username_input = GUICtrlCreateInput("pi", 130, 100, 240, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_password_label = GUICtrlCreateLabel("RetroPie Password", 20, 120, 100, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_password_input = GUICtrlCreateInput("raspberry", 130, 120, 240, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_ssh_key_label = GUICtrlCreateLabel("RetroPie SSH Key", 20, 140, 100, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_ssh_key_input = GUICtrlCreateInput("ssh-ed25519 255 cq4AFscwWDozkpWLAzpJmZak8M7USnljP1lO36e23Co=", 130, 140, 240, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_download_path_label = GUICtrlCreateLabel("Download Path", 20, 160, 100, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_download_path_input = GUICtrlCreateInput("D:\dwn", 130, 160, 240, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Confirmation Prompts", 20, 180, 200, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
 
-GUICtrlCreateGroup("Display Device", 20, 220, 300, 450)
-Global $display_device_name_label = GUICtrlCreateLabel("Name", 30, 240, 30, 20)
+GUICtrlCreateGroup("RetroPie", 20, 80, 380, 160)
+Global $retropie_hostname_label = GUICtrlCreateLabel("Hostname", 30, 100, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-_GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
-Global $display_device_name_combo = GUICtrlCreateCombo("", 70, 240, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+Global $retropie_hostname_input = GUICtrlCreateInput("retropie", 120, 100, 240, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $display_device_add_button = GUICtrlCreateButton("Add", 230, 240, 40, 20)
-Global $display_device_delete_button = GUICtrlCreateButton("Del", 275, 240, 40, 20)
-Global $display_device_scan_modes_button = GUICtrlCreateButton("Scan Modes", 30, 270, 120, 20)
-Global $display_device_listview = GUICtrlCreateListView("Video Mode|Resolution", 30, 300, 260, 360)
+Global $retropie_username_label = GUICtrlCreateLabel("Username", 30, 120, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $retropie_username_input = GUICtrlCreateInput("pi", 120, 120, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $retropie_password_label = GUICtrlCreateLabel("Password", 30, 140, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $retropie_password_input = GUICtrlCreateInput("raspberry", 120, 140, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $retropie_ssh_key_label = GUICtrlCreateLabel("SSH Key", 30, 160, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $retropie_ssh_key_input = GUICtrlCreateInput("ssh-ed25519 255 cq4AFscwWDozkpWLAzpJmZak8M7USnljP1lO36e23Co=", 120, 160, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Confirmation Prompts", 420, 180, 200, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+GUICtrlCreateGroup("PC", 20, 300, 380, 100)
+Global $retropie_download_path_label = GUICtrlCreateLabel("Download Path", 30, 320, 100, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $retropie_download_path_input = GUICtrlCreateInput("D:\dwn", 120, 320, 240, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+GUICtrlCreateGroup("Display Device", 420, 220, 300, 450)
+;Global $display_device_name_label = GUICtrlCreateLabel("Name", 30, 240, 30, 20)
+;GUICtrlSetResizing(-1, $GUI_DOCKALL)
+;_GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
+;Global $display_device_name_combo = GUICtrlCreateCombo("", 70, 240, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+;GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $display_device_add_button = GUICtrlCreateButton("Add", 430, 240, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\add.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Add a new Display Device", GUICtrlGetHandle(-1))
+Global $display_device_delete_button = GUICtrlCreateButton("Del", 460, 240, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\delete.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Delete the selected Display Device", GUICtrlGetHandle(-1))
+Global $display_device_scan_modes_button = GUICtrlCreateButton("Scan Modes", 490, 240, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\scan video modes.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Scan all video modes for the connected Display Device", GUICtrlGetHandle(-1))
+Global $display_device_listview = GUICtrlCreateListView("Video Mode|Resolution", 430, 300, 260, 360)
 _GUICtrlListView_SetColumnWidth(-1, 0, 90)
 _GUICtrlListView_SetColumnWidth(-1, 1, 160)
 _GUICtrlListView_SetExtendedListViewStyle($display_device_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
@@ -328,10 +373,14 @@ Global $rebuild_roms_roms_list = GUICtrlCreateList("", 30, 170, 200, 420, BitOR(
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 GUICtrlSetLimit(-1, 500)
 
-Local $rebuild_roms_refresh_button = GUICtrlCreateButton("&Get Data", 30, 590, 80, 40)
+Local $rebuild_roms_refresh_button = GUICtrlCreateButton("&Get Data", 30, 590, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\get from retropie.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Get the list of roms from the RetroPie", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
-Global $rebuild_roms_rebuild_button = GUICtrlCreateButton("Rebuild / Repair", 120, 590, 110, 40)
+Global $rebuild_roms_rebuild_button = GUICtrlCreateButton("Rebuild / Repair", 120, 590, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\repair.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Rebuild / Repair the selected rom", GUICtrlGetHandle(-1))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 
@@ -360,7 +409,8 @@ Global $scrape_metadata_minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Min
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($scrape_metadata_minimized_scrapers_checkbox))
-Local $scrape_metadata_scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 80, 20)
+Local $scrape_metadata_scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\scraper.ico")
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
 	"Scrapes box art according to the selections above." & @CRLF & _
@@ -368,7 +418,7 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	"Front Covers will be stored in the Box folder." & @CRLF  & _
 	"Back Covers will be stored in the BoxBack folder." & @CRLF  & _
 	"Full Covers will be stored in the BoxFull folder." & @CRLF _
-	, GUICtrlGetHandle($scrape_metadata_scrape_button))
+	, GUICtrlGetHandle(-1))
 
 GUICtrlCreateGroup("", -1, -1, 0, 0)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -394,7 +444,9 @@ Global $scrape_metadata_games_list = GUICtrlCreateList("", 240, 200, 200, 420, B
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 ;GUICtrlSetLimit(-1, 500)
 
-Local $scrape_metadata_refresh_button = GUICtrlCreateButton("&Get Data", 20, 640, 80, 40)
+Local $scrape_metadata_refresh_button = GUICtrlCreateButton("&Get Data", 20, 640, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\get from retropie and scraper.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Get data scraped (local PC) plus games list (RetroPie)", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
 GUICtrlCreateGroup("Mismatching Metadata Type", 460, 200, 200, 150)
@@ -455,7 +507,8 @@ Global $minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Minimized Scrapers"
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($minimized_scrapers_checkbox))
-Local $scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 80, 20)
+Local $scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\scraper.ico")
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
 	"Scrapes box art according to the selections above." & @CRLF & _
@@ -463,7 +516,7 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	"Front Covers will be stored in the Box folder." & @CRLF  & _
 	"Back Covers will be stored in the BoxBack folder." & @CRLF  & _
 	"Full Covers will be stored in the BoxFull folder." & @CRLF _
-	, GUICtrlGetHandle($scrape_button))
+	, GUICtrlGetHandle(-1))
 
 Global $scrape_auto_join_match_art_to_roms_radio = GUICtrlCreateRadio("Match Art to Roms", 650, 120, 120, 20)
 GUICtrlSetState(-1, $GUI_CHECKED)
@@ -485,7 +538,9 @@ GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_auto_join_rom_list = GUICtrlCreateList("", 240, 120, 200, 350, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 500)
-Local $scrape_auto_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 480, 80, 40)
+Local $scrape_auto_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 480, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\get from retropie and scraper.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Get art scraped (local PC) plus games list (RetroPie)", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Local $scrape_auto_join_upload_button = GUICtrlCreateButton("Upload &Art", 440, 550, 180, 40)
 GUICtrlSetState(-1, $GUI_DEFBUTTON)
@@ -520,7 +575,8 @@ Global $scrape_manual_join_minimized_scrapers_checkbox = GUICtrlCreateCheckbox("
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($scrape_manual_join_minimized_scrapers_checkbox))
-Local $scrape_manual_join_scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 80, 20)
+Local $scrape_manual_join_scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\scraper.ico")
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
 	"Scrapes box art according to the selections above." & @CRLF & _
@@ -528,7 +584,7 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	"Front Covers will be stored in the Box folder." & @CRLF  & _
 	"Back Covers will be stored in the BoxBack folder." & @CRLF  & _
 	"Full Covers will be stored in the BoxFull folder." & @CRLF _
-	, GUICtrlGetHandle($scrape_manual_join_scrape_button))
+	, GUICtrlGetHandle(-1))
 
 GUICtrlCreateGroup("", -1, -1, 0, 0)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -558,15 +614,21 @@ Global $scrape_manual_join_rom_list = GUICtrlCreateList("", 240, 200, 200, 420, 
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 ;GUICtrlSetLimit(-1, 500)
 
-Local $scrape_manual_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 640, 80, 40)
+Local $scrape_manual_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 640, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\get from retropie and scraper.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Get art scraped (local PC) plus games list (RetroPie)", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 Local $scrape_manual_join_upload_button = GUICtrlCreateButton("Upload &Art", 240, 640, 80, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 Local $scrape_manual_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 330, 640, 100, 40)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_down_button = GUICtrlCreateButton("&Down", 710, 640, 50, 40)
+Local $scrape_manual_join_down_button = GUICtrlCreateButton("&Down", 710, 640, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\down.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Move selection down", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_up_button = GUICtrlCreateButton("&Up", 770, 640, 50, 40)
+Local $scrape_manual_join_up_button = GUICtrlCreateButton("&Up", 770, 640, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\up.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Move selection up", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
 Global $scrape_manual_join_art_1_pic = GUICtrlCreatePic("", 480, 80, 220, 110)
@@ -646,15 +708,10 @@ Local $game_config_y = $boot_config_y + 210
 
 GUICtrlCreateGroup("RetroPie", $boot_config_x, $boot_config_y, 200, 180)
 Local $config_boot_edit_config_button = GUICtrlCreateButton("Edit Boot Config", $boot_config_x + 20, $boot_config_y + 20, 120, 40)
-Local $config_reboot_button = GUICtrlCreateButton("Restart", $boot_config_x + 20, $boot_config_y + 70, 120, 40)
-Local $config_shutdown_button = GUICtrlCreateButton("Shutdown", $boot_config_x + 20, $boot_config_y + 120, 120, 40)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlCreateGroup("EmulationStation", $systems_list_config_x, $systems_list_config_y, 200, 180)
 Local $config_edit_systems_list_button = GUICtrlCreateButton("Edit Systems List", $systems_list_config_x + 20, $systems_list_config_y + 20, 120, 40)
-Local $config_restart_emulationstation_button = GUICtrlCreateButton("Restart", $systems_list_config_x + 20, $systems_list_config_y + 70, 120, 40)
-;Local $config_shutdown_emulationstation_button = GUICtrlCreateButton("Shutdown", $systems_list_config_x + 20, $systems_list_config_y + 120, 120, 40)
-Local $config_quit_emulationstation_button = GUICtrlCreateButton("Quit", $systems_list_config_x + 20, $systems_list_config_y + 120, 120, 40)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlCreateGroup("Input Devices", $input_devices_config_x, $input_devices_config_y, 200, 180)

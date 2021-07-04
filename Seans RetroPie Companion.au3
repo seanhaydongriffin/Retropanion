@@ -334,8 +334,8 @@ Global $rebuild_roms_roms_list = GUICtrlCreateList("", 30, 170, 200, 420, BitOR(
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 GUICtrlSetLimit(-1, 500)
 Local $rebuild_roms_refresh_button = GUICtrlCreateButton("&Get Data", 30, 590, 36, 36, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\get from retropie.ico")
-_GUIToolTip_AddTool($tooltip, 0, "Get the list of roms from the RetroPie", GUICtrlGetHandle(-1))
+GUICtrlSetImage(-1, @ScriptDir & "\get games list.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Get the list of games (from the RetroPie)", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 Global $rebuild_roms_rebuild_button = GUICtrlCreateButton("Rebuild / Repair", 120, 590, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\repair.ico")
@@ -367,10 +367,10 @@ GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($scrape_metadata_minimized_scrapers_checkbox))
 Local $scrape_metadata_scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 36, 36, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\scraper.ico")
+GUICtrlSetImage(-1, @ScriptDir & "\scrape metadata.ico")
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
-	"Scrapes box art according to the selections above." & @CRLF & _
+	"Scrapes game metadata according to the selections above." & @CRLF & _
 	@CRLF & _
 	"Front Covers will be stored in the Box folder." & @CRLF  & _
 	"Back Covers will be stored in the BoxBack folder." & @CRLF  & _
@@ -382,9 +382,13 @@ GUICtrlSetState(-1, $GUI_HIDE)
 Global $scrape_metadata_match_scraped_data_to_games_radio = GUICtrlCreateRadio("Match Scraped Data to Games", 30, 140, 180, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
-Global $scrape_metadata_match_games_to_scraped_data_radio = GUICtrlCreateRadio("Match Games to Scraped Data", 240, 140, 180, 20)
+Global $scrape_metadata_match_games_to_scraped_data_radio = GUICtrlCreateRadio("Match Games to Scraped Data", 220, 140, 180, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
+Local $scrape_metadata_refresh_button = GUICtrlCreateButton("&Get Data", 400, 140, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\get games metadata.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Get scraped metadata plus game names (from the RetroPie)", GUICtrlGetHandle(-1))
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
 Global $scrape_metadata_scraped_data_label = GUICtrlCreateLabel("Scraped Data", 20, 180, 70, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
@@ -401,10 +405,6 @@ Global $scrape_metadata_games_list = GUICtrlCreateList("", 240, 200, 200, 420, B
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 ;GUICtrlSetLimit(-1, 500)
 
-Local $scrape_metadata_refresh_button = GUICtrlCreateButton("&Get Data", 20, 640, 36, 36, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\get from retropie and scraper.ico")
-_GUIToolTip_AddTool($tooltip, 0, "Get data scraped (local PC) plus games list (RetroPie)", GUICtrlGetHandle(-1))
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
 GUICtrlCreateGroup("Mismatching Metadata Type", 460, 200, 200, 150)
 Global $scrape_metadata_release_date_checkbox = GUICtrlCreateCheckbox("Release Date", 480, 220, 120, 20)
@@ -465,7 +465,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($minimized_scrapers_checkbox))
 Local $scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 36, 36, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\scraper.ico")
+GUICtrlSetImage(-1, @ScriptDir & "\scrape art.ico")
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
 	"Scrapes box art according to the selections above." & @CRLF & _
@@ -480,6 +480,10 @@ GUICtrlSetState(-1, $GUI_CHECKED)
 Global $scrape_auto_join_match_roms_to_art_radio = GUICtrlCreateRadio("Match Roms to Art", 650, 140, 120, 20)
 Global $scrape_auto_join_exclude_uploaded_art_checkbox = GUICtrlCreateCheckbox("Exclude Uploaded Art", 650, 160, 120, 20)
 GUICtrlSetState(-1, $GUI_CHECKED)
+Local $scrape_auto_join_refresh_button = GUICtrlCreateButton("&Refresh", 650, 190, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\get games art.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Get scraped art plus game names (from the RetroPie)", GUICtrlGetHandle(-1))
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
 
 Global $scrape_auto_join_art_label = GUICtrlCreateLabel("Art", 20, 100, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
@@ -495,14 +499,14 @@ GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_auto_join_rom_list = GUICtrlCreateList("", 240, 120, 200, 350, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 500)
-Local $scrape_auto_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 480, 36, 36, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\get from retropie and scraper.ico")
-_GUIToolTip_AddTool($tooltip, 0, "Get art scraped (local PC) plus games list (RetroPie)", GUICtrlGetHandle(-1))
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Local $scrape_auto_join_upload_button = GUICtrlCreateButton("Upload &Art", 440, 550, 180, 40)
+Local $scrape_auto_join_upload_button = GUICtrlCreateButton("Upload &Art", 450, 120, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\upload art.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Upload selected art with game name (to the RetroPie)", GUICtrlGetHandle(-1))
 GUICtrlSetState(-1, $GUI_DEFBUTTON)
 Local $scrape_auto_join_rotate_art_button = GUICtrlCreateButton("Split Back && Front Art and R&otate", 440, 600, 180, 40)
-Local $scrape_auto_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist ...", 680, 480, 100, 40)
+Local $scrape_auto_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist ...", 450, 430, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\update list.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Update games list (on the RetroPie) with all art uploaded", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 
 Global $scrape_auto_join_art_1_pic = GUICtrlCreatePic("", 20, 540, 384, 120)
@@ -533,7 +537,7 @@ GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($scrape_manual_join_minimized_scrapers_checkbox))
 Local $scrape_manual_join_scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 36, 36, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\scraper.ico")
+GUICtrlSetImage(-1, @ScriptDir & "\scrape art.ico")
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
 	"Scrapes box art according to the selections above." & @CRLF & _
@@ -551,10 +555,13 @@ GUICtrlSetState(-1, $GUI_CHECKED)
 Global $scrape_manual_join_match_roms_to_art_radio = GUICtrlCreateRadio("Match Roms to Art", 140, 140, 120, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-
 Global $scrape_manual_join_exclude_uploaded_art_checkbox = GUICtrlCreateCheckbox("Exclude Uploaded Art", 260, 140, 120, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
+Local $scrape_manual_join_refresh_button = GUICtrlCreateButton("&Refresh", 400, 140, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\get games art.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Get scraped art plus game names (from the RetroPie) - Alt+R", GUICtrlGetHandle(-1))
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
 Global $scrape_manual_join_art_label = GUICtrlCreateLabel("Art", 20, 180, 70, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
@@ -570,14 +577,13 @@ GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $scrape_manual_join_rom_list = GUICtrlCreateList("", 240, 200, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL, $LBS_EXTENDEDSEL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 ;GUICtrlSetLimit(-1, 500)
-
-Local $scrape_manual_join_refresh_button = GUICtrlCreateButton("&Refresh", 20, 640, 36, 36, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\get from retropie and scraper.ico")
-_GUIToolTip_AddTool($tooltip, 0, "Get art scraped (local PC) plus games list (RetroPie)", GUICtrlGetHandle(-1))
+Local $scrape_manual_join_upload_button = GUICtrlCreateButton("Upload &Art", 450, 200, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\upload art.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Upload selected art with game name (to the RetroPie) - Alt+A", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_upload_button = GUICtrlCreateButton("Upload &Art", 240, 640, 80, 40)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 330, 640, 100, 40)
+Local $scrape_manual_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 450, 575, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\update list.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Update games list (on the RetroPie) with all art uploaded - Alt+G", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 Local $scrape_manual_join_down_button = GUICtrlCreateButton("&Down", 710, 640, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\down.ico")
@@ -690,6 +696,7 @@ _GUIToolTip_AddTool($tooltip, 0, "Delete the selected Display Device", GUICtrlGe
 Global $display_device_scan_modes_button = GUICtrlCreateButton("Scan Modes", 90, 170, 28, 28, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\scan video modes.ico")
 _GUIToolTip_AddTool($tooltip, 0, "Scan all video modes for the connected Display Device", GUICtrlGetHandle(-1))
+Global $display_label = GUICtrlCreateLabel("Video Modes for the ""..."" display", 30, 210, 200, 20)
 Global $display_device_listview = GUICtrlCreateListView("Video Mode|Resolution", 30, 230, 240, 360)
 _GUICtrlListView_SetColumnWidth(-1, 0, 90)
 _GUICtrlListView_SetColumnWidth(-1, 1, 160)
@@ -710,6 +717,7 @@ if @error = 0 Then
 
 	_GUICtrlComboBox_SetCurSel($display_device_name_combo, 0)
 	RefreshDisplayDeviceVideoModesListView()
+	GUICtrlSetData($display_label, "Video Modes for the """ & GUICtrlRead($display_device_name_combo) & """ display")
 EndIf
 
 GUICtrlCreateGroup("Input", $input_devices_config_x, $input_devices_config_y, 200, 70)
@@ -724,18 +732,18 @@ _GUIToolTip_AddTool($tooltip, 0, "Joystick 1 test", GUICtrlGetHandle(-1))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 Global $config_emulators_games_group = GUICtrlCreateGroup("Emulators && Games (3DO)", $system_config_x, $system_config_y, 520, 620)
-Global $config_display_device_label = GUICtrlCreateLabel("Display Device", $system_config_x + 20, $system_config_y + 20, 80, 20)
-Global $config_display_device_combo = GUICtrlCreateCombo("", $system_config_x + 110, $system_config_y + 20, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+;Global $config_display_device_label = GUICtrlCreateLabel("Display Device", $system_config_x + 20, $system_config_y + 20, 80, 20)
+;Global $config_display_device_combo = GUICtrlCreateCombo("", $system_config_x + 110, $system_config_y + 20, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
 
-for $i = 1 to $display_device_filename_arr[0]
+;for $i = 1 to $display_device_filename_arr[0]
 
-	Local $display_device_filename = $display_device_filename_arr[$i]
-	$display_device_filename = StringReplace($display_device_filename, "display device ", "")
-	$display_device_filename = StringReplace($display_device_filename, ".txt", "")
-	_GUICtrlComboBox_AddString($config_display_device_combo, $display_device_filename)
-Next
+;	Local $display_device_filename = $display_device_filename_arr[$i]
+;	$display_device_filename = StringReplace($display_device_filename, "display device ", "")
+;	$display_device_filename = StringReplace($display_device_filename, ".txt", "")
+;	_GUICtrlComboBox_AddString($config_display_device_combo, $display_device_filename)
+;Next
 
-_GUICtrlComboBox_SetCurSel($config_display_device_combo, 0)
+;_GUICtrlComboBox_SetCurSel($config_display_device_combo, 0)
 
 Global $config_emulators_games_reload_button = GUICtrlCreateButton("Reload from RetroPie", $system_config_x + 270, $system_config_y + 20, 180, 20)
 Global $config_emulators_label = GUICtrlCreateLabel("Emulators", $system_config_x + 10, $system_config_y + 50, 100, 20)
@@ -3527,14 +3535,14 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 					RefreshDisplayDeviceVideoModesListView()
 			EndSwitch
 
-		case GUICtrlGetHandle($config_display_device_combo)
+;		case GUICtrlGetHandle($config_display_device_combo)
 
-			Switch $iCode
+;			Switch $iCode
 
-                Case $CBN_SELCHANGE
+ ;               Case $CBN_SELCHANGE
 
-					ReloadEmulatorsAndGamesConfig()
-			EndSwitch
+;					ReloadEmulatorsAndGamesConfig()
+;			EndSwitch
 
 
         Case GUICtrlGetHandle($scrape_auto_join_art_list)
@@ -4694,6 +4702,7 @@ EndFunc   ;==>_DBG_StringSplit2d
 
 Func RefreshDisplayDeviceVideoModesListView()
 
+	GUICtrlSetData($display_label, "Video Modes for the """ & GUICtrlRead($display_device_name_combo) & """ display")
 	_GUICtrlListView_DeleteAllItems($display_device_listview)
 	Local $display_device_filename = $app_data_dir & "\display device " & GUICtrlRead($display_device_name_combo) & ".txt"
 	Local $display_device_arr
@@ -4733,7 +4742,7 @@ Func ReloadEmulatorsAndGamesConfig()
 		EndIf
 	Next
 
-	Local $display_device_filename = $app_data_dir & "\display device " & GUICtrlRead($config_display_device_combo) & ".txt"
+	Local $display_device_filename = $app_data_dir & "\display device " & GUICtrlRead($display_device_name_combo) & ".txt"
 	Local $display_device_arr
 	_FileReadToArray($display_device_filename, $display_device_arr, 0, "|")
 ;				_ArrayDisplay($video_mode_arr)

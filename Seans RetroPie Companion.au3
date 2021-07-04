@@ -259,7 +259,7 @@ GUICtrlSetImage(-1, @ScriptDir & "\open wiki page.ico")
 _GUIToolTip_AddTool($tooltip, 0, "Open the Wiki page for this system", GUICtrlGetHandle(-1))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlCreateGroup("Display Device", 360, 0, 200, 40)
+GUICtrlCreateGroup("Display", 360, 0, 200, 40)
 Global $display_device_name_combo = GUICtrlCreateCombo("", 370, 15, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
@@ -327,63 +327,20 @@ Global $retropie_download_path_input = GUICtrlCreateInput("D:\dwn", 120, 320, 24
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlCreateGroup("Display Device", 420, 220, 300, 450)
-;Global $display_device_name_label = GUICtrlCreateLabel("Name", 30, 240, 30, 20)
-;GUICtrlSetResizing(-1, $GUI_DOCKALL)
-;_GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
-;Global $display_device_name_combo = GUICtrlCreateCombo("", 70, 240, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
-;GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $display_device_add_button = GUICtrlCreateButton("Add", 430, 240, 28, 28, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\add.ico")
-_GUIToolTip_AddTool($tooltip, 0, "Add a new Display Device", GUICtrlGetHandle(-1))
-Global $display_device_delete_button = GUICtrlCreateButton("Del", 460, 240, 28, 28, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\delete.ico")
-_GUIToolTip_AddTool($tooltip, 0, "Delete the selected Display Device", GUICtrlGetHandle(-1))
-Global $display_device_scan_modes_button = GUICtrlCreateButton("Scan Modes", 490, 240, 28, 28, $BS_ICON)
-GUICtrlSetImage(-1, @ScriptDir & "\scan video modes.ico")
-_GUIToolTip_AddTool($tooltip, 0, "Scan all video modes for the connected Display Device", GUICtrlGetHandle(-1))
-Global $display_device_listview = GUICtrlCreateListView("Video Mode|Resolution", 430, 300, 260, 360)
-_GUICtrlListView_SetColumnWidth(-1, 0, 90)
-_GUICtrlListView_SetColumnWidth(-1, 1, 160)
-_GUICtrlListView_SetExtendedListViewStyle($display_device_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
-GUICtrlCreateGroup("", -99, -99, 1, 1)
-
-Local $display_device_filename_arr = _FileListToArray($app_data_dir, "display device *.txt", 1)
-
-if @error = 0 Then
-
-	for $i = 1 to $display_device_filename_arr[0]
-
-		Local $display_device_filename = $display_device_filename_arr[$i]
-		$display_device_filename = StringReplace($display_device_filename, "display device ", "")
-		$display_device_filename = StringReplace($display_device_filename, ".txt", "")
-		_GUICtrlComboBox_AddString($display_device_name_combo, $display_device_filename)
-	Next
-
-	_GUICtrlComboBox_SetCurSel($display_device_name_combo, 0)
-	RefreshDisplayDeviceVideoModesListView()
-EndIf
-
-
 GUICtrlCreateTabItem("ROMs")
 
 GUICtrlCreateGroup("ROMs", 20, 140, 250, 500)
-
 Global $rebuild_roms_roms_list = GUICtrlCreateList("", 30, 170, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 GUICtrlSetLimit(-1, 500)
-
 Local $rebuild_roms_refresh_button = GUICtrlCreateButton("&Get Data", 30, 590, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\get from retropie.ico")
 _GUIToolTip_AddTool($tooltip, 0, "Get the list of roms from the RetroPie", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-
 Global $rebuild_roms_rebuild_button = GUICtrlCreateButton("Rebuild / Repair", 120, 590, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\repair.ico")
 _GUIToolTip_AddTool($tooltip, 0, "Rebuild / Repair the selected rom", GUICtrlGetHandle(-1))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-
-
 
 
 
@@ -696,32 +653,77 @@ GUICtrlSetState(-1, $GUI_UNCHECKED)
 GUICtrlCreateTabItem("Config")
 Local $boot_config_x = 20
 Local $boot_config_y = 60
-Local $systems_list_config_x = 20
-Local $systems_list_config_y = $boot_config_y + 200
+Local $systems_list_config_x = 90
+Local $systems_list_config_y = $boot_config_y
 Local $input_devices_config_x = 20
-Local $input_devices_config_y = $systems_list_config_y + 200
-Local $system_config_x = 230
+Local $input_devices_config_y = 610
+Local $system_config_x = 310
 Local $system_config_y = 60
-Local $game_config_x = 230
+Local $game_config_x = 310
 Local $game_config_y = $boot_config_y + 210
 
 
-GUICtrlCreateGroup("RetroPie", $boot_config_x, $boot_config_y, 200, 180)
-Local $config_boot_edit_config_button = GUICtrlCreateButton("Edit Boot Config", $boot_config_x + 20, $boot_config_y + 20, 120, 40)
+GUICtrlCreateGroup("RetroPie", $boot_config_x, $boot_config_y, 60, 70)
+Local $config_boot_edit_config_button = GUICtrlCreateButton("Edit Boot Config", $boot_config_x + 10, $boot_config_y + 20, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\edit startup.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Edit the Boot Config of the RetroPie", GUICtrlGetHandle(-1))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlCreateGroup("EmulationStation", $systems_list_config_x, $systems_list_config_y, 200, 180)
-Local $config_edit_systems_list_button = GUICtrlCreateButton("Edit Systems List", $systems_list_config_x + 20, $systems_list_config_y + 20, 120, 40)
+GUICtrlCreateGroup("EmulationStation", $systems_list_config_x, $systems_list_config_y, 100, 70)
+Local $config_edit_systems_list_button = GUICtrlCreateButton("Edit Systems List", $systems_list_config_x + 10, $systems_list_config_y + 20, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\edit consoles.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Edit the Systems List of the RetroPie", GUICtrlGetHandle(-1))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlCreateGroup("Input Devices", $input_devices_config_x, $input_devices_config_y, 200, 180)
-Local $config_joystick_0_test_button = GUICtrlCreateButton("Joystick 0 test", $input_devices_config_x + 20, $input_devices_config_y + 20, 120, 20)
-_GUIToolTip_AddTool($tooltip, 0, "The output of this can be used in the configuration of RetroArch", GUICtrlGetHandle($config_joystick_0_test_button))
-Local $config_joystick_1_test_button = GUICtrlCreateButton("Joystick 1 test", $input_devices_config_x + 20, $input_devices_config_y + 50, 120, 20)
-_GUIToolTip_AddTool($tooltip, 0, "The output of this can be used in the configuration of RetroArch", GUICtrlGetHandle($config_joystick_1_test_button))
+GUICtrlCreateGroup("Display", 20, 150, 260, 450)
+;Global $display_device_name_label = GUICtrlCreateLabel("Name", 30, 240, 30, 20)
+;GUICtrlSetResizing(-1, $GUI_DOCKALL)
+;_GUIToolTip_AddTool($tooltip, 0, "The system to scrape the box art for", GUICtrlGetHandle($system_label))
+;Global $display_device_name_combo = GUICtrlCreateCombo("", 70, 240, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+;GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $display_device_add_button = GUICtrlCreateButton("Add", 30, 170, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\add.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Add a new Display Device", GUICtrlGetHandle(-1))
+Global $display_device_delete_button = GUICtrlCreateButton("Del", 60, 170, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\delete.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Delete the selected Display Device", GUICtrlGetHandle(-1))
+Global $display_device_scan_modes_button = GUICtrlCreateButton("Scan Modes", 90, 170, 28, 28, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\scan video modes.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Scan all video modes for the connected Display Device", GUICtrlGetHandle(-1))
+Global $display_device_listview = GUICtrlCreateListView("Video Mode|Resolution", 30, 230, 240, 360)
+_GUICtrlListView_SetColumnWidth(-1, 0, 90)
+_GUICtrlListView_SetColumnWidth(-1, 1, 160)
+_GUICtrlListView_SetExtendedListViewStyle($display_device_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-Global $config_emulators_games_group = GUICtrlCreateGroup("Emulators && Games (3DO)", $system_config_x, $system_config_y, 600, 620)
+Local $display_device_filename_arr = _FileListToArray($app_data_dir, "display device *.txt", 1)
+
+if @error = 0 Then
+
+	for $i = 1 to $display_device_filename_arr[0]
+
+		Local $display_device_filename = $display_device_filename_arr[$i]
+		$display_device_filename = StringReplace($display_device_filename, "display device ", "")
+		$display_device_filename = StringReplace($display_device_filename, ".txt", "")
+		_GUICtrlComboBox_AddString($display_device_name_combo, $display_device_filename)
+	Next
+
+	_GUICtrlComboBox_SetCurSel($display_device_name_combo, 0)
+	RefreshDisplayDeviceVideoModesListView()
+EndIf
+
+GUICtrlCreateGroup("Input", $input_devices_config_x, $input_devices_config_y, 200, 70)
+Local $config_joystick_0_test_button = GUICtrlCreateButton("Joystick 0 test", $input_devices_config_x + 10, $input_devices_config_y + 20, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\joystick0.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Joystick 0 test", GUICtrlGetHandle(-1))
+;_GUIToolTip_AddTool($tooltip, 0, "The output of this can be used in the configuration of RetroArch", GUICtrlGetHandle($config_joystick_0_test_button))
+Local $config_joystick_1_test_button = GUICtrlCreateButton("Joystick 1 test", $input_devices_config_x + 50, $input_devices_config_y + 20, 36, 36, $BS_ICON)
+GUICtrlSetImage(-1, @ScriptDir & "\joystick1.ico")
+_GUIToolTip_AddTool($tooltip, 0, "Joystick 1 test", GUICtrlGetHandle(-1))
+;_GUIToolTip_AddTool($tooltip, 0, "The output of this can be used in the configuration of RetroArch", GUICtrlGetHandle($config_joystick_1_test_button))
+GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+Global $config_emulators_games_group = GUICtrlCreateGroup("Emulators && Games (3DO)", $system_config_x, $system_config_y, 520, 620)
 Global $config_display_device_label = GUICtrlCreateLabel("Display Device", $system_config_x + 20, $system_config_y + 20, 80, 20)
 Global $config_display_device_combo = GUICtrlCreateCombo("", $system_config_x + 110, $system_config_y + 20, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
 
@@ -739,7 +741,7 @@ Global $config_emulators_games_reload_button = GUICtrlCreateButton("Reload from 
 Global $config_emulators_label = GUICtrlCreateLabel("Emulators", $system_config_x + 10, $system_config_y + 50, 100, 20)
 _GUIToolTip_AddTool($tooltip, 0, "/opt/retropie/configs/all/videomodes.cfg", GUICtrlGetHandle($config_emulators_label))
 ;Global $config_system_listview = GUICtrlCreateListView("Emulator Name|Video Mode|Default Emulator", $system_config_x + 10, $system_config_y + 40, 580, 240, $LVS_SHOWSELALWAYS)
-Global $config_system_listview = GUICtrlCreateListView("Emulator Name|Video Mode|Default Emulator", $system_config_x + 10, $system_config_y + 70, 580, 190)
+Global $config_system_listview = GUICtrlCreateListView("Emulator Name|Video Mode|Default Emulator", $system_config_x + 10, $system_config_y + 70, 500, 190)
 _GUICtrlListView_SetColumnWidth(-1, 0, 200)
 _GUICtrlListView_SetColumnWidth(-1, 1, 150)
 _GUICtrlListView_SetColumnWidth(-1, 2, 120)
@@ -747,7 +749,7 @@ _GUICtrlListView_SetExtendedListViewStyle($config_system_listview, BitOR($LVS_EX
 Global $config_games_label = GUICtrlCreateLabel("Games", $game_config_x + 10, $game_config_y + 20, 100, 20)
 _GUIToolTip_AddTool($tooltip, 0, "/opt/retropie/configs/all/emulators.cfg", GUICtrlGetHandle($config_games_label))
 ;Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $game_config_x + 10, $game_config_y + 40, 580, 240, $LVS_SHOWSELALWAYS)
-Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $game_config_x + 10, $game_config_y + 40, 580, 240, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS))
+Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $game_config_x + 10, $game_config_y + 40, 500, 240, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS))
 _GUICtrlListView_SetColumnWidth(-1, 0, 200)
 _GUICtrlListView_SetColumnWidth(-1, 1, 200)
 _GUICtrlListView_SetExtendedListViewStyle($config_game_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
@@ -761,9 +763,9 @@ _GUIToolTip_AddTool($tooltip, 0, "Only works if EmulationStation has been Quit",
 Global $config_games_update_emulator_and_save_game_before_launch_game_checkbox = GUICtrlCreateCheckbox("Update Emulator to Game and Save before Launch", $game_config_x + 140, $game_config_y + 330, 260, 20)
 GUICtrlSetState(-1, $GUI_CHECKED)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-GUICtrlCreateGroup("PC", $game_config_x + 430, $game_config_y + 290, 150, 45)
-Global $config_games_open_button = GUICtrlCreateButton("Open", $game_config_x + 430 + 20, $game_config_y + 305, 50, 20)
-Global $config_games_save_as_button = GUICtrlCreateButton("Save As", $game_config_x + 490 + 20, $game_config_y + 305, 60, 20)
+GUICtrlCreateGroup("PC", $game_config_x + 430, $game_config_y + 290, 80, 70)
+Global $config_games_open_button = GUICtrlCreateButton("Open", $game_config_x + 430 + 10, $game_config_y + 305, 50, 20)
+Global $config_games_save_as_button = GUICtrlCreateButton("Save As", $game_config_x + 430 + 10, $game_config_y + 335, 60, 20)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 

@@ -25,43 +25,10 @@
 #Include "_XMLDomWrapper2.au3"
 
 
-
-
-
-
 _GDIPlus_Startup()
 
 
 Global $app_name = "Seans RetroPie Companion"
-
-; Fuzzy match rom filenames to artwork from RF Generation
-
-;Local $emulator_folder_name = "snes"
-;Local $download_path = "D:\dwn\Nintendo_SNES"
-;Local $emulator_folder_name = "wonderswan"
-;Local $download_path = "D:\dwn\Bandai_WonderSwan"
-;Local $emulator_folder_name = "wonderswancolor"
-;Local $download_path = "D:\dwn\Bandai_WonderSwan_Color_SwanCrystal"
-;Local $emulator_folder_name = "ngpc"
-;Local $download_path = "D:\dwn\SNK_Neo_Geo_Pocket_Color"
-;Local $emulator_folder_name = "ngp"
-;Local $download_path = "D:\dwn\SNK_Neo_Geo_Pocket"
-;Local $emulator_folder_name = "gbc"
-;Local $download_path = "D:\dwn\Nintendo_Game_Boy_Color"
-;Local $emulator_folder_name = "n64"
-;Local $download_path = "D:\dwn\Nintendo_64"
-;Local $emulator_folder_name = "snes"
-;Local $download_path = "D:\dwn\Nintendo_SNES_Super_Famicom"
-;Local $emulator_folder_name = "gamegear"
-;Local $download_path = "D:\dwn\Sega_Game_Gear"
-;Local $emulator_folder_name = "atarilynx"
-;Local $download_path = "D:\dwn\Atari_Lynx"
-;Local $emulator_folder_name = "gb"
-;Local $download_path = "D:\dwn\Nintendo_Game_Boy"
-;Local $emulator_folder_name = "pcengine"
-;Local $download_path = "D:\dwn\NEC_PC_Engine_TurboGrafx-16"
-;Local $emulator_folder_name = "atari2600"
-;Local $download_path = "D:\dwn\Atari_2600"
 
 Global $download_path = "D:\dwn"
 
@@ -287,43 +254,43 @@ GUICtrlSetResizing(-1, $GUI_DOCKVCENTER + $GUI_DOCKBORDERS)
 
 Global $settings_tabitem = GUICtrlCreateTabItem("Settings")
 
-Global $image_compression_quality_label = GUICtrlCreateLabel("Image Compression / Quality", 20, 60, 160, 20)
+Global $image_compression_quality_label = GUICtrlCreateLabel("Image Compression / Quality", 20, 100, 160, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The maximum level of compression / quality required", GUICtrlGetHandle($image_compression_quality_label))
-Global $image_compression_quality_input = GUICtrlCreateInput("80", 190, 60, 30, 20)
+Global $image_compression_quality_input = GUICtrlCreateInput("80", 190, 100, 30, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-GUICtrlCreateLabel("%", 225, 60, 20, 20)
+GUICtrlCreateLabel("%", 225, 100, 20, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $image_compression_quality_slider = GUICtrlCreateSlider(260, 60, 200, 20)
+Global $image_compression_quality_slider = GUICtrlCreateSlider(260, 100, 200, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetLimit(-1, 10, 1)
 GUICtrlSetData(-1, 10)
 
-GUICtrlCreateGroup("RetroPie", 20, 80, 380, 160)
-Global $retropie_hostname_label = GUICtrlCreateLabel("Hostname", 30, 100, 100, 20)
+GUICtrlCreateGroup("RetroPie", 20, 300, 380, 160)
+Global $retropie_hostname_label = GUICtrlCreateLabel("Hostname", 30, 320, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_hostname_input = GUICtrlCreateInput("retropie", 120, 100, 240, 20)
+Global $retropie_hostname_input = GUICtrlCreateInput("retropie", 120, 320, 240, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_username_label = GUICtrlCreateLabel("Username", 30, 120, 100, 20)
+Global $retropie_username_label = GUICtrlCreateLabel("Username", 30, 340, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_username_input = GUICtrlCreateInput("pi", 120, 120, 240, 20)
+Global $retropie_username_input = GUICtrlCreateInput("pi", 120, 340, 240, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_password_label = GUICtrlCreateLabel("Password", 30, 140, 100, 20)
+Global $retropie_password_label = GUICtrlCreateLabel("Password", 30, 360, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_password_input = GUICtrlCreateInput("raspberry", 120, 140, 240, 20)
+Global $retropie_password_input = GUICtrlCreateInput("raspberry", 120, 360, 240, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_ssh_key_label = GUICtrlCreateLabel("SSH Key", 30, 160, 100, 20)
+Global $retropie_ssh_key_label = GUICtrlCreateLabel("SSH Key", 30, 380, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_ssh_key_input = GUICtrlCreateInput("ssh-ed25519 255 cq4AFscwWDozkpWLAzpJmZak8M7USnljP1lO36e23Co=", 120, 160, 240, 20)
+Global $retropie_ssh_key_input = GUICtrlCreateInput("ssh-ed25519 255 cq4AFscwWDozkpWLAzpJmZak8M7USnljP1lO36e23Co=", 120, 380, 240, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 Global $minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Confirmation Prompts", 420, 180, 200, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-GUICtrlCreateGroup("PC", 20, 300, 380, 100)
-Global $retropie_download_path_label = GUICtrlCreateLabel("Download Path", 30, 320, 100, 20)
+GUICtrlCreateGroup("PC", 420, 300, 380, 100)
+Global $retropie_download_path_label = GUICtrlCreateLabel("Download Path", 430, 320, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $retropie_download_path_input = GUICtrlCreateInput("D:\dwn", 120, 320, 240, 20)
+Global $retropie_download_path_input = GUICtrlCreateInput("D:\dwn", 520, 320, 240, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
@@ -346,27 +313,28 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 GUICtrlCreateTabItem("Scrape Metadata")
 
-Global $scrape_metadata_websites_label = GUICtrlCreateLabel("Website(s)", 20, 60, 70, 20)
+GUICtrlCreateGroup("Scraping Metadata", 20, 70, 680, 55)
+Global $scrape_metadata_websites_label = GUICtrlCreateLabel("Website(s)", 30, 90, 70, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The website(s) to scrape the box art from", GUICtrlGetHandle($scrape_metadata_websites_label))
-Global $scrape_metadata_website_combo = GUICtrlCreateCombo("", 90, 60, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+Global $scrape_metadata_website_combo = GUICtrlCreateCombo("", 90, 90, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUICtrlComboBox_AddString($scrape_metadata_website_combo, "LaunchBox")
 _GUICtrlComboBox_SetCurSel($scrape_metadata_website_combo, 0)
-Global $scrape_metadata_max_scrapers_label = GUICtrlCreateLabel("Max Scrapers", 250, 60, 80, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-_GUIToolTip_AddTool($tooltip, 0, "The maximum number of scrapers that will run in parallel", GUICtrlGetHandle($scrape_metadata_max_scrapers_label))
-Global $scrape_metadata_max_scrapers_input = GUICtrlCreateInput("10", 320, 60, 30, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $scrape_metadata_max_scrapers_slider = GUICtrlCreateSlider(360, 60, 150, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-GUICtrlSetLimit(-1, 10, 1)
-GUICtrlSetData(-1, 10)
-Global $scrape_metadata_minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Minimized Scrapers", 520, 60, 120, 20)
+Global $scrape_metadata_minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Minimized Scrapers", 250, 90, 120, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($scrape_metadata_minimized_scrapers_checkbox))
-Local $scrape_metadata_scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 36, 36, $BS_ICON)
+Global $scrape_metadata_max_scrapers_label = GUICtrlCreateLabel("Max Scrapers", 380, 90, 80, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+_GUIToolTip_AddTool($tooltip, 0, "The maximum number of scrapers that will run in parallel", GUICtrlGetHandle($scrape_metadata_max_scrapers_label))
+Global $scrape_metadata_max_scrapers_input = GUICtrlCreateInput("10", 450, 90, 30, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $scrape_metadata_max_scrapers_slider = GUICtrlCreateSlider(490, 90, 150, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+GUICtrlSetLimit(-1, 10, 1)
+GUICtrlSetData(-1, 10)
+Local $scrape_metadata_scrape_button = GUICtrlCreateButton("Scrape", 650, 80, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\scrape metadata.ico")
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
@@ -376,8 +344,8 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	"Back Covers will be stored in the BoxBack folder." & @CRLF  & _
 	"Full Covers will be stored in the BoxFull folder." & @CRLF _
 	, GUICtrlGetHandle(-1))
-
 GUICtrlCreateGroup("", -1, -1, 0, 0)
+
 GUICtrlSetState(-1, $GUI_HIDE)
 Global $scrape_metadata_match_scraped_data_to_games_radio = GUICtrlCreateRadio("Match Scraped Data to Games", 30, 140, 180, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
@@ -417,6 +385,7 @@ Global $scrape_metadata_genre_checkbox = GUICtrlCreateCheckbox("Genre", 480, 280
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 Global $scrape_metadata_players_checkbox = GUICtrlCreateCheckbox("Players", 480, 300, 120, 20)
 GUICtrlSetState(-1, $GUI_CHECKED)
+GUICtrlCreateGroup("", -1, -1, 0, 0)
 
 Global $scrape_metadata_listview = GUICtrlCreateListView("Metadata Name|Scraped|RetroPie", 460, 370, 350, 200)
 _GUICtrlListView_SetColumnWidth(-1, 0, 110)
@@ -514,29 +483,30 @@ GUICtrlSetState(-1, $GUI_HIDE)
 
 GUICtrlCreateTabItem("Scrape Images with Manual Join")
 
-Global $scrape_manual_join_websites_label = GUICtrlCreateLabel("Website(s)", 20, 60, 70, 20)
+GUICtrlCreateGroup("Scraping Metadata", 20, 70, 410, 80)
+Global $scrape_manual_join_websites_label = GUICtrlCreateLabel("Website(s)", 30, 90, 70, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, "The website(s) to scrape the box art from", GUICtrlGetHandle($scrape_manual_join_websites_label))
-Global $scrape_manual_join_website_combo = GUICtrlCreateCombo("", 90, 60, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
+Global $scrape_manual_join_website_combo = GUICtrlCreateCombo("", 90, 90, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUICtrlComboBox_AddString($scrape_manual_join_website_combo, "Atarimania")
 _GUICtrlComboBox_AddString($scrape_manual_join_website_combo, "LaunchBox")
 _GUICtrlComboBox_SetCurSel($scrape_manual_join_website_combo, 0)
 ;_GUIToolTip_AddTool($tooltip, 0, "If checked then box art will be scraped from the RF Generation website", GUICtrlGetHandle($rf_generation_radio))
-Global $scrape_manual_join_max_scrapers_label = GUICtrlCreateLabel("Max Scrapers", 250, 60, 80, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-_GUIToolTip_AddTool($tooltip, 0, "The maximum number of scrapers that will run in parallel", GUICtrlGetHandle($scrape_manual_join_max_scrapers_label))
-Global $scrape_manual_join_max_scrapers_input = GUICtrlCreateInput("10", 320, 60, 30, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $scrape_manual_join_max_scrapers_slider = GUICtrlCreateSlider(360, 60, 150, 20)
-GUICtrlSetResizing(-1, $GUI_DOCKALL)
-GUICtrlSetLimit(-1, 10, 1)
-GUICtrlSetData(-1, 10)
-Global $scrape_manual_join_minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Minimized Scrapers", 520, 60, 120, 20)
+Global $scrape_manual_join_minimized_scrapers_checkbox = GUICtrlCreateCheckbox("Minimized Scrapers", 250, 90, 120, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
 _GUIToolTip_AddTool($tooltip, 0, "If checked then run each scraper in a minimized window", GUICtrlGetHandle($scrape_manual_join_minimized_scrapers_checkbox))
-Local $scrape_manual_join_scrape_button = GUICtrlCreateButton("Scrape", 640, 60, 36, 36, $BS_ICON)
+Global $scrape_manual_join_max_scrapers_label = GUICtrlCreateLabel("Max Scrapers", 30, 120, 80, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+_GUIToolTip_AddTool($tooltip, 0, "The maximum number of scrapers that will run in parallel", GUICtrlGetHandle($scrape_manual_join_max_scrapers_label))
+Global $scrape_manual_join_max_scrapers_input = GUICtrlCreateInput("10", 100, 120, 30, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+Global $scrape_manual_join_max_scrapers_slider = GUICtrlCreateSlider(140, 120, 150, 20)
+GUICtrlSetResizing(-1, $GUI_DOCKALL)
+GUICtrlSetLimit(-1, 10, 1)
+GUICtrlSetData(-1, 10)
+Local $scrape_manual_join_scrape_button = GUICtrlCreateButton("Scrape", 370, 90, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\scrape art.ico")
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 _GUIToolTip_AddTool($tooltip, 0, _
@@ -546,125 +516,122 @@ _GUIToolTip_AddTool($tooltip, 0, _
 	"Back Covers will be stored in the BoxBack folder." & @CRLF  & _
 	"Full Covers will be stored in the BoxFull folder." & @CRLF _
 	, GUICtrlGetHandle(-1))
-
 GUICtrlCreateGroup("", -1, -1, 0, 0)
-GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_match_art_to_roms_radio = GUICtrlCreateRadio("Match Art to Roms", 20, 140, 120, 20)
+
+
+Global $scrape_manual_join_match_art_to_roms_radio = GUICtrlCreateRadio("Match Art to Roms", 20, 190, 120, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
-Global $scrape_manual_join_match_roms_to_art_radio = GUICtrlCreateRadio("Match Roms to Art", 140, 140, 120, 20)
+Global $scrape_manual_join_match_roms_to_art_radio = GUICtrlCreateRadio("Match Roms to Art", 140, 190, 120, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-Global $scrape_manual_join_exclude_uploaded_art_checkbox = GUICtrlCreateCheckbox("Exclude Uploaded Art", 260, 140, 120, 20)
+Global $scrape_manual_join_exclude_uploaded_art_checkbox = GUICtrlCreateCheckbox("Exclude Uploaded Art", 260, 190, 120, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
 GUICtrlSetState(-1, $GUI_CHECKED)
-Local $scrape_manual_join_refresh_button = GUICtrlCreateButton("&Refresh", 400, 140, 36, 36, $BS_ICON)
+Local $scrape_manual_join_refresh_button = GUICtrlCreateButton("&Refresh", 400, 190, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\get games art.ico")
 _GUIToolTip_AddTool($tooltip, 0, "Get scraped art plus game names (from the RetroPie) - Alt+R", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
-Global $scrape_manual_join_art_label = GUICtrlCreateLabel("Art", 20, 180, 70, 20)
+Global $scrape_manual_join_art_label = GUICtrlCreateLabel("Art", 20, 230, 70, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $scrape_manual_join_art_files_label = GUICtrlCreateLabel("0 Files", 180, 180, 70, 20)
+Global $scrape_manual_join_art_files_label = GUICtrlCreateLabel("0 Files", 180, 230, 70, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $scrape_manual_join_art_list = GUICtrlCreateList("", 20, 200, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
+Global $scrape_manual_join_art_list = GUICtrlCreateList("", 20, 250, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 GUICtrlSetLimit(-1, 500)
-Global $scrape_manual_join_rom_label = GUICtrlCreateLabel("Roms without Art", 240, 180, 100, 20)
+Global $scrape_manual_join_rom_label = GUICtrlCreateLabel("Roms without Art", 240, 230, 100, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $scrape_manual_join_rom_files_label = GUICtrlCreateLabel("0 Files", 400, 180, 70, 20)
+Global $scrape_manual_join_rom_files_label = GUICtrlCreateLabel("0 Files", 400, 230, 70, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKALL)
-Global $scrape_manual_join_rom_list = GUICtrlCreateList("", 240, 200, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL, $LBS_EXTENDEDSEL))
+Global $scrape_manual_join_rom_list = GUICtrlCreateList("", 240, 250, 200, 420, BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL, $LBS_EXTENDEDSEL))
 GUICtrlSetResizing(-1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 ;GUICtrlSetLimit(-1, 500)
-Local $scrape_manual_join_upload_button = GUICtrlCreateButton("Upload &Art", 450, 200, 36, 36, $BS_ICON)
+Local $scrape_manual_join_upload_button = GUICtrlCreateButton("Upload &Art", 450, 250, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\upload art.ico")
 _GUIToolTip_AddTool($tooltip, 0, "Upload selected art with game name (to the RetroPie) - Alt+A", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 450, 575, 36, 36, $BS_ICON)
+Local $scrape_manual_join_upload_gamelist_button = GUICtrlCreateButton("Upload &Gamelist", 450, 625, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\update list.ico")
 _GUIToolTip_AddTool($tooltip, 0, "Update games list (on the RetroPie) with all art uploaded - Alt+G", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_down_button = GUICtrlCreateButton("&Down", 710, 640, 36, 36, $BS_ICON)
+Global $scrape_manual_join_art_1_pic = GUICtrlCreatePic("", 500, 80, 220, 110)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKTOP + $GUI_DOCKAUTO)
+GUICtrlSetState(-1, $GUI_HIDE)
+Global $scrape_manual_join_art_2_pic = GUICtrlCreatePic("", 500, 200, 220, 110)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
+GUICtrlSetState(-1, $GUI_HIDE)
+Global $scrape_manual_join_art_3_pic = GUICtrlCreatePic("", 500, 320, 220, 110)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
+GUICtrlSetState(-1, $GUI_HIDE)
+Global $scrape_manual_join_art_4_pic = GUICtrlCreatePic("", 500, 440, 220, 110)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
+GUICtrlSetState(-1, $GUI_HIDE)
+Global $scrape_manual_join_art_5_pic = GUICtrlCreatePic("", 500, 560, 220, 110)
+GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKBOTTOM)
+GUICtrlSetState(-1, $GUI_HIDE)
+Local $scrape_manual_join_down_button = GUICtrlCreateButton("&Down", 730, 640, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\down.ico")
 _GUIToolTip_AddTool($tooltip, 0, "Move selection down", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-Local $scrape_manual_join_up_button = GUICtrlCreateButton("&Up", 770, 640, 36, 36, $BS_ICON)
+Local $scrape_manual_join_up_button = GUICtrlCreateButton("&Up", 780, 640, 36, 36, $BS_ICON)
 GUICtrlSetImage(-1, @ScriptDir & "\up.ico")
 _GUIToolTip_AddTool($tooltip, 0, "Move selection up", GUICtrlGetHandle(-1))
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
-Global $scrape_manual_join_art_1_pic = GUICtrlCreatePic("", 480, 80, 220, 110)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKTOP + $GUI_DOCKAUTO)
-GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_2_pic = GUICtrlCreatePic("", 480, 200, 220, 110)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
-GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_3_pic = GUICtrlCreatePic("", 480, 320, 220, 110)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
-GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_4_pic = GUICtrlCreatePic("", 480, 440, 220, 110)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO)
-GUICtrlSetState(-1, $GUI_HIDE)
-Global $scrape_manual_join_art_5_pic = GUICtrlCreatePic("", 480, 560, 220, 110)
-GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKBOTTOM)
-GUICtrlSetState(-1, $GUI_HIDE)
-
 GUIStartGroup()
-Global $art_1_front = GUICtrlCreateRadio("Front", 705, 120, 60, 20)
+Global $art_1_front = GUICtrlCreateRadio("Front", 725, 120, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_2_front = GUICtrlCreateRadio("Front", 705, 240, 60, 20)
+Global $art_2_front = GUICtrlCreateRadio("Front", 725, 240, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_3_front = GUICtrlCreateRadio("Front", 705, 360, 60, 20)
+Global $art_3_front = GUICtrlCreateRadio("Front", 725, 360, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_4_front = GUICtrlCreateRadio("Front", 705, 480, 60, 20)
+Global $art_4_front = GUICtrlCreateRadio("Front", 725, 480, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_5_front = GUICtrlCreateRadio("Front", 705, 600, 60, 20)
+Global $art_5_front = GUICtrlCreateRadio("Front", 725, 600, 60, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 GUIStartGroup()
-Global $art_1_back = GUICtrlCreateRadio("Back", 765, 120, 60, 20)
+Global $art_1_back = GUICtrlCreateRadio("Back", 785, 120, 40, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKTOP + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_2_back = GUICtrlCreateRadio("Back", 765, 240, 60, 20)
+Global $art_2_back = GUICtrlCreateRadio("Back", 785, 240, 40, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_3_back = GUICtrlCreateRadio("Back", 765, 360, 60, 20)
+Global $art_3_back = GUICtrlCreateRadio("Back", 785, 360, 40, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_4_back = GUICtrlCreateRadio("Back", 765, 480, 60, 20)
+Global $art_4_back = GUICtrlCreateRadio("Back", 785, 480, 40, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-Global $art_5_back = GUICtrlCreateRadio("Back", 765, 600, 60, 20)
+Global $art_5_back = GUICtrlCreateRadio("Back", 785, 600, 40, 20)
 GUICtrlSetResizing(-1, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT + $GUI_DOCKAUTO)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-
-
 
 
 GUICtrlCreateTabItem("Config")
 Local $boot_config_x = 20
-Local $boot_config_y = 60
+Local $boot_config_y = 70
 Local $systems_list_config_x = 90
 Local $systems_list_config_y = $boot_config_y
 Local $input_devices_config_x = 20
 Local $input_devices_config_y = 610
-Local $system_config_x = 310
-Local $system_config_y = 60
+Local $system_config_x = 300
+Local $system_config_y = 70
 Local $game_config_x = 310
 Local $game_config_y = $boot_config_y + 210
 
@@ -731,7 +698,7 @@ _GUIToolTip_AddTool($tooltip, 0, "Joystick 1 test", GUICtrlGetHandle(-1))
 ;_GUIToolTip_AddTool($tooltip, 0, "The output of this can be used in the configuration of RetroArch", GUICtrlGetHandle($config_joystick_1_test_button))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-Global $config_emulators_games_group = GUICtrlCreateGroup("Emulators && Games (3DO)", $system_config_x, $system_config_y, 520, 620)
+Global $config_emulators_games_group = GUICtrlCreateGroup("Emulators && Games (3DO)", $system_config_x, $system_config_y, 520, 610)
 ;Global $config_display_device_label = GUICtrlCreateLabel("Display Device", $system_config_x + 20, $system_config_y + 20, 80, 20)
 ;Global $config_display_device_combo = GUICtrlCreateCombo("", $system_config_x + 110, $system_config_y + 20, 150, 20, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))
 
@@ -757,23 +724,23 @@ _GUICtrlListView_SetExtendedListViewStyle($config_system_listview, BitOR($LVS_EX
 Global $config_games_label = GUICtrlCreateLabel("Games", $game_config_x + 10, $game_config_y + 20, 100, 20)
 _GUIToolTip_AddTool($tooltip, 0, "/opt/retropie/configs/all/emulators.cfg", GUICtrlGetHandle($config_games_label))
 ;Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $game_config_x + 10, $game_config_y + 40, 580, 240, $LVS_SHOWSELALWAYS)
-Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $game_config_x + 10, $game_config_y + 40, 500, 240, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS))
+Global $config_game_listview = GUICtrlCreateListView("Game Name|Emulator Name", $system_config_x + 10, $game_config_y + 40, 500, 240, BitOR($LVS_REPORT, $LVS_SHOWSELALWAYS))
 _GUICtrlListView_SetColumnWidth(-1, 0, 200)
 _GUICtrlListView_SetColumnWidth(-1, 1, 200)
 _GUICtrlListView_SetExtendedListViewStyle($config_game_listview, BitOR($LVS_EX_GRIDLINES, $LVS_EX_FULLROWSELECT))
-GUICtrlCreateGroup("Wiki", $game_config_x + 10, $game_config_y + 290, 110, 75)
-Global $config_wiki_compare_button = GUICtrlCreateButton("Compare...", $game_config_x + 20, $game_config_y + 305, 80, 20)
+GUICtrlCreateGroup("Wiki", $system_config_x + 10, $game_config_y + 290, 110, 75)
+Global $config_wiki_compare_button = GUICtrlCreateButton("Compare...", $system_config_x + 20, $game_config_y + 305, 80, 20)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-GUICtrlCreateGroup("RetroPie", $game_config_x + 130, $game_config_y + 290, 290, 75)
-Global $config_games_link_games_to_emulator_and_save_button = GUICtrlCreateButton("Link Games to Emulator and Save", $game_config_x + 140, $game_config_y + 305, 180, 20)
-Global $config_games_launch_game_button = GUICtrlCreateButton("Launch Game", $game_config_x + 330, $game_config_y + 305, 80, 20)
+GUICtrlCreateGroup("RetroPie", $system_config_x + 130, $game_config_y + 290, 290, 75)
+Global $config_games_link_games_to_emulator_and_save_button = GUICtrlCreateButton("Link Games to Emulator and Save", $system_config_x + 140, $game_config_y + 305, 180, 20)
+Global $config_games_launch_game_button = GUICtrlCreateButton("Launch Game", $system_config_x + 330, $game_config_y + 305, 80, 20)
 _GUIToolTip_AddTool($tooltip, 0, "Only works if EmulationStation has been Quit", GUICtrlGetHandle($config_games_launch_game_button))
 Global $config_games_update_emulator_and_save_game_before_launch_game_checkbox = GUICtrlCreateCheckbox("Update Emulator to Game and Save before Launch", $game_config_x + 140, $game_config_y + 330, 260, 20)
 GUICtrlSetState(-1, $GUI_CHECKED)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
-GUICtrlCreateGroup("PC", $game_config_x + 430, $game_config_y + 290, 80, 70)
-Global $config_games_open_button = GUICtrlCreateButton("Open", $game_config_x + 430 + 10, $game_config_y + 305, 50, 20)
-Global $config_games_save_as_button = GUICtrlCreateButton("Save As", $game_config_x + 430 + 10, $game_config_y + 335, 60, 20)
+GUICtrlCreateGroup("PC", $system_config_x + 430, $game_config_y + 290, 80, 70)
+Global $config_games_open_button = GUICtrlCreateButton("Open", $system_config_x + 430 + 10, $game_config_y + 305, 50, 20)
+Global $config_games_save_as_button = GUICtrlCreateButton("Save As", $system_config_x + 430 + 10, $game_config_y + 335, 60, 20)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 
@@ -2999,20 +2966,36 @@ While True
 
 		Case $scrape_manual_join_upload_gamelist_button
 
-			GUICtrlSetData($status_input, "Connecting to the RetroPie ...")
 
-			$result = _WinSCP_Open()
+			Local $gamelist_filepath = $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\gamelist.xml"
 
-			if $result = False Then
+			GUICtrlSetData($status_input, "Downloading /opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
+			pscp_download("/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml", $gamelist_filepath)
+			GUICtrlSetData($status_input, "Downloaded " & $gamelist_filepath)
 
-				GUICtrlSetData($status_input, $_WinSCP_COM_error_description)
-			Else
+			GUICtrlSetData($status_input, "Updating gamelist.xml ...")
 
-				; Refresh gamelist.xml on RetroPie
-				CreateGamelistOnRetroPie()
-			EndIf
+			$gamelist_xml_dom = _XMLLoadXML(FileRead($gamelist_filepath), "")
+			Local $gamelist_num_nodes = _XMLGetNodeCount($gamelist_xml_dom, "/gameList/game")
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $gamelist_num_nodes = ' & $gamelist_num_nodes & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-			GUICtrlSetData($status_input, "")
+			for $i = 1 to $gamelist_num_nodes
+
+				;Local $game_name = _XMLGetValue($gamelist_xml_dom, "/gameList/game[" & $i & "]/name")
+				Local $game_path = _XMLGetValue($gamelist_xml_dom, "/gameList/game[" & $i & "]/path")
+				_PathSplit($game_path, $sDrive1, $sDir1, $sFileName1, $sExtension1)
+				XMLUpdateOrCreateChildNode($gamelist_xml_dom, "/gameList/game[" & $i & "]", "image", "~/.emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
+			Next
+
+			Local $gamelist_xml = _XMLGetDocXML($gamelist_xml_dom)
+			$gamelist_xml = msWordXML_Beautify($gamelist_xml)
+			FileDelete($gamelist_filepath)
+			FileWrite($gamelist_filepath, $gamelist_xml)
+
+			GUICtrlSetData($status_input, "Uploading " & $gamelist_filepath)
+			pscp_upload($gamelist_filepath, "/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
+			GUICtrlSetData($status_input, "Uploaded " & $gamelist_filepath)
+
 
 
 		Case $scrape_manual_join_down_button

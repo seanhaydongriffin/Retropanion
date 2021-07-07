@@ -220,14 +220,10 @@ $system_config_x = 300
 $system_config_y = 70
 $game_config_x = 310
 $game_config_y = $boot_config_y + 210
-
-
 GUICtrlCreateGroupEx  ("----> RetroPie", $boot_config_x, $boot_config_y, 60, 70)
 $config_boot_edit_config_button = 						GUICtrlCreateImageButton("edit startup.ico", $boot_config_x + 10, $boot_config_y + 20, 36, "Edit the Boot Config of the RetroPie")
-
 GUICtrlCreateGroupEx  ("----> EmulationStation", $systems_list_config_x, $systems_list_config_y, 100, 70)
 $config_edit_systems_list_button = 						GUICtrlCreateImageButton("edit consoles.ico", $systems_list_config_x + 10, $systems_list_config_y + 20, 36, "Edit the Systems List of the RetroPie")
-
 GUICtrlCreateGroupEx  ("----> Display", 20, 150, 260, 450)
 $display_device_add_button = 							GUICtrlCreateImageButton("add.ico", 30, 170, 28, "Add a new Display Device")
 $display_device_delete_button = 						GUICtrlCreateImageButton("delete.ico", 60, 170, 28, "Delete the selected Display Device")
@@ -257,15 +253,12 @@ $config_joystick_0_test_button = 											GUICtrlCreateImageButton("joystick0.
 ;_GUIToolTip_AddTool($tooltip, 0, "The output of this can be used in the configuration of RetroArch", GUICtrlGetHandle($config_joystick_0_test_button))
 $config_joystick_1_test_button = 											GUICtrlCreateImageButton("joystick1.ico", $input_devices_config_x + 50, $input_devices_config_y + 20, 36, "Joystick 1 test")
 ;_GUIToolTip_AddTool($tooltip, 0, "The output of this can be used in the configuration of RetroArch", GUICtrlGetHandle($config_joystick_1_test_button))
-
 GUICtrlCreateGroupEx  ("----> Emulators && Games (3DO)", $system_config_x, $system_config_y, 520, 610)
-
 $config_emulators_games_reload_button = 									GUICtrlCreateButton("Reload from RetroPie", $system_config_x + 270, $system_config_y + 20, 180, 20)
 $config_emulators_label = 													GUICtrlCreateLabelEx("Emulators", $system_config_x + 10, $system_config_y + 50, 100, 20, "/opt/retropie/configs/all/videomodes.cfg")
 $config_system_listview = 													GUICtrlCreateListViewEx($system_config_x + 10, $system_config_y + 70, 500, 190, "Emulator Name", 200, "Video Mode", 150, "Default Emulator", 120)
 $config_games_label = 														GUICtrlCreateLabelEx("Games", $game_config_x + 10, $game_config_y + 20, 100, 20, "/opt/retropie/configs/all/emulators.cfg")
 $config_game_listview = 													GUICtrlCreateListViewEx($system_config_x + 10, $game_config_y + 40, 500, 240, "Game Name", 200, "Emulator Name", 200)
-
 GUICtrlCreateGroupEx  ("----> Wiki", $system_config_x + 10, $game_config_y + 290, 110, 75)
 $config_wiki_compare_button = 												GUICtrlCreateButton("Compare...", $system_config_x + 20, $game_config_y + 305, 80, 20)
 GUICtrlCreateGroupEx  ("----> RetroPie", $system_config_x + 130, $game_config_y + 290, 290, 75)
@@ -329,14 +322,16 @@ $shift_down_dummy = GUICtrlCreateDummy()
 GUISetAccelerators($main_aAccelKeys, $main_gui)
 
 
-$art_gui = 																	GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+$art_gui = 																	ChildGUICreate($app_name, 640, 480, $main_gui)
 $art_big_pic = 																GUICtrlCreatePic("", 0, 0, 640, 480)
-$art_gui2 = 																GUICreate($app_name, 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+
+$art_gui2 = 																ChildGUICreate($app_name, 1024, 576, $main_gui)
 $art_big_pic2 = 															GUICtrlCreatePic("", 0, 0, 1024, 576)
-$art_gui3 = 																GUICreate("Child", 1024, 576, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+
+$art_gui3 = 																ChildGUICreate("Child", 1024, 576, $main_gui)
 $art_big_pic3 = 															GUICtrlCreatePic("", 0, 0, 1024, 576) ;, 0, 0)
 
-$gameslist_gui = 															GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+$gameslist_gui = 															ChildGUICreate($app_name, 640, 480, $main_gui)
 GUICtrlCreateGroupEx  ("----> RetroPie (/opt/retropie/configs/all/emulationstation/gamelists/n64/gamelist.xml)", 5, 5, 430, 40)
 $gameslist_load_button = 													GUICtrlCreateButton("Load", 10, 20, 80, 20)
 $gameslist_save_button = 													GUICtrlCreateButton("Save", 100, 20, 80, 20)
@@ -347,7 +342,7 @@ $gameslist_save_as_button = 												GUICtrlCreateButton("Save As", 545, 20, 
 $gameslist_edit = 															GUICtrlCreateEdit("", 10, 50, 620, 400)
 $gameslist_status_input = 													GUICtrlCreateStatusInput("", 10, 480 - 25, 640 - 20, 20)
 
-$boot_config_gui = 															GUICreate($app_name, 640, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+$boot_config_gui = 															ChildGUICreate($app_name, 640, 480, $main_gui)
 GUICtrlCreateGroupEx  ("----> RetroPie (/boot/config.txt)", 5, 5, 180, 40)
 $boot_config_load_button = 													GUICtrlCreateButton("Load", 10, 20, 80, 20)
 $boot_config_save_button = 													GUICtrlCreateButton("Save", 100, 20, 80, 20)
@@ -357,7 +352,7 @@ $boot_config_save_as_button = 												GUICtrlCreateButton("Save As", 295, 20
 $boot_config_edit = 														GUICtrlCreateEdit("", 10, 50, 620, 400)
 $boot_config_status_input = 												GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 
-$systems_list_gui = 														GUICreate($app_name, 800, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+$systems_list_gui = 														ChildGUICreate($app_name, 800, 480, $main_gui)
 GUICtrlCreateGroupEx  ("----> RetroPie (/etc/emulationstation/es_systems.cfg)", 5, 5, 250, 40)
 $systems_list_load_button = 												GUICtrlCreateButton("Load", 10, 20, 80, 20)
 $systems_list_save_button = 												GUICtrlCreateButton("Save", 100, 20, 80, 20)
@@ -370,9 +365,7 @@ $systems_list_custom_order_list = 											GUICtrlCreateList("", 660, 20, 120,
 $systems_list_custom_order_reorder_button = 								GUICtrlCreateButton("ReOrder", 660, 360, 80, 20)
 $systems_list_status_input = 												GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 
-
-
-$upload_data_to_retropie_gui = 												GUICreate($app_name & " - Upload Game List to RetroPie", 1024, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+$upload_data_to_retropie_gui = 												ChildGUICreate($app_name & " - Upload Game List to RetroPie", 1024, 480, $main_gui)
 $upload_data_to_retropie_upload_button = 									GUICtrlCreateButton("Upload game list (left side)", 10, 5, 200, 40)
 $upload_data_to_retropie_ie = _IECreateEmbedded()
 GUICtrlCreateObj($upload_data_to_retropie_ie, 10, 50, 1004, 400)
@@ -381,8 +374,7 @@ $upload_data_to_retropie_status_input = 									GUICtrlCreateStatusInput("", 10
 $upload_data_to_retropie_dummy = 											GUICtrlCreateDummy()
 GUISetAccelerators($upload_data_aAccelKeys, $upload_data_to_retropie_gui)
 
-
-$compare_games_to_wiki_gui = 												GUICreate($app_name & " - Compare Game List to Wiki page", 1024, 480, -1, -1, -1, $WS_EX_MDICHILD, $main_gui)
+$compare_games_to_wiki_gui = 												ChildGUICreate($app_name & " - Compare Game List to Wiki page", 1024, 480, $main_gui)
 $compare_games_to_wiki_accept_button = 										GUICtrlCreateButton("Accept Wiki page game list (left side)", 10, 5, 200, 40)
 $compare_games_to_wiki_ie = _IECreateEmbedded()
 GUICtrlCreateObj($compare_games_to_wiki_ie, 10, 50, 1004, 400)

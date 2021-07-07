@@ -2381,6 +2381,13 @@ Func MainGUICreate(ByRef $tab, $tab_left, $tab_top, $tab_width, $tab_height, $ta
 
 EndFunc
 
+Func ChildGUICreate($title, $width, $height, $parent_gui)
+
+	Local $gui = GUICreate($title, $width, $height, -1, -1, -1, $WS_EX_MDICHILD, $parent_gui)
+	Return $gui
+
+EndFunc
+
 Func GUICtrlCreateComboFromDict($value_dictionary = Null, $left = -1, $top = -1, $width = 80, $height = 20, $resizing = -1)
 
 	local $ctrl = GUICtrlCreateCombo("", $left, $top, $width, $height, BitOR($CBS_DROPDOWNLIST, $CBS_DROPDOWN, $CBS_AUTOHSCROLL, $WS_VSCROLL))

@@ -1,33 +1,27 @@
-#include-once
 
 ; #INCLUDES# =========================================================================================================
-;#include <GUIConstantsEx.au3>
-;#include <WindowsConstants.au3>
-;#include <GuiScrollBars.au3>
-;#include <ScrollBarConstants.au3>
-;#include <SendMessage.au3>
-;#include <WinAPI.au3>
-
-#include <AutoItConstants.au3>
+#include-once
 #include <GUIConstants.au3>
-#include <GUIConstantsEx.au3>
-#include <GuiTreeView.au3>
-#include <GuiButton.au3>
-#include <MsgBoxConstants.au3>
-#include <WindowsConstants.au3>
-#include <Array.au3>
 #include <File.au3>
 #include <GuiComboBox.au3>
-#include <Math.au3>
 #include <GuiToolTip.au3>
 #include <GuiListView.au3>
 #include <GuiListBox.au3>
 #include <GuiTab.au3>
-#include <IE.au3>
 #include "WinSCP.au3"
 #include <GDIPlus.au3>
-#include "GUIScrollbars_Ex.au3"
 #Include "_XMLDomWrapper2.au3"
+
+;#include <AutoItConstants.au3>
+;#include <GUIConstantsEx.au3>
+;#include <GuiTreeView.au3>
+;#include <GuiButton.au3>
+;#include <MsgBoxConstants.au3>
+;#include <WindowsConstants.au3>
+;#include <Array.au3>
+;#include <Math.au3>
+;#include <IE.au3>
+;#include "GUIScrollbars_Ex.au3"
 
 
 
@@ -178,22 +172,6 @@ Global $tab
 
 ; Settings tab
 
-Global $image_compression_quality_label
-Global $image_compression_quality_input
-Global $image_compression_quality_slider
-
-Global $retropie_hostname_label
-Global $retropie_hostname_input
-Global $retropie_username_label
-Global $retropie_username_input
-Global $retropie_password_label
-Global $retropie_password_input
-Global $retropie_ssh_key_label
-Global $retropie_ssh_key_input
-Global $minimized_scrapers_checkbox
-
-Global $retropie_download_path_label
-Global $retropie_download_path_input
 
 ; ROMs tab
 
@@ -1519,76 +1497,6 @@ Func plink_insert_text_in_file($path, $text_to_insert)
 	plink($command)
 EndFunc
 
-Func Enable_Config($retropie_edit_boot_config_button = $GUI_DISABLE, $retropie_restart_button = $GUI_DISABLE, $retropie_shutdown_button = $GUI_DISABLE, $emulationstation_edit_systems_list_button = $GUI_DISABLE, $emulationstation_restart_button = $GUI_DISABLE, $reload_button = $GUI_DISABLE, $system_listview = $GUI_DISABLE, $game_listview = $GUI_DISABLE, $update_games_emulator_button = $GUI_DISABLE, $save_games_button = $GUI_DISABLE, $open_button = $GUI_DISABLE, $save_as_button = $GUI_DISABLE)
-
-	GUICtrlSetState($config_boot_edit_config_button, $retropie_edit_boot_config_button)
-	GUICtrlSetState($config_reboot_button, $retropie_restart_button)
-	GUICtrlSetState($config_shutdown_button, $retropie_shutdown_button)
-	GUICtrlSetState($config_edit_systems_list_button, $emulationstation_edit_systems_list_button)
-	GUICtrlSetState($config_restart_emulationstation_button, $emulationstation_restart_button)
-
-	Enable_Emulators_and_Games($reload_button, $system_listview, $game_listview, $update_games_emulator_button, $save_games_button, $open_button, $save_as_button)
-EndFunc
-
-Func Enable_Emulators_and_Games($reload_button = $GUI_DISABLE, $system_listview = $GUI_DISABLE, $game_listview = $GUI_DISABLE, $update_games_emulator_button = $GUI_DISABLE, $save_games_button = $GUI_DISABLE, $open_button = $GUI_DISABLE, $save_as_button = $GUI_DISABLE)
-
-	GUICtrlSetState($config_emulators_games_reload_button, $reload_button)
-	GUICtrlSetState($config_system_listview, $system_listview)
-	GUICtrlSetState($config_game_listview, $game_listview)
-	GUICtrlSetState($config_games_link_games_to_emulator_and_save_button, $update_games_emulator_button)
-	GUICtrlSetState($config_games_open_button, $open_button)
-	GUICtrlSetState($config_games_save_as_button, $save_as_button)
-EndFunc
-
-Func update_games_emulator()
-
-	$selected_games = _GUICtrlListView_GetSelectedIndices($config_game_listview, true)
-
-	if $selected_games[0] > 0 Then
-
-		_ArrayDelete($selected_games, 0)
-		Local $selected_emulator = _GUICtrlListView_GetItemText($config_system_listview, Number(_GUICtrlListView_GetSelectedIndices($config_system_listview)), 0)
-
-		for $each_game_index In $selected_games
-
-			_GUICtrlListView_SetItemText($config_game_listview, $each_game_index, $selected_emulator, 1)
-		Next
-	EndIf
-
-EndFunc
-
-Func save_games()
-
-	Enable_Config()
-	$emulators_cfg_str = ""
-
-	for $i = 0 to (_GUICtrlListView_GetItemCount($config_game_listview) - 1)
-
-		Local $game_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 0)
-		Local $emulator_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 1)
-
-		if StringCompare($emulator_name, $default_emulator) <> 0 Then
-
-			if StringLen($emulators_cfg_str) > 0 Then
-
-				$emulators_cfg_str = $emulators_cfg_str & @CRLF
-			EndIf
-
-			$emulators_cfg_str = $emulators_cfg_str & $game_name & " = """ & $emulator_name & """"
-		EndIf
-	Next
-
-	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $emulators_cfg_str = ' & $emulators_cfg_str & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-
-	GUICtrlSetData($status_input, "Erasing emulators.cfg on the RetroPie ...")
-	plink_delete_all_text_in_file("/opt/retropie/configs/all/emulators.cfg")
-	GUICtrlSetData($status_input, "Saving emulators.cfg to /opt/retropie/configs/all on the RetroPie ...")
-	plink_insert_text_in_file("/opt/retropie/configs/all/emulators.cfg", $emulators_cfg_str)
-	GUICtrlSetData($status_input, "Saved emulators.cfg to /opt/retropie/configs/all on the RetroPie. Start the game using the RetroPie to try the emulator.")
-	Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
-
-EndFunc
-
 
 Func DirCreateSafe($path)
 
@@ -1745,247 +1653,6 @@ Func RefreshDisplayDeviceVideoModesListView()
 	_GUICtrlListView_AddArray($display_device_listview, $display_device_arr)
 EndFunc
 
-Func ReloadEmulatorsAndGamesConfig()
-
-	Enable_Config()
-	GUICtrlSetData($config_emulators_label, "Emulators")
-	GUICtrlSetData($config_games_label, "Games")
-	_GUICtrlListView_DeleteAllItems($config_system_listview)
-	_GUICtrlListView_DeleteAllItems($config_game_listview)
-
-	GUICtrlSetData($status_input, "Reading directory from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
-	$result = plink("ls /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/*.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws}", 2)
-	$all_roms_line_arr = StringSplit($result, @LF, 3)
-
-	GUICtrlSetData($status_input, "Reading emulators.cfg from /opt/retropie/configs/all on the RetroPie ...")
-	$result = plink("cat /opt/retropie/configs/all/emulators.cfg", 2)
-	Local $all_emulators_line_arr = StringSplit($result, @LF, 3)
-
-	GUICtrlSetData($status_input, "Reading emulators.cfg from /opt/retropie/configs/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
-	$result = plink("cat /opt/retropie/configs/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/emulators.cfg", 2)
-	Local $system_emulators_line_arr = StringSplit($result, @LF, 3)
-
-	GUICtrlSetData($status_input, "Reading videomodes.cfg from /opt/retropie/configs/all on the RetroPie ...")
-	$result = plink("cat /opt/retropie/configs/all/videomodes.cfg", 2)
-	Local $videomodes_arr = _StringSplit2d($result, " = ")
-
-	for $i = 0 to (UBound($videomodes_arr) - 1)
-
-		if StringLen($videomodes_arr[$i][0]) = 0 Then
-
-			_ArrayDelete($videomodes_arr, $i)
-		EndIf
-	Next
-
-	Local $display_device_filename = $app_data_dir & "\display device " & GUICtrlRead($display_device_name_combo) & ".txt"
-	Local $display_device_arr
-	_FileReadToArray($display_device_filename, $display_device_arr, 0, "|")
-;				_ArrayDisplay($video_mode_arr)
-
-	GUICtrlSetData($status_input, "Updating Emulators ...")
-	_GUICtrlListView_BeginUpdate($config_system_listview)
-
-	for $each_system_emulator_line in $system_emulators_line_arr
-
-		Local $system_emulator_part_arr = StringSplit($each_system_emulator_line, " = ", 3)
-
-		if StringCompare($system_emulator_part_arr[0], "default") = 0 Then
-
-			$default_emulator = StringReplace($system_emulator_part_arr[1], """", "")
-		Else
-
-			_GUICtrlListView_AddItem($config_system_listview, $system_emulator_part_arr[0])
-		EndIf
-	Next
-
-	_GUICtrlListView_SetItemText($config_system_listview, _GUICtrlListView_FindText($config_system_listview, $default_emulator, -1, False), "Yes", 2)
-
-	for $i = 0 to (UBound($videomodes_arr) - 1)
-
-		$videomodes_arr[$i][1] = StringReplace($videomodes_arr[$i][1], """", "")
-
-		$result = _ArraySearch($display_device_arr, $videomodes_arr[$i][1])
-
-		if $result > -1 Then
-
-			_GUICtrlListView_SetItemText($config_system_listview, _GUICtrlListView_FindText($config_system_listview, $videomodes_arr[$i][0], -1, False), $display_device_arr[$result][1], 1)
-		EndIf
-	Next
-
-	Local $g_bSortSense = False
-	_GUICtrlListView_SimpleSort($config_system_listview, $g_bSortSense, 0, False)
-	_GUICtrlListView_EndUpdate($config_system_listview)
-	GUICtrlSetData($config_emulators_label, "Emulators (" & _GUICtrlListView_GetItemCount($config_system_listview) & ")")
-
-	GUICtrlSetData($status_input, "Updating Games ...")
-
-	_GUICtrlListView_BeginUpdate($config_game_listview)
-
-	for $each_all_emulator_line in $all_emulators_line_arr
-
-		Local $all_emulator_part_arr = StringSplit($each_all_emulator_line, " = ", 3)
-		Local $all_emulator_system_part_arr = StringSplit($all_emulator_part_arr[0], "_", 3)
-
-		if StringCompare($all_emulator_system_part_arr[0], $roms_path_dict.Item(GUICtrlRead($system_combo))) = 0 Then
-
-			$all_emulator_part_arr[1] = StringReplace($all_emulator_part_arr[1], """", "")
-			Local $index = _GUICtrlListView_AddItem($config_game_listview, $all_emulator_part_arr[0])
-			_GUICtrlListView_AddSubItem($config_game_listview, $index, $all_emulator_part_arr[1], 1)
-		EndIf
-	Next
-
-	for $each_all_roms_line in $all_roms_line_arr
-
-		_PathSplit($each_all_roms_line, $sDrive1, $sDir1, $sFileName1, $sExtension1)
-		$each_all_roms_line = $roms_path_dict.Item(GUICtrlRead($system_combo)) & "_" & $sFileName1
-		$each_all_roms_line = StringReplace($each_all_roms_line, " ", "")
-		$each_all_roms_line = StringReplace($each_all_roms_line, "(", "")
-		$each_all_roms_line = StringReplace($each_all_roms_line, ")", "")
-		$each_all_roms_line = StringReplace($each_all_roms_line, ",", "")
-		$each_all_roms_line = StringReplace($each_all_roms_line, ".", "")
-		$each_all_roms_line = StringReplace($each_all_roms_line, "[", "")
-		$each_all_roms_line = StringReplace($each_all_roms_line, "]", "")
-		$each_all_roms_line = StringReplace($each_all_roms_line, "!", "")
-		$each_all_roms_line = StringReplace($each_all_roms_line, "'", "")
-
-		$result = _GUICtrlListView_FindText($config_game_listview, $each_all_roms_line, -1, False)
-
-		if $result < 0 Then
-
-			Local $index = _GUICtrlListView_AddItem($config_game_listview, $each_all_roms_line)
-			_GUICtrlListView_AddSubItem($config_game_listview, $index, $default_emulator, 1)
-		EndIf
-	Next
-
-	Local $g_bSortSense = False
-	_GUICtrlListView_SimpleSort($config_game_listview, $g_bSortSense, 0, False)
-	_GUICtrlListView_EndUpdate($config_game_listview)
-	GUICtrlSetData($config_games_label, "Games (" & _GUICtrlListView_GetItemCount($config_game_listview) & ")")
-	Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
-	GUICtrlSetData($status_input, "Emulators & Games reloaded.")
-
-	; compare the emulators to the wiki page for differences
-
-	GUICtrlSetData($status_input, "Reading https://github.com/seanhaydongriffin/Seans-RetroPie-Companion/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
-	Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/Seans-RetroPie-Companion/wiki/' & $roms_path_dict.Item(GUICtrlRead($system_combo)) & '-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
-	ProcessWaitClose($iPID)
-	GUICtrlSetData($status_input, "")
-	Local $html = StdoutRead($iPID)
-	Local $html_arr = StringSplit($html, @LF, 3)
-	Local $found_emulator_table = False
-	Local $wiki_emulator_arr[0][3]
-
-	for $i = 0 to (UBound($html_arr) - 1)
-
-		if StringInStr($html_arr[$i], "<th>Emulator</th>") > 0 Then
-
-			$found_emulator_table = True
-		EndIf
-
-		if $found_emulator_table = True Then
-
-			if StringInStr($html_arr[$i], "<tr>") > 0 Then
-
-				$i = $i + 1
-				Local $emulator_name = $html_arr[$i]
-				$emulator_name = StringReplace($emulator_name, "<td>", "")
-				$emulator_name = StringReplace($emulator_name, "</td>", "")
-				$emulator_name = StringReplace($emulator_name, " (", "-")
-				$emulator_name = StringReplace($emulator_name, ")", "")
-				$i = $i + 1
-				Local $video_mode = $html_arr[$i]
-				$video_mode = StringReplace($video_mode, "<td>", "")
-				$video_mode = StringReplace($video_mode, "</td>", "")
-				Local $default_emulator_str = ""
-
-				if StringInStr($emulator_name, "*") > 0 Then
-
-					$default_emulator_str = "Yes"
-					$emulator_name = StringReplace($emulator_name, "*", "")
-				EndIf
-
-				$emulator_name = StringStripWS($emulator_name, 3)
-				$video_mode = StringStripWS($video_mode, 3)
-
-				_ArrayAdd($wiki_emulator_arr, $emulator_name & "|" & $video_mode & "|" & $default_emulator_str)
-			EndIf
-
-			if StringInStr($html_arr[$i], "</tbody>") > 0 Then
-
-				ExitLoop
-			EndIf
-		EndIf
-	Next
-
-			;_ArrayDisplay($wiki_emulator_arr)
-
-	for $i = 0 to (_GUICtrlListView_GetItemCount($config_system_listview) - 1)
-
-		Local $emulator_name = _GUICtrlListView_GetItemText($config_system_listview, $i, 0)
-		Local $video_mode = _GUICtrlListView_GetItemText($config_system_listview, $i, 1)
-		$result = _ArraySearch($wiki_emulator_arr, $emulator_name)
-
-		if $result > -1 Then
-
-			if StringCompare($video_mode, $wiki_emulator_arr[$result][1]) <> 0 Then
-
-				$result = MsgBox(1+48+8192, $app_name, "Emulator Video Modes not matching Wiki." & @CRLF & @CRLF & "Click OK to update Retropie with Wiki, or" & @CRLF & "click Cancel and investigate.")
-
-				if $result = 1 Then
-
-					Local $videomodes_str = ""
-
-					for $i = 0 to (UBound($wiki_emulator_arr) - 1)
-
-						$result = _ArraySearch($videomodes_arr, $wiki_emulator_arr[$i][0])
-
-						if $result = -1 Then
-
-							$result = _ArraySearch($display_device_arr, $wiki_emulator_arr[$i][1], 0, 0, 1, 0, 1, 1)
-
-							if $result > -1 Then
-
-								_ArrayAdd($videomodes_arr, $wiki_emulator_arr[$i][0] & "|" & $display_device_arr[$result][0])
-							EndIf
-
-						Else
-
-							$display_device_index = _ArraySearch($display_device_arr, $wiki_emulator_arr[$i][1], 0, 0, 1, 0, 1, 1)
-
-							if $display_device_index > -1 Then
-
-								$videomodes_arr[$result][1] = $display_device_arr[$display_device_index][0]
-							EndIf
-						EndIf
-					Next
-
-					for $i = 0 to (UBound($videomodes_arr) - 1)
-
-						$videomodes_arr[$i][1] = """" & $videomodes_arr[$i][1] & """"
-					Next
-
-					;_ArrayDisplay($videomodes_arr)
-					Local $videomodes_str = _ArrayToString($videomodes_arr, " = ", -1, -1, @LF)
-					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $videomodes_str = ' & $videomodes_str & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-
-					GUICtrlSetData($status_input, "Erasing videomodes.cfg on the RetroPie ...")
-					plink_delete_all_text_in_file("/opt/retropie/configs/all/videomodes.cfg")
-					GUICtrlSetData($status_input, "Saving videomodes.cfg to /opt/retropie/configs/all/videomodes.cfg on the RetroPie ...")
-					plink_insert_text_in_file("/opt/retropie/configs/all/videomodes.cfg", $videomodes_str)
-					GUICtrlSetData($status_input, "Saved videomodes.cfg to /opt/retropie/configs/all on the RetroPie.")
-
-					; reload from RetroPie after above updates
-					ReloadEmulatorsAndGamesConfig()
-
-					ExitLoop
-				EndIf
-
-				ExitLoop
-			EndIf
-		EndIf
-	Next
-
-EndFunc
 
 Func RefreshMetadataListview($selected_index = -1)
 
@@ -2374,7 +2041,7 @@ EndFunc
 
 Func MainGUICreate(ByRef $tab, $tab_left, $tab_top, $tab_width, $tab_height, $tab_resizing)
 
-	Local $gui = GUICreate($app_name, $main_gui_width, $main_gui_height, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU))
+	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU))
 	$tab = GUICtrlCreateTabEx($tab_left, $tab_top, $tab_width, $tab_height, $tab_resizing)
 
 	Return $gui

@@ -4,17 +4,20 @@
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ;#RequireAdmin
 #include-once
-#Include "Seans RetroPie Companion UDF.au3"
+#Include "RetropanionEx.au3"
 
 
 Func ROMs_tab_setup()
 
 	GUICtrlCreateTabItemEx("===> ROMs")
 	GUICtrlCreateGroupEx  ("----> ROMs", 20, 140, 250, 500)
-	$rebuild_roms_roms_list = 								GUICtrlCreateSingleSelectList(30, 170, 200, 420, 500, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
-	$rebuild_roms_refresh_button = 							GUICtrlCreateImageButton("get games list.ico", 30, 590, 36, "Get the list of games (from the RetroPie)", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-	$rebuild_roms_rebuild_button = 							GUICtrlCreateImageButton("repair.ico", 120, 590, 36, "Rebuild / Repair the selected rom")
+	$rebuild_roms_roms_list = 													GUICtrlCreateSingleSelectList(30, 170, 200, 420, 500, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
+	$rebuild_roms_refresh_button = 												GUICtrlCreateImageButton("get games list.ico", 30, 590, 36, "Get the list of games (from the RetroPie)", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+	$rebuild_roms_rebuild_button = 												GUICtrlCreateImageButton("repair.ico", 120, 590, 36, "Rebuild / Repair the selected rom")
 
+EndFunc
+
+Func ROMs_tab_child_gui_setup()
 EndFunc
 
 

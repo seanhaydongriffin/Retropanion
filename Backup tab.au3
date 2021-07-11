@@ -4,7 +4,7 @@
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ;#RequireAdmin
 #include-once
-#Include "Seans RetroPie Companion UDF.au3"
+#Include "RetropanionEx.au3"
 
 
 Func Backup_tab_setup()
@@ -53,7 +53,8 @@ Func Backup_tab_setup()
 
 EndFunc
 
-
+Func Backup_tab_child_gui_setup()
+EndFunc
 
 
 Func Backup_tab_event_handler($msg)

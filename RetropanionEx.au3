@@ -11,6 +11,7 @@
 #include "WinSCP.au3"
 #include <GDIPlus.au3>
 #Include "_XMLDomWrapper2.au3"
+#include <GuiRichEdit.au3>
 
 ;#include <AutoItConstants.au3>
 ;#include <GUIConstantsEx.au3>
@@ -81,50 +82,50 @@ $download_path_dict.Add("Sony PlayStation 2", 						"")
 $download_path_dict.Add("Sony PSP", 								"Sony_PSP")
 
 Global $roms_path_dict = ObjCreate("Scripting.Dictionary")
-$roms_path_dict.Add("3DO", 										"3do")
-$roms_path_dict.Add("Amstrad CPC 464", 							"amstradcpc")
-$roms_path_dict.Add("Apple II / Apple III", 					"apple2")
-$roms_path_dict.Add("Arcade", 									"arcade")
-$roms_path_dict.Add("Atari 2600", 								"atari2600")
-$roms_path_dict.Add("Atari 5200", 								"atari5200")
-$roms_path_dict.Add("Atari 7800", 								"atari7800")
-$roms_path_dict.Add("Atari 8-bit Family", 						"atari800")
-$roms_path_dict.Add("Atari Jaguar", 							"atarijaguar")
-$roms_path_dict.Add("Atari Lynx", 								"atarilynx")
-$roms_path_dict.Add("Atari ST / TT / Falcon", 					"atarist")
-$roms_path_dict.Add("Bandai WonderSwan", 						"wonderswan")
-$roms_path_dict.Add("Bandai WonderSwan Color / SwanCrystal", 	"wonderswancolor")
-$roms_path_dict.Add("Coleco / CBS ColecoVision", 				"coleco")
-$roms_path_dict.Add("Commodore 64 / 128", 						"c64")
-$roms_path_dict.Add("Commodore Amiga", 							"amiga")
-$roms_path_dict.Add("Dragon 32 / 64", 							"dragon32")
-$roms_path_dict.Add("GCE Vectrex / Bandai Kousokusen", 			"vectrex")
-$roms_path_dict.Add("LaserDisc", 								"daphne")
-$roms_path_dict.Add("Magnavox Odyssey^2 / VideoPac", 			"videopac")
-$roms_path_dict.Add("Mattel Intellivision", 					"intellivision")
-$roms_path_dict.Add("NEC PC Engine / TurboGrafx-16", 			"pcengine")
-$roms_path_dict.Add("Nintendo 64", 								"n64")
-$roms_path_dict.Add("Nintendo DS", 								"nds")
-$roms_path_dict.Add("Nintendo Famicom Disk System", 			"fds")
-$roms_path_dict.Add("Nintendo Game & Watch", 					"gameandwatch")
-$roms_path_dict.Add("Nintendo Game Boy", 						"gb")
-$roms_path_dict.Add("Nintendo Game Boy Advance", 				"gba")
-$roms_path_dict.Add("Nintendo Game Boy Color", 					"gbc")
-$roms_path_dict.Add("Nintendo GameCube", 						"gc")
-$roms_path_dict.Add("Nintendo NES / Famicom", 					"nes")
-$roms_path_dict.Add("Nintendo SNES / Super Famicom", 			"snes")
-$roms_path_dict.Add("Sega 32X", 								"sega32x")
-$roms_path_dict.Add("Sega CD / Mega CD", 						"segacd")
-$roms_path_dict.Add("Sega Dreamcast", 							"dreamcast")
-$roms_path_dict.Add("Sega Game Gear", 							"gamegear")
-$roms_path_dict.Add("Sega Genesis / Mega Drive", 				"megadrive")
-$roms_path_dict.Add("Sega Saturn", 								"saturn")
-$roms_path_dict.Add("Sega SG-1000 / SC-3000", 					"sg-1000")
-$roms_path_dict.Add("SNK Neo Geo Pocket", 						"ngp")
-$roms_path_dict.Add("SNK Neo Geo Pocket Color", 				"ngpc")
-$roms_path_dict.Add("Sony PlayStation", 						"psx")
-$roms_path_dict.Add("Sony PlayStation 2", 						"")
-$roms_path_dict.Add("Sony PSP", 								"psp")
+$roms_path_dict.Add("3DO", 											"3do")
+$roms_path_dict.Add("Amstrad CPC 464", 								"amstradcpc")
+$roms_path_dict.Add("Apple II / Apple III", 						"apple2")
+$roms_path_dict.Add("Arcade", 										"arcade")
+$roms_path_dict.Add("Atari 2600", 									"atari2600")
+$roms_path_dict.Add("Atari 5200", 									"atari5200")
+$roms_path_dict.Add("Atari 7800", 									"atari7800")
+$roms_path_dict.Add("Atari 8-bit Family", 							"atari800")
+$roms_path_dict.Add("Atari Jaguar", 								"atarijaguar")
+$roms_path_dict.Add("Atari Lynx", 									"atarilynx")
+$roms_path_dict.Add("Atari ST / TT / Falcon", 						"atarist")
+$roms_path_dict.Add("Bandai WonderSwan", 							"wonderswan")
+$roms_path_dict.Add("Bandai WonderSwan Color / SwanCrystal", 		"wonderswancolor")
+$roms_path_dict.Add("Coleco / CBS ColecoVision", 					"coleco")
+$roms_path_dict.Add("Commodore 64 / 128", 							"c64")
+$roms_path_dict.Add("Commodore Amiga", 								"amiga")
+$roms_path_dict.Add("Dragon 32 / 64", 								"dragon32")
+$roms_path_dict.Add("GCE Vectrex / Bandai Kousokusen", 				"vectrex")
+$roms_path_dict.Add("LaserDisc", 									"daphne")
+$roms_path_dict.Add("Magnavox Odyssey^2 / VideoPac", 				"videopac")
+$roms_path_dict.Add("Mattel Intellivision", 						"intellivision")
+$roms_path_dict.Add("NEC PC Engine / TurboGrafx-16", 				"pcengine")
+$roms_path_dict.Add("Nintendo 64", 									"n64")
+$roms_path_dict.Add("Nintendo DS", 									"nds")
+$roms_path_dict.Add("Nintendo Famicom Disk System", 				"fds")
+$roms_path_dict.Add("Nintendo Game & Watch", 						"gameandwatch")
+$roms_path_dict.Add("Nintendo Game Boy", 							"gb")
+$roms_path_dict.Add("Nintendo Game Boy Advance", 					"gba")
+$roms_path_dict.Add("Nintendo Game Boy Color", 						"gbc")
+$roms_path_dict.Add("Nintendo GameCube", 							"gc")
+$roms_path_dict.Add("Nintendo NES / Famicom", 						"nes")
+$roms_path_dict.Add("Nintendo SNES / Super Famicom", 				"snes")
+$roms_path_dict.Add("Sega 32X", 									"sega32x")
+$roms_path_dict.Add("Sega CD / Mega CD", 							"segacd")
+$roms_path_dict.Add("Sega Dreamcast", 								"dreamcast")
+$roms_path_dict.Add("Sega Game Gear", 								"gamegear")
+$roms_path_dict.Add("Sega Genesis / Mega Drive", 					"megadrive")
+$roms_path_dict.Add("Sega Saturn", 									"saturn")
+$roms_path_dict.Add("Sega SG-1000 / SC-3000", 						"sg-1000")
+$roms_path_dict.Add("SNK Neo Geo Pocket", 							"ngp")
+$roms_path_dict.Add("SNK Neo Geo Pocket Color", 					"ngpc")
+$roms_path_dict.Add("Sony PlayStation", 							"psx")
+$roms_path_dict.Add("Sony PlayStation 2", 							"")
+$roms_path_dict.Add("Sony PSP", 									"psp")
 
 Global $local_path = "F:\RetroPie"
 Global $ImageMagick_path = "C:\Program Files\ImageMagick-7.0.11-Q16-HDRI"
@@ -141,7 +142,6 @@ Global $default_emulator
 Global $all_roms_line_arr
 Global $gamelist_xml_dom
 Global $result = 1
-
 
 ; GUIs
 
@@ -454,7 +454,33 @@ Global $aFactors
 
 
 
+Func Retropanion_Startup()
 
+	_GDIPlus_Startup()
+
+
+	; Create the app data folder
+
+	if FileExists($app_data_dir) = False Then
+
+		DirCreate($app_data_dir)
+	EndIf
+
+
+	; Erase the log
+
+	if FileExists($log_filename) = true Then
+
+		FileDelete($log_filename)
+	EndIf
+
+EndFunc
+
+
+Func Retropanion_Shutdown()
+
+	_GDIPlus_ShutDown ()
+EndFunc
 
 
 
@@ -851,9 +877,15 @@ Func plink($command, $strip_whitespace_flag = 0)
 	$cmd = "plink.exe -ssh " & GUICtrlRead($retropie_hostname_input) & " -l " & GUICtrlRead($retropie_username_input) & " -pw " & GUICtrlRead($retropie_password_input) & " -batch " & $command
 	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $cmd = ' & $cmd & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-	Local $iPID = Run("plink.exe -ssh " & GUICtrlRead($retropie_hostname_input) & " -l " & GUICtrlRead($retropie_username_input) & " -pw " & GUICtrlRead($retropie_password_input) & " -batch " & $command, @ScriptDir, @SW_HIDE, 7)
+	Local $iPID = Run("plink.exe -ssh " & GUICtrlRead($retropie_hostname_input) & " -l " & GUICtrlRead($retropie_username_input) & " -pw " & GUICtrlRead($retropie_password_input) & " -batch " & $command, @ScriptDir, @SW_HIDE,  7)
     ProcessWaitClose($iPID)
     Local $sOutput = StdoutRead($iPID)
+    Local $stderr_output = StderrRead($iPID)
+
+	if StringLen($sOutput) = 0 and StringLen($stderr_output) > 0 Then
+
+		return SetError(1, 0, $stderr_output)
+	EndIf
 
 	if $strip_whitespace_flag > 0 Then
 
@@ -1440,6 +1472,7 @@ Func MainGUICreate(ByRef $tab, $tab_left, $tab_top, $tab_width, $tab_height, $ta
 
 	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU))
 	$tab = GUICtrlCreateTabEx($tab_left, $tab_top, $tab_width, $tab_height, $tab_resizing)
+	$current_gui = $gui
 
 	Return $gui
 
@@ -1448,6 +1481,7 @@ EndFunc
 Func ChildGUICreate($title, $width, $height, $parent_gui)
 
 	Local $gui = GUICreate($title, $width, $height, -1, -1, -1, $WS_EX_MDICHILD, $parent_gui)
+	$current_gui = $gui
 	Return $gui
 
 EndFunc
@@ -1574,11 +1608,24 @@ EndFunc
 
 Func GUICtrlCreateStatusInput($text, $left, $top, $width, $height)
 
-	local $input = GUICtrlCreateInput($text, $left, $top, $width, $height, $ES_READONLY, $WS_EX_STATICEDGE)
+	Local $status_input_header = "{\rtf1\ansi\deff0\readprot\annotprot{\fonttbl {\f0 Normal;}}\fs18 " ; Courier or New Times New Roman or roman or Times New Roman Greek
+	Local $status_input_footer = "\line "
+
+	local $input = _GUICtrlRichEdit_Create($current_gui, $status_input_header & $text & $status_input_footer, $left, $top, $width, $height, $ES_READONLY)
 	GUICtrlSetResizing(-1, $GUI_DOCKBOTTOM + $GUI_DOCKHEIGHT + $GUI_DOCKLEFT + $GUI_DOCKRIGHT)
+	_GUICtrlRichEdit_SetEventMask($input, $ENM_LINK)
+	_GUICtrlRichEdit_AutoDetectURL($input, True)
 	Return $input
 
 EndFunc
+
+Func GUICtrlStatusInput_SetText($input, $text)
+
+	Local $status_input_header = "{\rtf1\ansi\deff0\readprot\annotprot{\fonttbl {\f0 Normal;}}\fs18 " ; Courier or New Times New Roman or roman or Times New Roman Greek
+	Local $status_input_footer = "\line "
+	_GUICtrlRichEdit_SetText($input, $status_input_header & $text & $status_input_footer)
+EndFunc
+
 
 Func GUICtrlCreateSliderEx($left, $top, $width, $height, $resizing, $max, $min, $value)
 

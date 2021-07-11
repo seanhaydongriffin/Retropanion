@@ -4,7 +4,7 @@
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 ;#RequireAdmin
 #include-once
-#Include "Seans RetroPie Companion UDF.au3"
+#Include "RetropanionEx.au3"
 #include <IE.au3>
 
 
@@ -22,15 +22,15 @@ Func Config_tab_setup()
 	$game_config_x = 310
 	$game_config_y = $boot_config_y + 210
 	GUICtrlCreateGroupEx  ("----> RetroPie", $boot_config_x, $boot_config_y, 60, 70)
-	$config_boot_edit_config_button = 						GUICtrlCreateImageButton("edit startup.ico", $boot_config_x + 10, $boot_config_y + 20, 36, "Edit the Boot Config of the RetroPie")
+	$config_boot_edit_config_button = 											GUICtrlCreateImageButton("edit startup.ico", $boot_config_x + 10, $boot_config_y + 20, 36, "Edit the Boot Config of the RetroPie")
 	GUICtrlCreateGroupEx  ("----> EmulationStation", $systems_list_config_x, $systems_list_config_y, 100, 70)
-	$config_edit_systems_list_button = 						GUICtrlCreateImageButton("edit consoles.ico", $systems_list_config_x + 10, $systems_list_config_y + 20, 36, "Edit the Systems List of the RetroPie")
+	$config_edit_systems_list_button = 											GUICtrlCreateImageButton("edit consoles.ico", $systems_list_config_x + 10, $systems_list_config_y + 20, 36, "Edit the Systems List of the RetroPie")
 	GUICtrlCreateGroupEx  ("----> Display", 20, 150, 260, 450)
-	$display_device_add_button = 							GUICtrlCreateImageButton("add.ico", 30, 170, 28, "Add a new Display Device")
-	$display_device_delete_button = 						GUICtrlCreateImageButton("delete.ico", 60, 170, 28, "Delete the selected Display Device")
-	$display_device_scan_modes_button = 					GUICtrlCreateImageButton("scan video modes.ico", 90, 170, 28, "Scan all video modes for the connected Display Device")
-	$display_label = 										GUICtrlCreateLabel("Video Modes for the ""..."" display", 30, 210, 200, 20)
-	$display_device_listview = 								GUICtrlCreateListViewEx(30, 230, 240, 360, "Video Mode", 90, "Resolution", 160)
+	$display_device_add_button = 												GUICtrlCreateImageButton("add.ico", 30, 170, 28, "Add a new Display Device")
+	$display_device_delete_button = 											GUICtrlCreateImageButton("delete.ico", 60, 170, 28, "Delete the selected Display Device")
+	$display_device_scan_modes_button = 										GUICtrlCreateImageButton("scan video modes.ico", 90, 170, 28, "Scan all video modes for the connected Display Device")
+	$display_label = 															GUICtrlCreateLabel("Video Modes for the ""..."" display", 30, 210, 200, 20)
+	$display_device_listview = 													GUICtrlCreateListViewEx(30, 230, 240, 360, "Video Mode", 90, "Resolution", 160)
 
 	Local $display_device_filename_arr = _FileListToArray($app_data_dir, "display device *.txt", 1)
 
@@ -73,7 +73,7 @@ Func Config_tab_setup()
 
 EndFunc
 
-Func Config_Boot_GUI_setup()
+Func Config_tab_child_gui_setup()
 
 	$boot_config_gui = 															ChildGUICreate($app_name & " - Boot GUI", 640, 480, $main_gui)
 	GUICtrlCreateGroupEx  ("----> RetroPie (/boot/config.txt)", 5, 5, 180, 40)
@@ -84,10 +84,6 @@ Func Config_Boot_GUI_setup()
 	$boot_config_save_as_button = 												GUICtrlCreateButton("Save As", 295, 20, 80, 20)
 	$boot_config_edit = 														GUICtrlCreateEdit("", 10, 50, 620, 400)
 	$boot_config_status_input = 												GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
-
-EndFunc
-
-Func Config_Systems_List_GUI_setup()
 
 	$systems_list_gui = 														ChildGUICreate($app_name & " - Systems List GUI", 800, 480, $main_gui)
 	GUICtrlCreateGroupEx  ("----> RetroPie (/etc/emulationstation/es_systems.cfg)", 5, 5, 250, 40)
@@ -102,20 +98,17 @@ Func Config_Systems_List_GUI_setup()
 	$systems_list_custom_order_reorder_button = 								GUICtrlCreateButton("ReOrder", 660, 360, 80, 20)
 	$systems_list_status_input = 												GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 
-EndFunc
-
-Func Config_Compare_Game_List_to_Wiki_GUI_setup()
-
 	$compare_games_to_wiki_gui = 												ChildGUICreate($app_name & " - Compare Game List to Wiki GUI", 1024, 480, $main_gui)
 	$compare_games_to_wiki_accept_button = 										GUICtrlCreateButton("Accept Wiki page game list (left side)", 10, 5, 200, 40)
 	$compare_games_to_wiki_ie = _IECreateEmbedded()
 	GUICtrlCreateObj($compare_games_to_wiki_ie, 10, 50, 1004, 400)
-	$compare_games_to_wiki_status_input = GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
+	$compare_games_to_wiki_status_input = 										GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 
 	$compare_games_to_wiki_dummy = 												GUICtrlCreateDummy()
 	GUISetAccelerators($compare_aAccelKeys, $compare_games_to_wiki_gui)
 
 EndFunc
+
 
 
 
@@ -279,8 +272,8 @@ Func Config_tab_event_handler($msg)
 
 			; convert the wiki games data into a RetroPie emulator.cfg formatted file
 
-			GUICtrlSetData($compare_games_to_wiki_status_input, "Reading https://github.com/seanhaydongriffin/Seans-RetroPie-Companion/wiki/N64-Emulator-Game-Compatibility")
-			Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/Seans-RetroPie-Companion/wiki/N64-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
+			GUICtrlSetData($compare_games_to_wiki_status_input, "Reading https://github.com/seanhaydongriffin/" & $app_name & "/wiki/N64-Emulator-Game-Compatibility")
+			Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/' & $app_name & '/wiki/N64-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
 			ProcessWaitClose($iPID)
 			Local $html = StdoutRead($iPID)
 			GUICtrlSetData($compare_games_to_wiki_status_input, "")
@@ -536,7 +529,7 @@ Func Config_tab_event_handler($msg)
 
 		Case $system_open_wiki_page_button
 
-			ShellExecute("https://github.com/seanhaydongriffin/Seans-RetroPie-Companion/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
+			ShellExecute("https://github.com/seanhaydongriffin/" & $app_name & "/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
 
 		case $config_games_link_games_to_emulator_and_save_button
 
@@ -595,7 +588,7 @@ Func Config_tab_event_handler($msg)
 
 		Case $config_games_open_button
 
-			$result = FileOpenDialog($app_name, $app_data_dir, "Config files (*.cfg)", 0, "Seans RetroPie Companion n64 emulators.cfg", $main_gui)
+			$result = FileOpenDialog($app_name, $app_data_dir, "Config files (*.cfg)", 0, $app_name & " n64 emulators.cfg", $main_gui)
 
 			if @error = 0 Then
 
@@ -654,7 +647,7 @@ Func Config_tab_event_handler($msg)
 
 		Case $config_games_save_as_button
 
-			$result = FileSaveDialog($app_name, $app_data_dir, "Config files (*.cfg)", 0, "Seans RetroPie Companion n64 emulators.cfg", $main_gui)
+			$result = FileSaveDialog($app_name, $app_data_dir, "Config files (*.cfg)", 0, $app_name & " n64 emulators.cfg", $main_gui)
 
 			if @error = 0 Then
 
@@ -701,12 +694,12 @@ Func Config_tab_event_handler($msg)
 			GUICtrlSetData($systems_list_edit, $result)
 			GUICtrlSetData($systems_list_status_input, "Read /etc/emulationstation/es_systems.cfg from RetroPie.")
 
-			; load the Seans RetroPie Companion Systems Custom Order.cfg if that exists
+			; load the Retropanion Systems Custom Order.cfg if that exists
 
-			if FileExists(@ScriptDir & "\Seans RetroPie Companion Systems Custom Order.cfg") = True Then
+			if FileExists(@ScriptDir & "\" & $app_name & " Systems Custom Order.cfg") = True Then
 
 				Local $custom_order_arr
-				_FileReadToArray(@ScriptDir & "\Seans RetroPie Companion Systems Custom Order.cfg", $custom_order_arr, 0)
+				_FileReadToArray(@ScriptDir & "\" & $app_name & " Systems Custom Order.cfg", $custom_order_arr, 0)
 
 				for $each in $custom_order_arr
 
@@ -991,8 +984,8 @@ Func ReloadEmulatorsAndGamesConfig()
 
 	; compare the emulators to the wiki page for differences
 
-	GUICtrlSetData($status_input, "Reading https://github.com/seanhaydongriffin/Seans-RetroPie-Companion/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
-	Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/Seans-RetroPie-Companion/wiki/' & $roms_path_dict.Item(GUICtrlRead($system_combo)) & '-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
+	GUICtrlSetData($status_input, "Reading https://github.com/seanhaydongriffin/" & $app_name & "/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
+	Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/' & $app_name & '/wiki/' & $roms_path_dict.Item(GUICtrlRead($system_combo)) & '-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
 	ProcessWaitClose($iPID)
 	GUICtrlSetData($status_input, "")
 	Local $html = StdoutRead($iPID)
@@ -1111,3 +1104,35 @@ Func ReloadEmulatorsAndGamesConfig()
 	Next
 
 EndFunc
+
+
+Func Config_tab_WM_NOTIFY_handler($hWndFrom, $iCode)
+
+	Switch $hWndFrom
+
+
+		Case GUICtrlGetHandle($config_game_listview)
+
+			Switch $iCode
+
+				Case $LVN_ITEMCHANGED
+
+					Local $arr = _GUICtrlListView_GetItemTextArray($config_game_listview)
+
+					if StringLen($arr[2]) > 0 Then
+
+;						ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $arr[2] = ' & $arr[2] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+						_GUICtrlListView_SetItemSelected($config_system_listview, _GUICtrlListView_FindText($config_system_listview, $arr[2], -1, False))
+					EndIf
+
+;					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $LVN_ITEMCHANGED = ' & $LVN_ITEMCHANGED & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+
+
+			EndSwitch
+
+
+	EndSwitch
+
+EndFunc
+

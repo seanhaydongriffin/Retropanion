@@ -11,15 +11,15 @@
 Func Scrape_Images_with_Manual_Join_tab_setup()
 
 	GUICtrlCreateTabItemEx("===> Scrape Images with Manual Join")
-	GUICtrlCreateGroupEx  ("----> Scraping Images", 20, 70, 410, 80)
-	$scrape_manual_join_website_combo = 										GUICtrlCreateComboFromDictWithLabel($scrape_manual_join_websites_label, "Website(s)", 30, 90, 70, 20, "The website(s) to scrape the box art from", Null, 90, 90, 150, 20)
+	GUICtrlCreateGroupEx  ("----> Scraping Images", 20, 90, 410, 80)
+	$scrape_manual_join_website_combo = 										GUICtrlCreateComboFromDictWithLabel($scrape_manual_join_websites_label, "Website(s)", 30, 110, 70, 20, "The website(s) to scrape the box art from", Null, 90, 110, 150, 20)
 	_GUICtrlComboBox_AddString($scrape_manual_join_website_combo, "Atarimania")
 	_GUICtrlComboBox_AddString($scrape_manual_join_website_combo, "LaunchBox")
 	_GUICtrlComboBox_SetCurSel($scrape_manual_join_website_combo, 0)
-	$scrape_manual_join_minimized_scrapers_checkbox = 							GUICtrlCreateCheckboxEx("Minimized Scrapers", 250, 90, 120, 20, True, "If checked then run each scraper in a minimized window")
-	$scrape_manual_join_max_scrapers_input = 									GUICtrlCreateInputWithLabel("10", 100, 120, 30, 20, $scrape_manual_join_max_scrapers_label, "Max Scrapers", 30, 120, 80, 20, "The maximum number of scrapers that will run in parallel")
-	$scrape_manual_join_max_scrapers_slider = 									GUICtrlCreateSliderEx(140, 120, 150, 20, $GUI_DOCKALL, 10, 1, 10)
-	$scrape_manual_join_scrape_button = 										GUICtrlCreateImageButton("scrape art.ico", 370, 90, 36, _
+	$scrape_manual_join_minimized_scrapers_checkbox = 							GUICtrlCreateCheckboxEx("Minimized Scrapers", 250, 110, 120, 20, True, "If checked then run each scraper in a minimized window")
+	$scrape_manual_join_max_scrapers_input = 									GUICtrlCreateInputWithLabel("10", 100, 140, 30, 20, $scrape_manual_join_max_scrapers_label, "Max Scrapers", 30, 140, 80, 20, "The maximum number of scrapers that will run in parallel")
+	$scrape_manual_join_max_scrapers_slider = 									GUICtrlCreateSliderEx(140, 140, 150, 20, $GUI_DOCKALL, 10, 1, 10)
+	$scrape_manual_join_scrape_button = 										GUICtrlCreateImageButton("scrape art.ico", 370, 110, 36, _
 		"Scrapes game metadata according to the selections above." & @CRLF & _
 		@CRLF & _
 		"Front Covers will be stored in the Box folder." & @CRLF  & _
@@ -37,11 +37,11 @@ Func Scrape_Images_with_Manual_Join_tab_setup()
 	$scrape_manual_join_rom_list = 												GUICtrlCreateSingleSelectList(240, 250, 200, 420, -1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 	$scrape_manual_join_upload_button = 										GUICtrlCreateImageButton("upload art.ico", 450, 250, 36, "Upload selected art with game name (to the RetroPie) - Alt+A", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 	$scrape_manual_join_upload_gamelist_button = 								GUICtrlCreateImageButton("update list.ico", 450, 625, 36, "Update games list (on the RetroPie) with all art uploaded - Alt+G", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-	$scrape_manual_join_art_1_pic = 											GUICtrlCreatePicEx(500, 80, 220, 110, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKTOP + $GUI_DOCKAUTO, True)
-	$scrape_manual_join_art_2_pic = 											GUICtrlCreatePicEx(500, 200, 220, 110, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO, True)
-	$scrape_manual_join_art_3_pic = 											GUICtrlCreatePicEx(500, 320, 220, 110, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO, True)
-	$scrape_manual_join_art_4_pic = 											GUICtrlCreatePicEx(500, 440, 220, 110, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO, True)
-	$scrape_manual_join_art_5_pic = 											GUICtrlCreatePicEx(500, 560, 220, 110, $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKBOTTOM, True)
+	$scrape_manual_join_art_1_pic = 											GUICtrlCreatePicEx(500, 80, 220, 110, "Left mouse click to view enlarged", $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKTOP + $GUI_DOCKAUTO, True)
+	$scrape_manual_join_art_2_pic = 											GUICtrlCreatePicEx(500, 200, 220, 110, "Left mouse click to view enlarged", $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO, True)
+	$scrape_manual_join_art_3_pic = 											GUICtrlCreatePicEx(500, 320, 220, 110, "Left mouse click to view enlarged", $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO, True)
+	$scrape_manual_join_art_4_pic = 											GUICtrlCreatePicEx(500, 440, 220, 110, "Left mouse click to view enlarged", $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKAUTO, True)
+	$scrape_manual_join_art_5_pic = 											GUICtrlCreatePicEx(500, 560, 220, 110, "Left mouse click to view enlarged", $GUI_DOCKLEFT + $GUI_DOCKWIDTH + $GUI_DOCKBOTTOM, True)
 	$scrape_manual_join_down_button = 											GUICtrlCreateImageButton("down.ico", 730, 640, 36, "Move selection down", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 	$scrape_manual_join_up_button = 											GUICtrlCreateImageButton("up.ico", 780, 640, 36, "Move selection up", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 	GUIStartGroup()
@@ -62,8 +62,13 @@ EndFunc
 
 Func Scrape_Images_with_Manual_Join_tab_child_gui_setup()
 
-	$art_gui = 																	ChildGUICreate($app_name, 640, 480, $main_gui)
-	$art_big_pic = 																GUICtrlCreatePic("", 0, 0, 640, 480)
+	$art_gui = 																	ChildGUICreate($app_name & " - Art Enlarged", 640, 480, $main_gui)
+	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $art_gui = ' & $art_gui & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+	$art_big_pic = 																GUICtrlCreatePicEx(0, 0, 640, 480, "", $GUI_DOCKAUTO)
+
+	$art_dummy = 																GUICtrlCreateDummy()
+	Local $art_aAccelKeys[1][2] = [["{Esc}", $art_dummy]]
+	GUISetAccelerators($art_aAccelKeys, $art_gui)
 
 EndFunc
 
@@ -660,10 +665,10 @@ Func Scrape_Images_with_Manual_Join_tab_event_handler($msg)
 
 			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-1.jpg") = True Then
 
-				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-1.jpg")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-1.jpg")
 			Else
 
-				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-1.png")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-1.png")
 			EndIf
 
 			GUISetState(@SW_DISABLE, $main_gui)
@@ -674,10 +679,10 @@ Func Scrape_Images_with_Manual_Join_tab_event_handler($msg)
 
 			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-2.jpg") = True Then
 
-				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-2.jpg")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-2.jpg")
 			Else
 
-				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-2.png")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-2.png")
 			EndIf
 
 			GUISetState(@SW_DISABLE, $main_gui)
@@ -688,10 +693,10 @@ Func Scrape_Images_with_Manual_Join_tab_event_handler($msg)
 
 			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-3.jpg") = True Then
 
-				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-3.jpg")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-3.jpg")
 			Else
 
-				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-3.png")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-3.png")
 			EndIf
 
 			GUISetState(@SW_DISABLE, $main_gui)
@@ -702,10 +707,10 @@ Func Scrape_Images_with_Manual_Join_tab_event_handler($msg)
 
 			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-4.jpg") = True Then
 
-				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-4.jpg")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-4.jpg")
 			Else
 
-				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-4.png")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-4.png")
 			EndIf
 
 			GUISetState(@SW_DISABLE, $main_gui)
@@ -716,10 +721,10 @@ Func Scrape_Images_with_Manual_Join_tab_event_handler($msg)
 
 			if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-5.jpg") = True Then
 
-				GUICtrlSetImage($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-5.jpg")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-5.jpg")
 			Else
 
-				GUICtrlSetImagePNG($art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-5.png")
+				GUISetImage($art_gui, $art_big_pic, $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & _GUICtrlListBox_GetText($scrape_manual_join_art_list, _GUICtrlListBox_GetCurSel($scrape_manual_join_art_list)) & "-5.png")
 			EndIf
 
 			GUISetState(@SW_DISABLE, $main_gui)
@@ -816,6 +821,13 @@ Func Scrape_Images_with_Manual_Join_tab_event_handler($msg)
 		Case $art_1_front, $art_2_front, $art_3_front, $art_4_front, $art_5_front, $art_1_back, $art_2_back, $art_3_back, $art_4_back, $art_5_back
 
 			GUICtrlSetState($scrape_manual_join_art_list, $GUI_FOCUS)
+
+
+		Case $art_dummy
+
+			GUISetState(@SW_ENABLE, $main_gui)
+			GUISetState(@SW_HIDE, $current_gui)
+			$current_gui = $main_gui
 
 
 

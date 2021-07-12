@@ -37,17 +37,17 @@ Func ROMs_tab_event_handler($msg)
 
 ;			if $result = 6 Then
 
-;				GUICtrlSetData($status_input, "Downloading /opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
+;				GUICtrlStatusInput_SetText($status_input, "Downloading /opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
 ;				pscp_download("/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml", $gamelist_filepath)
-;				GUICtrlSetData($status_input, "Downloaded " & $gamelist_filepath)
+;				GUICtrlStatusInput_SetText($status_input, "Downloaded " & $gamelist_filepath)
 ;			EndIf
 
-			GUICtrlSetData($status_input, "Getting rom list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)))
+			GUICtrlStatusInput_SetText($status_input, "Getting rom list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)))
 			$result = plink("(cd /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws})", 2)
 			Local $rom_filename_arr = StringSplit($result, @LF, 3)
 			_ArraySort($rom_filename_arr)
 			;_ArrayDisplay($rom_filename_arr)
-			GUICtrlSetData($status_input, "")
+			GUICtrlStatusInput_SetText($status_input, "")
 
 
 ;			_ArraySort($tmp_roms_list_arr)
@@ -68,11 +68,11 @@ Func ROMs_tab_event_handler($msg)
 
 			; get the latest ClrMame Pro DAT files
 
-			GUICtrlSetData($status_input, "Downloading FinalBurn Neo (ClrMame Pro XML, Neogeo only).dat")
+			GUICtrlStatusInput_SetText($status_input, "Downloading FinalBurn Neo (ClrMame Pro XML, Neogeo only).dat")
 			InetGet("https://github.com/libretro/FBNeo/raw/master/dats/FinalBurn%20Neo%20(ClrMame%20Pro%20XML%2C%20Neogeo%20only).dat", @ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Neogeo only).dat")
-			GUICtrlSetData($status_input, "Downloading FinalBurn Neo (ClrMame Pro XML, Arcade only).dat")
+			GUICtrlStatusInput_SetText($status_input, "Downloading FinalBurn Neo (ClrMame Pro XML, Arcade only).dat")
 			InetGet("https://github.com/libretro/FBNeo/raw/master/dats/FinalBurn%20Neo%20(ClrMame%20Pro%20XML%2C%20Arcade%20only).dat", @ScriptDir & "\FinalBurn Neo (ClrMame Pro XML, Arcade only).dat")
-			GUICtrlSetData($status_input, "")
+			GUICtrlStatusInput_SetText($status_input, "")
 
 ;			Local $rom_filename_arr[1]
 			Local $rom_name = _GUICtrlListBox_GetText($rebuild_roms_roms_list, _GUICtrlListBox_GetCurSel($rebuild_roms_roms_list))
@@ -127,10 +127,10 @@ Func ROMs_tab_event_handler($msg)
 
 			; download roms to rebuild and bios
 
-;			GUICtrlSetData($status_input, "Downloading /opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
+;			GUICtrlStatusInput_SetText($status_input, "Downloading /opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
 			pscp_download("/home/pi/RetroPie/BIOS/neogeo.zip", @ScriptDir & "\clrmamepro_source\neogeo.zip")
 			pscp_download("/home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $rom_filename_arr[0], @ScriptDir & "\clrmamepro_source\" & $rom_filename_arr[0])
-;			GUICtrlSetData($status_input, "Downloaded " & $gamelist_filepath)
+;			GUICtrlStatusInput_SetText($status_input, "Downloaded " & $gamelist_filepath)
 
 
 			Local $clrmamepro_dat_filename = "FinalBurn Neo (ClrMame Pro XML, Neogeo only) updated.dat"

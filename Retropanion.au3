@@ -16,23 +16,25 @@ Retropanion_Startup()
 
 ; Main gui
 
-$main_gui = 																	MainGUICreate($tab, 5, 40, 840-10, 720-30-30, $GUI_DOCKVCENTER + $GUI_DOCKBORDERS)
-GUICtrlCreateGroupEx  ("----> System", 5, 0, 350, 40)
+$main_gui = 																	MainGUICreate($tab, 5, 50, 840-10, 720-80, $GUI_DOCKVCENTER + $GUI_DOCKBORDERS)
+GUICtrlCreateGroupEx  ("----> System", 5, 0, 350, 47)
 $system_combo = 																GUICtrlCreateComboFromDict($roms_path_dict, 10, 15, 250)
 $system_open_docs_page_button = 												GUICtrlCreateImageButton("open docs page.ico", 270, 10, 28, "Open the RetroPie Docs page for this system")
 $system_open_wiki_page_button = 												GUICtrlCreateImageButton("open wiki page.ico", 300, 10, 28, "Open the Wiki page for this system")
-GUICtrlCreateGroupEx  ("----> Display", 360, 0, 200, 40)
+GUICtrlCreateGroupEx  ("----> Display", 360, 0, 200, 47)
 $display_device_name_combo = 													GUICtrlCreateComboFromDict(Null, 370, 15, 150)
-GUICtrlCreateGroupEx  ("----> EmulationStation", 580, 0, 100, 40)
-$config_restart_emulationstation_button = 										GUICtrlCreateImageButton("restart.ico", 590, 15, 28, "Restart EmulationStation")
-$config_quit_emulationstation_button = 											GUICtrlCreateImageButton("exit.ico", 620, 15, 28, "Quit EmulationStation")
-GUICtrlCreateGroupEx  ("----> RetroPie", 700, 0, 100, 40)
-$config_reboot_button = 														GUICtrlCreateImageButton("restart.ico", 710, 15, 28, "Restart RetroPie")
-$config_shutdown_button = 														GUICtrlCreateImageButton("shutdown.ico", 740, 15, 28, "Shutdown RetroPie")
-$status_input = 																GUICtrlCreateStatusInput("Hint - hover mouse over controls for help", 10, 720 - 25, 800 - 20, 20)
+GUICtrlCreateGroupEx  ("----> EmulationStation", 580, 0, 100, 47)
+$emulationstation_restart_button = 												GUICtrlCreateImageButton("restart.ico", 590, 15, 28, "Restart EmulationStation")
+$emulationstation_quit_button = 												GUICtrlCreateImageButton("exit.ico", 620, 15, 28, "Quit EmulationStation")
+GUICtrlCreateGroupEx  ("----> RetroPie", 700, 0, 80, 47)
+$retropie_reboot_button = 														GUICtrlCreateImageButton("restart.ico", 710, 15, 28, "Restart RetroPie")
+$retropie_shutdown_button = 													GUICtrlCreateImageButton("shutdown.ico", 740, 15, 28, "Shutdown RetroPie")
+$help_button = 																	GUICtrlCreateImageButton("help.ico", 795, 10, 36, "Help")
+$status_input = 																GUICtrlCreateStatusInput("Hint - hover mouse over controls for help", 5, 720 - 25, 830, 20)
 
-;$shift_up_dummy = GUICtrlCreateDummy()
-;$shift_down_dummy = GUICtrlCreateDummy()
+$shift_up_dummy = 																GUICtrlCreateDummy()
+$shift_down_dummy = 															GUICtrlCreateDummy()
+Local $main_aAccelKeys[2][2] = [["+{UP}", $shift_up_dummy], ["+{DOWN}", $shift_down_dummy]]
 GUISetAccelerators($main_aAccelKeys, $main_gui)
 
 ; Main gui tabs
@@ -128,6 +130,38 @@ While True
 
 ;			Local $arr = _GUICtrlListBox_GetSelItems($scrape_manual_join_rom_list)
 ;			_GUICtrlListBox_SelItemRange($scrape_manual_join_rom_list, $arr[UBound($arr)-1]+1, $arr[UBound($arr)-1]+1)
+
+
+
+		Case $emulationstation_restart_button
+
+			GUICtrlSetData($status_input, "Restarting EmulationStation ...")
+			plink("sudo touch /tmp/es-restart")
+			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
+			GUICtrlSetData($status_input, "")
+
+
+		Case $emulationstation_quit_button
+
+			GUICtrlSetData($status_input, "Quitting EmulationStation ...")
+			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
+			GUICtrlSetData($status_input, "")
+
+		Case $retropie_reboot_button
+
+			GUICtrlSetData($status_input, "Restarting the RetroPie ...")
+			plink("sudo reboot")
+			GUICtrlSetData($status_input, "")
+
+		Case $retropie_shutdown_button
+
+			GUICtrlSetData($status_input, "Shutting down the RetroPie ...")
+			plink("sudo shutdown -h now")
+			GUICtrlSetData($status_input, "")
+
+		Case $help_button
+
+			Run('"' & @WindowsDir & '\hh.exe" "' & @ScriptDir & '\Retropanion.chm"')
 
 
 	EndSwitch

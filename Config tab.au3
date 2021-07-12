@@ -12,13 +12,13 @@ Func Config_tab_setup()
 
 	GUICtrlCreateTabItemEx("===> Config")
 	$boot_config_x = 20
-	$boot_config_y = 70
+	$boot_config_y = 75
 	$systems_list_config_x = 90
 	$systems_list_config_y = $boot_config_y
 	$input_devices_config_x = 20
 	$input_devices_config_y = 610
 	$system_config_x = 300
-	$system_config_y = 70
+	$system_config_y = 75
 	$game_config_x = 310
 	$game_config_y = $boot_config_y + 210
 	GUICtrlCreateGroupEx  ("----> RetroPie", $boot_config_x, $boot_config_y, 60, 70)
@@ -54,7 +54,7 @@ Func Config_tab_setup()
 	;_GUIToolTip_AddTool($tooltip, 0, "The output of this can be used in the configuration of RetroArch", GUICtrlGetHandle($config_joystick_0_test_button))
 	$config_joystick_1_test_button = 											GUICtrlCreateImageButton("joystick1.ico", $input_devices_config_x + 50, $input_devices_config_y + 20, 36, "Joystick 1 test")
 	;_GUIToolTip_AddTool($tooltip, 0, "The output of this can be used in the configuration of RetroArch", GUICtrlGetHandle($config_joystick_1_test_button))
-	GUICtrlCreateGroupEx  ("----> Emulators && Games (3DO)", $system_config_x, $system_config_y, 520, 610)
+	GUICtrlCreateGroupEx  ("----> Emulators && Games (3DO)", $system_config_x, $system_config_y, 520, 605)
 	$config_emulators_games_reload_button = 									GUICtrlCreateButton("Reload from RetroPie", $system_config_x + 270, $system_config_y + 20, 180, 20)
 	$config_emulators_label = 													GUICtrlCreateLabelEx("Emulators", $system_config_x + 10, $system_config_y + 50, 100, 20, "/opt/retropie/configs/all/videomodes.cfg")
 	$config_system_listview = 													GUICtrlCreateListViewEx($system_config_x + 10, $system_config_y + 70, 500, 190, "Emulator Name", 200, "Video Mode", 150, "Default Emulator", 120)
@@ -105,6 +105,7 @@ Func Config_tab_child_gui_setup()
 	$compare_games_to_wiki_status_input = 										GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
 
 	$compare_games_to_wiki_dummy = 												GUICtrlCreateDummy()
+	Local $compare_aAccelKeys[1][2] = [["{Esc}", $compare_games_to_wiki_dummy]]
 	GUISetAccelerators($compare_aAccelKeys, $compare_games_to_wiki_gui)
 
 EndFunc
@@ -194,9 +195,9 @@ Func Config_tab_event_handler($msg)
 		Case $display_device_scan_modes_button
 
 			_GUICtrlListView_DeleteAllItems($display_device_listview)
-			GUICtrlSetData($status_input, "Executing ""/opt/retropie/supplementary/mesa-drm/modetest -c"" on the RetroPie ...")
+			GUICtrlStatusInput_SetText($status_input, "Executing ""/opt/retropie/supplementary/mesa-drm/modetest -c"" on the RetroPie ...")
 			$result = plink("/opt/retropie/supplementary/mesa-drm/modetest -c", 2)
-			GUICtrlSetData($status_input, "")
+			GUICtrlStatusInput_SetText($status_input, "")
 			Local $modetest_line_arr = StringSplit($result, @LF, 3)
 			Local $modes_header_num = 99999
 			Local $video_mode_arr[0][2]
@@ -225,7 +226,7 @@ Func Config_tab_event_handler($msg)
 
 			if UBound($video_mode_arr) < 1 Then
 
-				GUICtrlSetData($status_input, "No video modes detected. RetroPie must be active on your display, then try again.")
+				GUICtrlStatusInput_SetText($status_input, "No video modes detected. RetroPie must be active on your display, then try again.")
 			else
 
 				_GUICtrlListView_AddArray($display_device_listview, $video_mode_arr)
@@ -481,37 +482,12 @@ Func Config_tab_event_handler($msg)
 
 
 
-		Case $config_reboot_button
-
-			GUICtrlSetData($status_input, "Restarting the RetroPie ...")
-			plink("sudo reboot")
-			GUICtrlSetData($status_input, "")
-
-		Case $config_shutdown_button
-
-			GUICtrlSetData($status_input, "Shutting down the RetroPie ...")
-			plink("sudo shutdown -h now")
-			GUICtrlSetData($status_input, "")
-
-		Case $config_restart_emulationstation_button
-
-			GUICtrlSetData($status_input, "Restarting EmulationStation ...")
-			plink("sudo touch /tmp/es-restart")
-			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
-			GUICtrlSetData($status_input, "")
-
 ;		Case $config_shutdown_emulationstation_button
 
-;			GUICtrlSetData($status_input, "Shutting down EmulationStation ...")
+;			GUICtrlStatusInput_SetText($status_input, "Shutting down EmulationStation ...")
 ;			plink("sudo touch /tmp/es-shutdown")
 ;			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
-;			GUICtrlSetData($status_input, "")
-
-		Case $config_quit_emulationstation_button
-
-			GUICtrlSetData($status_input, "Quitting EmulationStation ...")
-			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
-			GUICtrlSetData($status_input, "")
+;			GUICtrlStatusInput_SetText($status_input, "")
 
 		Case $config_joystick_0_test_button
 
@@ -572,7 +548,7 @@ Func Config_tab_event_handler($msg)
 
 					; quitting emulationstation (otherwise the game runs underneath emulationstation) and launching the rom
 
-					GUICtrlSetData($status_input, "Quitting EmulationStation and Launching """ & $sFileName1 & $sExtension1 & """ ... (to restart EmulationStation click RetroPie Restart)")
+					GUICtrlStatusInput_SetText($status_input, "Quitting EmulationStation and Launching """ & $sFileName1 & $sExtension1 & """ ... (to restart EmulationStation click RetroPie Restart)")
 					plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
 
 					Local $plink_cmd = "sudo /opt/retropie/supplementary/runcommand/runcommand2.sh 0 _SYS_ n64 """ & $rom_name_for_runcommand & """"
@@ -609,7 +585,7 @@ Func Config_tab_event_handler($msg)
 				_GUICtrlListView_BeginUpdate($config_game_listview)
 				_GUICtrlListView_AddArray($config_game_listview, $emulators_cfg_arr)
 
-				GUICtrlSetData($status_input, "Reading directory from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
+				GUICtrlStatusInput_SetText($status_input, "Reading directory from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
 				$result = plink("ls /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/*.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws}", 2)
 				Local $all_roms_line_arr = StringSplit($result, @LF, 3)
 
@@ -641,7 +617,7 @@ Func Config_tab_event_handler($msg)
 				_GUICtrlListView_EndUpdate($config_game_listview)
 				Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
 				GUICtrlSetData($config_games_label, "Games (" & _GUICtrlListView_GetItemCount($config_game_listview) & ")")
-				GUICtrlSetData($status_input, "Games updated.")
+				GUICtrlStatusInput_SetText($status_input, "Games updated.")
 
 			EndIf
 
@@ -670,11 +646,11 @@ Func Config_tab_event_handler($msg)
 					EndIf
 				Next
 
-				GUICtrlSetData($status_input, "Erasing " & $result & " ...")
+				GUICtrlStatusInput_SetText($status_input, "Erasing " & $result & " ...")
 				FileDelete($result)
-				GUICtrlSetData($status_input, "Saving " & $result & " ...")
+				GUICtrlStatusInput_SetText($status_input, "Saving " & $result & " ...")
 				FileWrite($result, $emulators_cfg_str)
-				GUICtrlSetData($status_input, "Saved " & $result & ".")
+				GUICtrlStatusInput_SetText($status_input, "Saved " & $result & ".")
 				Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
 			EndIf
 
@@ -832,11 +808,11 @@ Func save_games()
 
 	ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $emulators_cfg_str = ' & $emulators_cfg_str & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-	GUICtrlSetData($status_input, "Erasing emulators.cfg on the RetroPie ...")
+	GUICtrlStatusInput_SetText($status_input, "Erasing emulators.cfg on the RetroPie ...")
 	plink_delete_all_text_in_file("/opt/retropie/configs/all/emulators.cfg")
-	GUICtrlSetData($status_input, "Saving emulators.cfg to /opt/retropie/configs/all on the RetroPie ...")
+	GUICtrlStatusInput_SetText($status_input, "Saving emulators.cfg to /opt/retropie/configs/all on the RetroPie ...")
 	plink_insert_text_in_file("/opt/retropie/configs/all/emulators.cfg", $emulators_cfg_str)
-	GUICtrlSetData($status_input, "Saved emulators.cfg to /opt/retropie/configs/all on the RetroPie. Start the game using the RetroPie to try the emulator.")
+	GUICtrlStatusInput_SetText($status_input, "Saved emulators.cfg to /opt/retropie/configs/all on the RetroPie. Start the game using the RetroPie to try the emulator.")
 	Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
 
 EndFunc
@@ -845,10 +821,10 @@ EndFunc
 Func Enable_Config($retropie_edit_boot_config_button = $GUI_DISABLE, $retropie_restart_button = $GUI_DISABLE, $retropie_shutdown_button = $GUI_DISABLE, $emulationstation_edit_systems_list_button = $GUI_DISABLE, $emulationstation_restart_button = $GUI_DISABLE, $reload_button = $GUI_DISABLE, $system_listview = $GUI_DISABLE, $game_listview = $GUI_DISABLE, $update_games_emulator_button = $GUI_DISABLE, $save_games_button = $GUI_DISABLE, $open_button = $GUI_DISABLE, $save_as_button = $GUI_DISABLE)
 
 	GUICtrlSetState($config_boot_edit_config_button, $retropie_edit_boot_config_button)
-	GUICtrlSetState($config_reboot_button, $retropie_restart_button)
-	GUICtrlSetState($config_shutdown_button, $retropie_shutdown_button)
+	GUICtrlSetState($retropie_reboot_button, $retropie_restart_button)
+	GUICtrlSetState($retropie_shutdown_button, $retropie_shutdown_button)
 	GUICtrlSetState($config_edit_systems_list_button, $emulationstation_edit_systems_list_button)
-	GUICtrlSetState($config_restart_emulationstation_button, $emulationstation_restart_button)
+;	GUICtrlSetState($config_restart_emulationstation_button, $emulationstation_restart_button)
 
 	Enable_Emulators_and_Games($reload_button, $system_listview, $game_listview, $update_games_emulator_button, $save_games_button, $open_button, $save_as_button)
 EndFunc
@@ -871,19 +847,19 @@ Func ReloadEmulatorsAndGamesConfig()
 	_GUICtrlListView_DeleteAllItems($config_system_listview)
 	_GUICtrlListView_DeleteAllItems($config_game_listview)
 
-	GUICtrlSetData($status_input, "Reading directory from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
+	GUICtrlStatusInput_SetText($status_input, "Reading directory from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
 	$result = plink("ls /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/*.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws}", 2)
 	$all_roms_line_arr = StringSplit($result, @LF, 3)
 
-	GUICtrlSetData($status_input, "Reading emulators.cfg from /opt/retropie/configs/all on the RetroPie ...")
+	GUICtrlStatusInput_SetText($status_input, "Reading emulators.cfg from /opt/retropie/configs/all on the RetroPie ...")
 	$result = plink("cat /opt/retropie/configs/all/emulators.cfg", 2)
 	Local $all_emulators_line_arr = StringSplit($result, @LF, 3)
 
-	GUICtrlSetData($status_input, "Reading emulators.cfg from /opt/retropie/configs/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
+	GUICtrlStatusInput_SetText($status_input, "Reading emulators.cfg from /opt/retropie/configs/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " on the RetroPie ...")
 	$result = plink("cat /opt/retropie/configs/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/emulators.cfg", 2)
 	Local $system_emulators_line_arr = StringSplit($result, @LF, 3)
 
-	GUICtrlSetData($status_input, "Reading videomodes.cfg from /opt/retropie/configs/all on the RetroPie ...")
+	GUICtrlStatusInput_SetText($status_input, "Reading videomodes.cfg from /opt/retropie/configs/all on the RetroPie ...")
 	$result = plink("cat /opt/retropie/configs/all/videomodes.cfg", 2)
 	Local $videomodes_arr = _StringSplit2d($result, " = ")
 
@@ -900,7 +876,7 @@ Func ReloadEmulatorsAndGamesConfig()
 	_FileReadToArray($display_device_filename, $display_device_arr, 0, "|")
 ;				_ArrayDisplay($video_mode_arr)
 
-	GUICtrlSetData($status_input, "Updating Emulators ...")
+	GUICtrlStatusInput_SetText($status_input, "Updating Emulators ...")
 	_GUICtrlListView_BeginUpdate($config_system_listview)
 
 	for $each_system_emulator_line in $system_emulators_line_arr
@@ -935,7 +911,7 @@ Func ReloadEmulatorsAndGamesConfig()
 	_GUICtrlListView_EndUpdate($config_system_listview)
 	GUICtrlSetData($config_emulators_label, "Emulators (" & _GUICtrlListView_GetItemCount($config_system_listview) & ")")
 
-	GUICtrlSetData($status_input, "Updating Games ...")
+	GUICtrlStatusInput_SetText($status_input, "Updating Games ...")
 
 	_GUICtrlListView_BeginUpdate($config_game_listview)
 
@@ -980,14 +956,14 @@ Func ReloadEmulatorsAndGamesConfig()
 	_GUICtrlListView_EndUpdate($config_game_listview)
 	GUICtrlSetData($config_games_label, "Games (" & _GUICtrlListView_GetItemCount($config_game_listview) & ")")
 	Enable_Config($GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE, $GUI_ENABLE)
-	GUICtrlSetData($status_input, "Emulators & Games reloaded.")
+	GUICtrlStatusInput_SetText($status_input, "Emulators & Games reloaded.")
 
 	; compare the emulators to the wiki page for differences
 
-	GUICtrlSetData($status_input, "Reading https://github.com/seanhaydongriffin/" & $app_name & "/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
+	GUICtrlStatusInput_SetText($status_input, "Reading https://github.com/seanhaydongriffin/" & $app_name & "/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
 	Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/' & $app_name & '/wiki/' & $roms_path_dict.Item(GUICtrlRead($system_combo)) & '-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
 	ProcessWaitClose($iPID)
-	GUICtrlSetData($status_input, "")
+	GUICtrlStatusInput_SetText($status_input, "")
 	Local $html = StdoutRead($iPID)
 	Local $html_arr = StringSplit($html, @LF, 3)
 	Local $found_emulator_table = False
@@ -1086,11 +1062,11 @@ Func ReloadEmulatorsAndGamesConfig()
 					Local $videomodes_str = _ArrayToString($videomodes_arr, " = ", -1, -1, @LF)
 					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $videomodes_str = ' & $videomodes_str & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-					GUICtrlSetData($status_input, "Erasing videomodes.cfg on the RetroPie ...")
+					GUICtrlStatusInput_SetText($status_input, "Erasing videomodes.cfg on the RetroPie ...")
 					plink_delete_all_text_in_file("/opt/retropie/configs/all/videomodes.cfg")
-					GUICtrlSetData($status_input, "Saving videomodes.cfg to /opt/retropie/configs/all/videomodes.cfg on the RetroPie ...")
+					GUICtrlStatusInput_SetText($status_input, "Saving videomodes.cfg to /opt/retropie/configs/all/videomodes.cfg on the RetroPie ...")
 					plink_insert_text_in_file("/opt/retropie/configs/all/videomodes.cfg", $videomodes_str)
-					GUICtrlSetData($status_input, "Saved videomodes.cfg to /opt/retropie/configs/all on the RetroPie.")
+					GUICtrlStatusInput_SetText($status_input, "Saved videomodes.cfg to /opt/retropie/configs/all on the RetroPie.")
 
 					; reload from RetroPie after above updates
 					ReloadEmulatorsAndGamesConfig()

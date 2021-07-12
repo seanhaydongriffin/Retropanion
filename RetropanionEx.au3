@@ -160,11 +160,11 @@ Global $system_open_wiki_page_button
 
 Global $display_device_name_combo
 
-Global $config_restart_emulationstation_button
-Global $config_quit_emulationstation_button
+Global $emulationstation_restart_button
+Global $emulationstation_quit_button
 
-Global $config_reboot_button
-Global $config_shutdown_button
+Global $retropie_reboot_button
+Global $retropie_shutdown_button
 
 ; Tabs
 
@@ -376,19 +376,20 @@ Global $backup_mirror_button
 Global $status_input
 Global $shift_up_dummy
 Global $shift_down_dummy
-Global $main_aAccelKeys[2][2] = [["+{UP}", $shift_up_dummy], ["+{DOWN}", $shift_down_dummy]]
 
 
 ; Art gui
 
 Global $art_gui
 Global $art_big_pic
-;Global $art_gui2
+Global $art_dummy
+
 
 ; Art2 gui
 
 Global $art_gui2
 Global $art_big_pic2
+Global $art2_dummy
 
 ; Art3 gui
 
@@ -435,7 +436,6 @@ Global $upload_data_to_retropie_upload_button
 Global $upload_data_to_retropie_ie
 Global $upload_data_to_retropie_status_input
 Global $upload_data_to_retropie_dummy
-Global $upload_data_aAccelKeys[1][2] = [["{Esc}", $upload_data_to_retropie_dummy]]
 
 
 ; Compare Game List to Wiki page gui
@@ -445,7 +445,6 @@ Global $compare_games_to_wiki_accept_button
 Global $compare_games_to_wiki_ie
 Global $compare_games_to_wiki_status_input
 Global $compare_games_to_wiki_dummy
-Global $compare_aAccelKeys[1][2] = [["{Esc}", $compare_games_to_wiki_dummy]]
 
 
 Global $art_big_pic3_width
@@ -939,6 +938,50 @@ Func DirCreateSafe($path)
 			Exit
 		EndIf
 	EndIf
+EndFunc
+
+
+Func GUISetImage($gui, $ctrl, $image_filepath)
+
+	Local $pic_size = GetImageSize($image_filepath, True)
+	WinMove($gui, "", (@DesktopWidth/2)-$pic_size[0]/2, (@DesktopHeight/2)-$pic_size[1]/2, $pic_size[0], $pic_size[1])
+	GUICtrlSetPos($ctrl, 0, 0, $pic_size[0], $pic_size[1])
+
+	if StringInStr($image_filepath, ".png") > 0 Then
+
+		GUICtrlSetImagePNG($ctrl, $image_filepath)
+	Else
+
+		GUICtrlSetImage($ctrl, $image_filepath)
+	EndIf
+
+EndFunc
+
+Func GetImageSize($image_filepath, $to_fit_desktop = False)
+
+	Local $size[2]
+
+	$hImage =  _GDIPlus_ImageLoadFromFile($image_filepath)
+	$size[0] = _GDIPlus_ImageGetWidth($hImage)
+	$size[1] = _GDIPlus_ImageGetHeight($hImage)
+	_GDIPlus_ImageDispose($hImage)
+
+	if $to_fit_desktop = True Then
+
+		if $size[0] > @DesktopWidth Then
+
+			$size[1] = $size[1] * (@DesktopWidth / $size[0])
+			$size[0] = @DesktopWidth
+		EndIf
+
+		if $size[1] > @DesktopHeight Then
+
+			$size[0] = $size[0] * (@DesktopHeight / $size[1])
+			$size[1] = @DesktopHeight
+		EndIf
+	EndIf
+
+	Return $size
 EndFunc
 
 Func GUICtrlSetSizeAndImage($ctrl, $image_file_path, $ctrl_width = -1, $ctrl_height = -1, $center_position = False, $resize_gui = False)
@@ -1480,7 +1523,7 @@ EndFunc
 
 Func ChildGUICreate($title, $width, $height, $parent_gui)
 
-	Local $gui = GUICreate($title, $width, $height, -1, -1, -1, $WS_EX_MDICHILD, $parent_gui)
+	Local $gui = GUICreate($title, $width, $height, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU), $WS_EX_MDICHILD, $parent_gui)
 	$current_gui = $gui
 	Return $gui
 
@@ -1571,6 +1614,9 @@ Func GUICtrlCreateImageButton($ico_filename, $left, $top, $width_height, $toolti
 	Return $ctrl
 
 EndFunc
+
+
+
 
 Func GUICtrlCreateTabEx($left, $top, $width, $height, $resizing )
 
@@ -1772,9 +1818,14 @@ Func GUICtrlCreateListViewEx($left, $top, $width, $height, $col_1_name = Null, $
 
 EndFunc
 
-Func GUICtrlCreatePicEx($left, $top, $width, $height, $resizing = -1, $hide = False)
+Func GUICtrlCreatePicEx($left, $top, $width, $height, $tooltip_text = "", $resizing = -1, $hide = False)
 
 	Local $ctrl = GUICtrlCreatePic("", $left, $top, $width, $height)
+
+	if StringLen($tooltip_text) > 0 Then
+
+		_GUIToolTip_AddTool($tooltip, 0, $tooltip_text, GUICtrlGetHandle($ctrl))
+	EndIf
 
 	if $resizing > -1 Then
 

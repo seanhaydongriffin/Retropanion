@@ -12,41 +12,41 @@
 Func Scrape_Metadata_tab_setup()
 
 	GUICtrlCreateTabItemEx("===> Scrape Metadata")
-	GUICtrlCreateGroupEx  ("----> Scraping Metadata", 20, 70, 680, 55)
-	$scrape_metadata_website_combo = 											GUICtrlCreateComboFromDictWithLabel($scrape_metadata_websites_label, "Website(s)", 30, 90, 70, 20, "The website(s) to scrape the box art from", Null, 90, 90, 150, 20)
+	GUICtrlCreateGroupEx  ("----> Scraping Metadata", 20, 90, 680, 55)
+	$scrape_metadata_website_combo = 											GUICtrlCreateComboFromDictWithLabel($scrape_metadata_websites_label, "Website(s)", 30, 110, 70, 20, "The website(s) to scrape the box art from", Null, 90, 110, 150, 20)
 	_GUICtrlComboBox_AddString($scrape_metadata_website_combo, "LaunchBox")
 	_GUICtrlComboBox_SetCurSel($scrape_metadata_website_combo, 0)
-	$scrape_metadata_minimized_scrapers_checkbox = 								GUICtrlCreateCheckboxEx("Minimized Scrapers", 250, 90, 120, 20, True, "If checked then run each scraper in a minimized window")
-	$scrape_metadata_max_scrapers_input = 										GUICtrlCreateInputWithLabel("10", 450, 90, 30, 20, $scrape_metadata_max_scrapers_label, "Max Scrapers", 380, 90, 80, 20, "The maximum number of scrapers that will run in parallel")
-	$scrape_metadata_max_scrapers_slider = 										GUICtrlCreateSliderEx(490, 90, 150, 20, $GUI_DOCKALL, 10, 1, 10)
-	$scrape_metadata_scrape_button = 											GUICtrlCreateImageButton("scrape metadata.ico", 650, 80, 36, _
+	$scrape_metadata_minimized_scrapers_checkbox = 								GUICtrlCreateCheckboxEx("Minimized Scrapers", 250, 110, 120, 20, True, "If checked then run each scraper in a minimized window")
+	$scrape_metadata_max_scrapers_input = 										GUICtrlCreateInputWithLabel("10", 450, 110, 30, 20, $scrape_metadata_max_scrapers_label, "Max Scrapers", 380, 110, 80, 20, "The maximum number of scrapers that will run in parallel")
+	$scrape_metadata_max_scrapers_slider = 										GUICtrlCreateSliderEx(490, 110, 150, 20, $GUI_DOCKALL, 10, 1, 10)
+	$scrape_metadata_scrape_button = 											GUICtrlCreateImageButton("scrape metadata.ico", 650, 100, 36, _
 		"Scrapes game metadata according to the selections above." & @CRLF & _
 		@CRLF & _
 		"Front Covers will be stored in the Box folder." & @CRLF  & _
 		"Back Covers will be stored in the BoxBack folder." & @CRLF  & _
 		"Full Covers will be stored in the BoxFull folder." & @CRLF, $GUI_DOCKALL)
-	$scrape_metadata_match_scraped_data_to_games_radio = 						GUICtrlCreateRadioEx("Match Scraped Data to Games", 30, 140, 180, 20, True, "", $GUI_DOCKALL)
-	$scrape_metadata_match_games_to_scraped_data_radio = 						GUICtrlCreateRadioEx("Match Games to Scraped Data", 220, 140, 180, 20, False, "", $GUI_DOCKALL)
-	$scrape_metadata_refresh_button = 											GUICtrlCreateImageButton("get games metadata.ico", 400, 140, 36, "Get scraped metadata plus game names (from the RetroPie)", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-	$scrape_metadata_scraped_data_label = 										GUICtrlCreateLabelEx("Scraped Data", 20, 180, 70, 20)
-	$scrape_metadata_scraped_data_files_label = 								GUICtrlCreateLabelEx("0 Files", 180, 180, 70, 20)
-	$scrape_metadata_scraped_data_list = 										GUICtrlCreateSingleSelectList(20, 200, 200, 420, 500, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
-	$scrape_metadata_games_label = 												GUICtrlCreateLabelEx("Games", 240, 180, 100, 20)
-	$scrape_metadata_games_files_label = 										GUICtrlCreateLabelEx("0 Files", 400, 180, 70, 20)
-	$scrape_metadata_games_list = 												GUICtrlCreateSingleSelectList(240, 200, 200, 420, -1, $GUI_DOCKALL + $GUI_DOCKBOTTOM) ; BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL)) ;, $LBS_EXTENDEDSEL))
-	GUICtrlCreateGroupEx  ("----> Mismatching Metadata Type", 460, 200, 200, 150)
-	$scrape_metadata_release_date_checkbox = 									GUICtrlCreateCheckboxEx("Release Date", 480, 220, 120, 20)
-	$scrape_metadata_developer_checkbox = 										GUICtrlCreateCheckboxEx("Developer", 480, 240, 120, 20)
-	$scrape_metadata_publisher_checkbox = 										GUICtrlCreateCheckboxEx("Publisher", 480, 260, 120, 20)
-	$scrape_metadata_genre_checkbox = 											GUICtrlCreateCheckboxEx("Genre", 480, 280, 120, 20)
-	$scrape_metadata_players_checkbox = 										GUICtrlCreateCheckboxEx("Players", 480, 300, 120, 20, True)
-	$scrape_metadata_listview = 												GUICtrlCreateListViewEx(460, 370, 350, 200, "Metadata Name", 110, "Scraped", 100, "RetroPie", 100, Null, Null, Null, Null, "Release Date", Null, Null, Null, Null, "Developer", Null, Null, Null, Null, "Publisher", Null, Null, Null, Null, "Genre", Null, Null, Null, Null, "Players", Null, Null, Null, Null)
+	$scrape_metadata_match_scraped_data_to_games_radio = 						GUICtrlCreateRadioEx("Match Scraped Data to Games", 30, 150, 180, 20, True, "", $GUI_DOCKALL)
+	$scrape_metadata_match_games_to_scraped_data_radio = 						GUICtrlCreateRadioEx("Match Games to Scraped Data", 220, 150, 180, 20, False, "", $GUI_DOCKALL)
+	$scrape_metadata_refresh_button = 											GUICtrlCreateImageButton("get games metadata.ico", 400, 150, 36, "Get scraped metadata plus game names (from the RetroPie)", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+	$scrape_metadata_scraped_data_label = 										GUICtrlCreateLabelEx("Scraped Data", 20, 190, 70, 20)
+	$scrape_metadata_scraped_data_files_label = 								GUICtrlCreateLabelEx("0 Files", 180, 190, 70, 20)
+	$scrape_metadata_scraped_data_list = 										GUICtrlCreateSingleSelectList(20, 210, 200, 420, 500, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
+	$scrape_metadata_games_label = 												GUICtrlCreateLabelEx("Games", 240, 190, 100, 20)
+	$scrape_metadata_games_files_label = 										GUICtrlCreateLabelEx("0 Files", 400, 190, 70, 20)
+	$scrape_metadata_games_list = 												GUICtrlCreateSingleSelectList(240, 210, 200, 420, -1, $GUI_DOCKALL + $GUI_DOCKBOTTOM) ; BitOR($GUI_SS_DEFAULT_LIST, $WS_HSCROLL)) ;, $LBS_EXTENDEDSEL))
+	GUICtrlCreateGroupEx  ("----> Mismatching Metadata Type", 460, 240, 200, 150)
+	$scrape_metadata_release_date_checkbox = 									GUICtrlCreateCheckboxEx("Release Date", 480, 260, 120, 20)
+	$scrape_metadata_developer_checkbox = 										GUICtrlCreateCheckboxEx("Developer", 480, 280, 120, 20)
+	$scrape_metadata_publisher_checkbox = 										GUICtrlCreateCheckboxEx("Publisher", 480, 300, 120, 20)
+	$scrape_metadata_genre_checkbox = 											GUICtrlCreateCheckboxEx("Genre", 480, 320, 120, 20)
+	$scrape_metadata_players_checkbox = 										GUICtrlCreateCheckboxEx("Players", 480, 340, 120, 20, True)
+	$scrape_metadata_listview = 												GUICtrlCreateListViewEx(460, 410, 350, 200, "Metadata Name", 110, "Scraped", 100, "RetroPie", 100, Null, Null, Null, Null, "Release Date", Null, Null, Null, Null, "Developer", Null, Null, Null, Null, "Publisher", Null, Null, Null, Null, "Genre", Null, Null, Null, Null, "Players", Null, Null, Null, Null)
 	$scrape_metadata_imagelist = _GUIImageList_Create(16, 16)
 	_GUIImageList_Add($scrape_metadata_imagelist, _GUICtrlListView_CreateSolidBitMap($scrape_metadata_listview, $COLOR_WHITE, 16, 16))
 	_GUIImageList_Add($scrape_metadata_imagelist, _GUICtrlListView_CreateSolidBitMap($scrape_metadata_listview, $COLOR_GREEN, 16, 16))
 	_GUIImageList_Add($scrape_metadata_imagelist, _GUICtrlListView_CreateSolidBitMap($scrape_metadata_listview, $COLOR_RED, 16, 16))
 	_GUICtrlListView_SetImageList($scrape_metadata_listview, $scrape_metadata_imagelist, 1)
-	$scrape_metadata_update_gamelist_button = 									GUICtrlCreateButtonEx("&Apply Scraped Data", 460, 580, 120, 20, "", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
+	$scrape_metadata_update_gamelist_button = 									GUICtrlCreateButtonEx("&Apply Scraped Data", 460, 620, 120, 20, "", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 	$scrape_metadata_upload_gamelist_button = 									GUICtrlCreateButtonEx("Upload Data to Retro&Pie", 680, 640, 140, 40, "", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
 
@@ -62,6 +62,7 @@ Func Scrape_Metadata_tab_child_gui_setup()
 	$upload_data_to_retropie_status_input = 									GUICtrlCreateStatusInput("", 10, 480 - 25, 640 - 20, 20)
 
 	$upload_data_to_retropie_dummy = 											GUICtrlCreateDummy()
+	Local $upload_data_aAccelKeys[1][2] = [["{Esc}", $upload_data_to_retropie_dummy]]
 	GUISetAccelerators($upload_data_aAccelKeys, $upload_data_to_retropie_gui)
 
 EndFunc
@@ -89,12 +90,12 @@ Func Scrape_Metadata_tab_event_handler($msg)
 				$scraper_exe = $app_name & " LaunchBox Scraper.exe"
 			endif
 
-			GUICtrlSetData($status_input, "Getting number of pages from " & $system_name & " ...")
+			GUICtrlStatusInput_SetText($status_input, "Getting number of pages from " & $system_name & " ...")
 			Local $iPID = Run($scraper_exe & " """ & GUICtrlRead($system_combo) & """", @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
 			ProcessWaitClose($iPID)
 			Local $num_pages = StdoutRead($iPID)
 			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $num_pages = ' & $num_pages & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-			GUICtrlSetData($status_input, "")
+			GUICtrlStatusInput_SetText($status_input, "")
 
 			Local $pages_per_scraper = Ceiling(Number($num_pages) / Number(GUICtrlRead($scrape_metadata_max_scrapers_input)))
 			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $pages_per_scraper = ' & $pages_per_scraper & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
@@ -149,17 +150,17 @@ Func Scrape_Metadata_tab_event_handler($msg)
 
 			if $result = 6 Then
 
-				GUICtrlSetData($status_input, "Downloading /opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
+				GUICtrlStatusInput_SetText($status_input, "Downloading /opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml")
 				pscp_download("/opt/retropie/configs/all/emulationstation/gamelists/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/gamelist.xml", $gamelist_filepath)
-				GUICtrlSetData($status_input, "Downloaded " & $gamelist_filepath)
+				GUICtrlStatusInput_SetText($status_input, "Downloaded " & $gamelist_filepath)
 			EndIf
 
-			GUICtrlSetData($status_input, "Getting rom list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)))
+			GUICtrlStatusInput_SetText($status_input, "Getting rom list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)))
 			$result = plink("(cd /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws})", 2)
 			Local $rom_filename_arr = StringSplit($result, @LF, 3)
 			_ArraySort($rom_filename_arr)
 			;_ArrayDisplay($rom_filename_arr)
-			GUICtrlSetData($status_input, "")
+			GUICtrlStatusInput_SetText($status_input, "")
 
 			; gamelist XML to array mapping:
 			;	[n][0] = path

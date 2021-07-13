@@ -1586,7 +1586,7 @@ Func GUICtrlCreateComboFromDictWithLabel(ByRef $label, $label_text = "", $label_
 
 EndFunc
 
-Func GUICtrlCreateButtonEx($text, $left, $top, $width, $height, $tooltip_text = "", $resizing = -1)
+Func GUICtrlCreateButtonEx($text, $left, $top, $width, $height, $tooltip_text = "", $resizing = -1, $hide = False)
 
 	local $ctrl = GUICtrlCreateButton($text, $left, $top, $width, $height)
 
@@ -1598,6 +1598,11 @@ Func GUICtrlCreateButtonEx($text, $left, $top, $width, $height, $tooltip_text = 
 	if $resizing > -1 Then
 
 		GUICtrlSetResizing(-1, $resizing)
+	EndIf
+
+	if $hide = True Then
+
+		GUICtrlSetState(-1, $GUI_HIDE)
 	EndIf
 
 	Return $ctrl

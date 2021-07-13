@@ -926,6 +926,8 @@ Func Scrape_Images_with_Manual_Join_tab_WM_COMMAND_handler($hWndFrom, $iCode)
 						_GUICtrlListBox_SetCurSel($scrape_manual_join_art_list, $selected_index)
 						_GUICtrlListBox_SetTopIndex($scrape_manual_join_art_list, $selected_index - 11)
 						Local $art_name = _GUICtrlListBox_GetText($scrape_manual_join_art_list, $selected_index)
+						GUICtrlSetState($scrape_manual_join_down_button, $GUI_SHOW)
+						GUICtrlSetState($scrape_manual_join_up_button, $GUI_SHOW)
 						GUICtrlSetState($scrape_manual_join_upload_button, $GUI_SHOW)
 
 						if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box\" & $art_name & "-1.*") = True Then

@@ -154,6 +154,8 @@ Global $tooltip = _GUIToolTip_Create(0) ; default style tooltip
 _GUIToolTip_SetMaxTipWidth($tooltip, 300)
 
 Global $main_gui
+Global $main_gui_first_control
+Global $main_gui_last_control
 Global $system_combo
 Global $system_open_docs_page_button
 Global $system_open_wiki_page_button
@@ -262,10 +264,8 @@ Global $scrape_manual_join_match_roms_to_art_radio
 Global $scrape_manual_join_exclude_uploaded_art_checkbox
 Global $scrape_manual_join_refresh_button
 Global $scrape_manual_join_art_label
-Global $scrape_manual_join_art_files_label
 Global $scrape_manual_join_art_list
 Global $scrape_manual_join_rom_label
-Global $scrape_manual_join_rom_files_label
 Global $scrape_manual_join_rom_list
 Global $scrape_manual_join_upload_button
 Global $scrape_manual_join_upload_gamelist_button
@@ -373,10 +373,13 @@ Global $backup_path_7_remote_input
 Global $backup_path_7_filemask_input
 Global $backup_path_7_include_checkbox
 Global $backup_mirror_button
+
 Global $status_input
 Global $shift_up_dummy
 Global $shift_down_dummy
-
+Global $spinner1_gif
+Global $spinner2_gif
+Global $spinner200_gif_filename = "Spinner200.gif"
 
 ; Art gui
 
@@ -1514,6 +1517,7 @@ EndFunc
 Func MainGUICreate(ByRef $tab, $tab_left, $tab_top, $tab_width, $tab_height, $tab_resizing)
 
 	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU))
+	$main_gui_first_control = GUICtrlCreateDummy()
 	$tab = GUICtrlCreateTabEx($tab_left, $tab_top, $tab_width, $tab_height, $tab_resizing)
 	$current_gui = $gui
 
@@ -1600,7 +1604,7 @@ Func GUICtrlCreateButtonEx($text, $left, $top, $width, $height, $tooltip_text = 
 
 EndFunc
 
-Func GUICtrlCreateImageButton($ico_filename, $left, $top, $width_height, $tooltip_text, $resizing = -1)
+Func GUICtrlCreateImageButton($ico_filename, $left, $top, $width_height, $tooltip_text, $resizing = -1, $hide = False)
 
 	local $ctrl = GUICtrlCreateButton("", $left, $top, $width_height, $width_height, $BS_ICON)
 	GUICtrlSetImage(-1, @ScriptDir & "\" & $ico_filename)
@@ -1609,6 +1613,11 @@ Func GUICtrlCreateImageButton($ico_filename, $left, $top, $width_height, $toolti
 	if $resizing > -1 Then
 
 		GUICtrlSetResizing(-1, $resizing)
+	EndIf
+
+	if $hide = True Then
+
+		GUICtrlSetState(-1, $GUI_HIDE)
 	EndIf
 
 	Return $ctrl
@@ -1860,3 +1869,19 @@ Func GUICtrlCreateGroupEx($text, $left, $top, $width, $height)
 
 EndFunc
 
+Func disable_main_gui()
+
+	For $i = $main_gui_first_control To $main_gui_last_control
+
+		GUICtrlSetState($i, $GUI_DISABLE)
+	Next
+EndFunc
+
+
+Func enable_main_gui()
+
+	For $i = $main_gui_first_control To $main_gui_last_control
+
+		GUICtrlSetState($i, $GUI_ENABLE)
+	Next
+EndFunc

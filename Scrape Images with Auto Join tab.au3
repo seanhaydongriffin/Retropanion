@@ -7,21 +7,22 @@
 #Include "RetropanionEx.au3"
 #include "GUIScrollbars_Ex.au3"
 #include <Math.au3>
+#include "GIFAnimation.au3"
 
 
 Func Scrape_Images_with_Auto_Join_tab_setup()
 
 	GUICtrlCreateTabItemEx("===> Scrape Images with Auto Join")
-	GUICtrlCreateGroupEx  ("----> Scraping Images", 20, 90, 680, 55)
-	$scrape_auto_join_website_combo = 											GUICtrlCreateComboFromDictWithLabel($scrape_auto_join_websites_label, "Website(s)", 30, 110, 70, 20, "The website(s) to scrape the box art from", Null, 90, 110, 150, 20)
+	GUICtrlCreateGroupEx  ("----> Scraping Images", 12, 80, 680, 55)
+	$scrape_auto_join_website_combo = 											GUICtrlCreateComboFromDictWithLabel($scrape_auto_join_websites_label, "Website(s)", 30, 100, 70, 20, "The website(s) to scrape the box art from", Null, 90, 100, 150, 20)
 	_GUICtrlComboBox_AddString($scrape_auto_join_website_combo, "RF Generation")
 	_GUICtrlComboBox_AddString($scrape_auto_join_website_combo, "Moby Games")
 	_GUICtrlComboBox_AddString($scrape_auto_join_website_combo, "The Cover Project")
 	_GUICtrlComboBox_SetCurSel($scrape_auto_join_website_combo, 0)
-	$minimized_scrapers_checkbox = 												GUICtrlCreateCheckboxEx("Minimized Scrapers", 250, 110, 120, 20, True, "If checked then run each scraper in a minimized window")
-	$max_scrapers_input = 														GUICtrlCreateInputWithLabel("10", 450, 110, 30, 20, $scrape_metadata_max_scrapers_label, "Max Scrapers", 380, 110, 80, 20, "The maximum number of scrapers that will run in parallel")
-	$max_scrapers_slider = 														GUICtrlCreateSliderEx(490, 110, 150, 20, $GUI_DOCKALL, 10, 1, 10)
-	$scrape_button = 															GUICtrlCreateImageButton("scrape art.ico", 650, 100, 36, _
+	$minimized_scrapers_checkbox = 												GUICtrlCreateCheckboxEx("Minimized Scrapers", 250, 100, 120, 20, True, "If checked then run each scraper in a minimized window")
+	$max_scrapers_input = 														GUICtrlCreateInputWithLabel("10", 450, 100, 30, 20, $scrape_metadata_max_scrapers_label, "Max Scrapers", 380, 100, 80, 20, "The maximum number of scrapers that will run in parallel")
+	$max_scrapers_slider = 														GUICtrlCreateSliderEx(490, 100, 150, 20, $GUI_DOCKALL, 10, 1, 10)
+	$scrape_button = 															GUICtrlCreateImageButton("scrape art.ico", 650, 90, 36, _
 		"Scrapes game metadata according to the selections above." & @CRLF & _
 		@CRLF & _
 		"Front Covers will be stored in the Box folder." & @CRLF  & _
@@ -46,6 +47,8 @@ Func Scrape_Images_with_Auto_Join_tab_setup()
 	GUICtrlCreateGroupEx  ("", 20, 530, 730, 145)
 	$scrape_auto_join_art_1_pic = 												GUICtrlCreatePicEx(30, 545, 384, 120, "Left mouse click to view enlarged", -1, True)
 	$scrape_auto_join_rotate_art_button = 										GUICtrlCreateButtonEx("Split Back && Front Art and R&otate", 560, 580, 180, 40)
+
+
 
 
 EndFunc
@@ -172,6 +175,8 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 
 		Case $scrape_auto_join_refresh_button
 
+			$spinner1_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 20, 210, -1, -1, 1)
+			$spinner2_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 240, 210, -1, -1, 1)
 			_GUICtrlListBox_ResetContent($scrape_auto_join_art_list)
 			_GUICtrlListBox_ResetContent($scrape_auto_join_rom_list)
 
@@ -184,6 +189,8 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 				GUICtrlStatusInput_SetText($status_input, "No art found in " & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full")
 			Else
 
+				_GUICtrlListBox_BeginUpdate($scrape_auto_join_art_list)
+
 				Local $num_files = 0
 
 				for $i = 1 to $arr[0]
@@ -193,8 +200,12 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 					$num_files = $num_files + 1
 					GUICtrlSetData($scrape_auto_join_art_files_label, $num_files & " Files")
 				Next
+
+				_GUICtrlListBox_EndUpdate($scrape_auto_join_art_list)
+
 			EndIf
 
+			_GIF_DeleteGIF($spinner1_gif)
 			GUICtrlStatusInput_SetText($status_input, "Getting images list from /opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
 			$result = plink("(cd /opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *-full-cover.jpg)", 2)
 
@@ -203,12 +214,11 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 				GUICtrlStatusInput_SetText($status_input, $result & ' - {\field{\*\fldinst{HYPERLINK "click_here_to_Troubleshoot"}}{\fldrslt{\ul\cf5\b click here to Troubleshoot}}}\b0\f0\par\par ')
 			Else
 
-
 				Local $art_filename_arr = StringSplit($result, @LF, 3)
 				_ArraySort($art_filename_arr)
-
 				GUICtrlStatusInput_SetText($status_input, "Getting roms list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
 				$result = plink("(cd /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws})", 2)
+				_GIF_DeleteGIF($spinner2_gif)
 
 				if @error <> 0 Then
 
@@ -239,6 +249,7 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 					_GUICtrlListBox_EndUpdate($scrape_auto_join_rom_list)
 				EndIf
 			EndIf
+
 
 		Case $scrape_auto_join_upload_button
 

@@ -47,6 +47,7 @@ Scrape_Images_with_Manual_Join_tab_setup()
 Config_tab_setup()
 Backup_tab_setup()
 GUICtrlCreateTabItemEx("") ; end tabitem definition
+$main_gui_last_control = GUICtrlCreateDummy()
 
 ; Child guis
 

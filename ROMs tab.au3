@@ -33,6 +33,8 @@ Func ROMs_tab_event_handler($msg)
 
 			_GUICtrlListBox_ResetContent($rebuild_roms_roms_list)
 
+			$spinner1_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 30, 170, -1, -1, 1)
+
 ;			$result = MsgBox(4+32+256+8192, $app_name, "A gamelist already exists on your computer (date-time)." & @CRLF & @CRLF & "Do you wish to overwrite this with the RetroPie?")
 
 ;			if $result = 6 Then
@@ -44,18 +46,32 @@ Func ROMs_tab_event_handler($msg)
 
 			GUICtrlStatusInput_SetText($status_input, "Getting rom list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)))
 			$result = plink("(cd /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws})", 2)
-			Local $rom_filename_arr = StringSplit($result, @LF, 3)
-			_ArraySort($rom_filename_arr)
-			;_ArrayDisplay($rom_filename_arr)
-			GUICtrlStatusInput_SetText($status_input, "")
+
+			if @error <> 0 Then
+
+				GUICtrlStatusInput_SetText($status_input, $result & ' - {\field{\*\fldinst{HYPERLINK "click_here_to_Troubleshoot"}}{\fldrslt{\ul\cf5\b click here to Troubleshoot}}}\b0\f0\par\par ')
+			Else
+
+				Local $rom_filename_arr = StringSplit($result, @LF, 3)
+				_ArraySort($rom_filename_arr)
+				;_ArrayDisplay($rom_filename_arr)
+				GUICtrlStatusInput_SetText($status_input, "")
 
 
-;			_ArraySort($tmp_roms_list_arr)
+	;			_ArraySort($tmp_roms_list_arr)
 
-			for $i = 0 to (UBound($rom_filename_arr) - 1)
+				_GUICtrlListBox_BeginUpdate($rebuild_roms_roms_list)
 
-				_GUICtrlListBox_InsertString($rebuild_roms_roms_list, $rom_filename_arr[$i])
-			Next
+				for $i = 0 to (UBound($rom_filename_arr) - 1)
+
+					_GUICtrlListBox_InsertString($rebuild_roms_roms_list, $rom_filename_arr[$i])
+				Next
+
+				_GUICtrlListBox_EndUpdate($rebuild_roms_roms_list)
+			EndIf
+
+			_GIF_DeleteGIF($spinner1_gif)
+
 
 		Case $rebuild_roms_rebuild_button
 

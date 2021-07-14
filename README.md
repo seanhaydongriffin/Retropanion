@@ -7,9 +7,9 @@ Please check the [Wiki](https://github.com/seanhaydongriffin/Seans-RetroPie-Tool
 
 ## ROM Tools
 
-## RetroPie Metadata Scraper
+## Metadata Scraper
 
-## RetroPie Image Scrapers
+## Image Scrapers
 
 ## RetroPie Configuration Tools
 

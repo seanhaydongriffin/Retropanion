@@ -17,16 +17,18 @@ Retropanion_Startup()
 ; Main gui
 
 $main_gui = 																	MainGUICreate($tab, 5, 50, 840-10, 720-80, $GUI_DOCKVCENTER + $GUI_DOCKBORDERS)
-GUICtrlCreateGroupEx  ("----> System", 5, 0, 350, 47)
+GUICtrlCreateGroupEx  ("System", 5, 0, 330, 47)
 $system_combo = 																GUICtrlCreateComboFromDict($roms_path_dict, 10, 15, 250)
 $system_open_docs_page_button = 												GUICtrlCreateImageButton("open docs page.ico", 270, 10, 28, "Open the RetroPie Docs page for this system")
 $system_open_wiki_page_button = 												GUICtrlCreateImageButton("open wiki page.ico", 300, 10, 28, "Open the Wiki page for this system")
-GUICtrlCreateGroupEx  ("----> Display", 360, 0, 200, 47)
-$display_device_name_combo = 													GUICtrlCreateComboFromDict(Null, 370, 15, 150)
-GUICtrlCreateGroupEx  ("----> EmulationStation", 580, 0, 100, 47)
+GUICtrlCreateGroupEx  ("Display", 340, 0, 235, 47)
+$display_device_name_combo = 													GUICtrlCreateComboFromDict(Null, 350, 15, 150)
+$display_device_add_button = 													GUICtrlCreateImageButton("add.ico", 510, 10, 28, "Add a new Display Device")
+$display_device_delete_button = 												GUICtrlCreateImageButton("delete.ico", 540, 10, 28, "Delete the selected Display Device")
+GUICtrlCreateGroupEx  ("EmulationStation", 580, 0, 100, 47)
 $emulationstation_restart_button = 												GUICtrlCreateImageButton("restart.ico", 590, 15, 28, "Restart EmulationStation")
 $emulationstation_quit_button = 												GUICtrlCreateImageButton("exit.ico", 620, 15, 28, "Quit EmulationStation")
-GUICtrlCreateGroupEx  ("----> RetroPie", 700, 0, 80, 47)
+GUICtrlCreateGroupEx  ("RetroPie", 700, 0, 80, 47)
 $retropie_reboot_button = 														GUICtrlCreateImageButton("restart.ico", 710, 15, 28, "Restart RetroPie")
 $retropie_shutdown_button = 													GUICtrlCreateImageButton("shutdown.ico", 740, 15, 28, "Shutdown RetroPie")
 $help_button = 																	GUICtrlCreateImageButton("help.ico", 795, 10, 36, "Help")
@@ -47,7 +49,6 @@ Scrape_Images_with_Manual_Join_tab_setup()
 Config_tab_setup()
 Backup_tab_setup()
 GUICtrlCreateTabItemEx("") ; end tabitem definition
-$main_gui_last_control = GUICtrlCreateDummy()
 
 ; Child guis
 
@@ -74,6 +75,8 @@ ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $rr = ' & $rr & @CRLF & '>Er
 _GUICtrlComboBox_SelectString($system_combo, IniRead($ini_filename, "Global", "System", "3DO"))
 ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $ini_filename = ' & $ini_filename & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 _GUICtrlTab_SetCurFocus($tab, Number(IniRead($ini_filename, "Global", "Tab", 1)))
+
+
 
 
 While True
@@ -132,6 +135,31 @@ While True
 ;			Local $arr = _GUICtrlListBox_GetSelItems($scrape_manual_join_rom_list)
 ;			_GUICtrlListBox_SelItemRange($scrape_manual_join_rom_list, $arr[UBound($arr)-1]+1, $arr[UBound($arr)-1]+1)
 
+
+		Case $display_device_add_button
+
+			$result = InputBox($app_name, "Enter a name to identify the new device", "", "", 240, 140, Default, Default, 0, $main_gui)
+
+			if StringLen($result) > 0 Then
+
+				Local $display_device_filename = $app_data_dir & "\display device " & $result & ".txt"
+				FileWrite($display_device_filename, "")
+				_GUICtrlComboBox_AddString($display_device_name_combo, $result)
+				_GUICtrlComboBox_SelectString($display_device_name_combo, $result)
+			EndIf
+
+
+		Case $display_device_delete_button
+
+			Local $display_device_filename = $app_data_dir & "\display device " & GUICtrlRead($display_device_name_combo) & ".txt"
+
+			if FileExists($display_device_filename) Then
+
+				FileDelete($display_device_filename)
+			EndIf
+
+			_GUICtrlComboBox_DeleteString($display_device_name_combo, _GUICtrlComboBox_GetCurSel($display_device_name_combo))
+			_GUICtrlComboBox_SetCurSel($display_device_name_combo, 0)
 
 
 		Case $emulationstation_restart_button
@@ -227,6 +255,12 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 							; then open the Troubleshooting help page
 							Run('"' & @WindowsDir & '\hh.exe" "' & @ScriptDir & '\Retropanion.chm::/Troubleshooting.html"')
 						EndIf
+
+						if StringCompare($sLink, "scanning_video_modes") = 0 Then
+
+							; then open the scanning video modes help page
+							Run('"' & @WindowsDir & '\hh.exe" "' & @ScriptDir & '\Retropanion.chm::/Scan-the-Video-Modes-for-your-displays.html"')
+						EndIf
 					EndIf
             EndSwitch
 
@@ -259,10 +293,50 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 
                 Case $CBN_SELCHANGE
 
-					GUICtrlSetData($config_emulators_games_group, "Emulators && Games (" & GUICtrlRead($system_combo) & ")")
+					;GUICtrlSetData($config_emulators_games_group, "Emulators && Games (" & GUICtrlRead($system_combo) & ")")
 					IniWrite($ini_filename, "Global", "System", GUICtrlRead($system_combo))
 					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : GUICtrlRead($system_combo) = ' & GUICtrlRead($system_combo) & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $ini_filename = ' & $ini_filename & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+					; clear all related controls that may already be set to another system
+
+					GUICtrlSetData($scrape_auto_join_art_label, "Art (0)")
+					GUICtrlSetData($scrape_auto_join_rom_label, "Roms (0)")
+					_GUICtrlListBox_ResetContent($scrape_auto_join_art_list)
+					_GUICtrlListBox_ResetContent($scrape_auto_join_rom_list)
+					GUICtrlSetState($scrape_auto_join_art_1_pic, $GUI_HIDE)
+					GUICtrlSetState($scrape_auto_join_rotate_art_button, $GUI_HIDE)
+					GUICtrlSetState($scrape_auto_join_upload_button, $GUI_HIDE)
+
+					GUICtrlSetData($scrape_manual_join_art_label, "Art (0)")
+					GUICtrlSetData($scrape_manual_join_rom_label, "Roms (0)")
+					_GUICtrlListBox_ResetContent($scrape_manual_join_art_list)
+					_GUICtrlListBox_ResetContent($scrape_manual_join_rom_list)
+					GUICtrlSetState($scrape_manual_join_down_button, $GUI_HIDE)
+					GUICtrlSetState($scrape_manual_join_up_button, $GUI_HIDE)
+					GUICtrlSetState($scrape_manual_join_art_1_pic, $GUI_HIDE)
+					GUICtrlSetState($art_1_front, $GUI_HIDE)
+					GUICtrlSetState($art_1_back, $GUI_HIDE)
+					GUICtrlSetState($scrape_manual_join_art_2_pic, $GUI_HIDE)
+					GUICtrlSetState($art_2_front, $GUI_HIDE)
+					GUICtrlSetState($art_2_back, $GUI_HIDE)
+					GUICtrlSetState($scrape_manual_join_art_3_pic, $GUI_HIDE)
+					GUICtrlSetState($art_3_front, $GUI_HIDE)
+					GUICtrlSetState($art_3_back, $GUI_HIDE)
+					GUICtrlSetState($scrape_manual_join_art_4_pic, $GUI_HIDE)
+					GUICtrlSetState($art_4_front, $GUI_HIDE)
+					GUICtrlSetState($art_4_back, $GUI_HIDE)
+					GUICtrlSetState($scrape_manual_join_art_5_pic, $GUI_HIDE)
+					GUICtrlSetState($art_5_front, $GUI_HIDE)
+					GUICtrlSetState($art_5_back, $GUI_HIDE)
+					GUICtrlSetState($scrape_manual_join_upload_button, $GUI_HIDE)
+
+					GUICtrlSetData($config_emulators_label, "Emulators (0)")
+					GUICtrlSetData($config_games_label, "Games (0)")
+					_GUICtrlListView_DeleteAllItems($config_system_listview)
+					_GUICtrlListView_DeleteAllItems($config_game_listview)
+
+
 			EndSwitch
 
         Case GUICtrlGetHandle($display_device_name_combo)

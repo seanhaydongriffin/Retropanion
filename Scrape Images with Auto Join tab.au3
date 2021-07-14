@@ -12,8 +12,8 @@
 
 Func Scrape_Images_with_Auto_Join_tab_setup()
 
-	GUICtrlCreateTabItemEx("===> Scrape Images with Auto Join")
-	GUICtrlCreateGroupEx  ("----> Scrape Art", 12, 80, 680, 55)
+	GUICtrlCreateTabItemEx("Scrape Art and Auto Join")
+	GUICtrlCreateGroupEx  ("Step 1: Scrape Art", 12, 80, 680, 55)
 	$scrape_auto_join_website_combo = 											GUICtrlCreateComboFromDictWithLabel($scrape_auto_join_websites_label, "Website(s)", 30, 100, 70, 20, "The website(s) to scrape the box art from", Null, 90, 100, 150, 20)
 	_GUICtrlComboBox_AddString($scrape_auto_join_website_combo, "RF Generation")
 	_GUICtrlComboBox_AddString($scrape_auto_join_website_combo, "Moby Games")
@@ -28,26 +28,35 @@ Func Scrape_Images_with_Auto_Join_tab_setup()
 		"Front Covers will be stored in the Box folder." & @CRLF  & _
 		"Back Covers will be stored in the BoxBack folder." & @CRLF  & _
 		"Full Covers will be stored in the BoxFull folder." & @CRLF, $GUI_DOCKALL)
-	GUICtrlCreateGroupEx  ("Join Art to Roms", 12, 140, 500, 398)
+	GUICtrlCreateGroupEx  ("Step 2: Assign Art to Roms", 12, 140, 500, 398)
 	$scrape_auto_join_match_art_to_roms_radio = 								GUICtrlCreateRadioEx("Match Art to Roms", 20, 160, 120, 20, True, "", $GUI_DOCKALL)
 	$scrape_auto_join_match_roms_to_art_radio = 								GUICtrlCreateRadioEx("Match Roms to Art", 140, 160, 120, 20, False, "", $GUI_DOCKALL)
 	$scrape_auto_join_exclude_uploaded_art_checkbox = 							GUICtrlCreateCheckboxEx("Exclude Uploaded Art", 260, 160, 120, 20, True)
 	$scrape_auto_join_refresh_button = 											GUICtrlCreateImageButton("get games art.ico", 400, 150, 36, "Get scraped art plus game names (from the RetroPie) - Alt+R", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
-	$scrape_auto_join_upload_gamelist_button = 									GUICtrlCreateImageButton("update list.ico", 450, 150, 36, "Update games list (on the RetroPie) with all art uploaded - Alt+G", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 	$scrape_auto_join_art_label = 												GUICtrlCreateLabelEx("Art (0)", 20, 190, 70, 20)
 	$scrape_auto_join_art_list = 												GUICtrlCreateSingleSelectList(20, 210, 200, 320, 500, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 	$scrape_auto_join_rom_label = 												GUICtrlCreateLabelEx("Roms (0)", 240, 190, 100, 20)
 	$scrape_auto_join_rom_list = 												GUICtrlCreateSingleSelectList(240, 210, 200, 320, -1, $GUI_DOCKALL + $GUI_DOCKBOTTOM)
 	GUICtrlSetState(-1, $GUI_DEFBUTTON)
-	GUICtrlCreateGroupEx  ("", 12, 530, 730, 145)
+	GUICtrlCreateGroupEx  ("", 12, 530, 730, 140)
+
+	; the following visually hides the border between two groups above
+    GUICtrlCreateLabel("", 13, 530, 498, 10)
+    GUICtrlSetBkColor(-1, _ColorFlip(_WinAPI_GetSysColor($COLOR_WINDOW)))
+
 	$scrape_auto_join_art_1_pic = 												GUICtrlCreatePicEx(30, 545, 384, 120, "Left mouse click to view enlarged", -1, True)
 	$scrape_auto_join_rotate_art_button = 										GUICtrlCreateButtonEx("Split Back && Front Art and R&otate", 550, 580, 180, 40, "", -1, True)
 	$scrape_auto_join_upload_button = 											GUICtrlCreateImageButton("upload art.ico", 690, 630, 36, "Upload selected art with game name (to the RetroPie) - Alt+A", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT, True)
+	GUICtrlCreateGroupEx  ("Step 3: Update Gamelist with Assigned Art", 530, 140, 250, 60)
+	$scrape_auto_join_upload_gamelist_button = 									GUICtrlCreateImageButton("update list.ico", 550, 160, 36, "Update games list (on the RetroPie) with all art uploaded - Alt+G", $GUI_DOCKLEFT + $GUI_DOCKBOTTOM + $GUI_DOCKWIDTH + $GUI_DOCKHEIGHT)
 
 
 
 
 EndFunc
+
+
+
 
 Func Scrape_Images_with_Auto_Join_tab_child_gui_setup()
 
@@ -103,7 +112,7 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 				$scraper_exe = $app_name & " Cover Project Scraper.exe"
 			endif
 
-			GUICtrlStatusInput_SetText($status_input, "Getting number of pages from " & $system_name & " ...")
+			GUICtrlStatusInput_SetText($status_input, "Please Wait. Getting number of pages from " & $system_name & " ...")
 			Local $iPID = Run($scraper_exe & " """ & GUICtrlRead($system_combo) & """", @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
 			ProcessWaitClose($iPID)
 			Local $num_pages = StdoutRead($iPID)
@@ -141,7 +150,7 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 					ExitLoop
 				EndIf
 
-				GUICtrlStatusInput_SetText($status_input, "Waiting for " & $num_scrapers_running & " scrapers to complete ...")
+				GUICtrlStatusInput_SetText($status_input, "Please Wait. Waiting for " & $num_scrapers_running & " scrapers to complete ...")
 				Sleep(5000)
 			Until $num_scrapers_running <= 0
 
@@ -166,13 +175,13 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 
 		Case $scrape_auto_join_refresh_button
 
-			disable_main_gui()
-			$spinner1_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 20, 220, -1, -1, 1)
-			$spinner2_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 240, 220, -1, -1, 1)
+			depress_button_and_disable_gui($scrape_auto_join_refresh_button)
+			Local $spinner1_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 20, 220, -1, -1, 1)
+			Local $spinner2_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 240, 220, -1, -1, 1)
 			_GUICtrlListBox_ResetContent($scrape_auto_join_art_list)
 			_GUICtrlListBox_ResetContent($scrape_auto_join_rom_list)
 
-			GUICtrlStatusInput_SetText($status_input, "Getting rom list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
+			GUICtrlStatusInput_SetText($status_input, "Please Wait. Getting rom list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
 			$result = plink("(cd /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws})", 2)
 			GUICtrlStatusInput_SetText($status_input, "")
 			Local $num_files = 0
@@ -187,7 +196,7 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 
 				if GUICtrlRead($scrape_auto_join_exclude_uploaded_art_checkbox) = $GUI_CHECKED Then
 
-					GUICtrlStatusInput_SetText($status_input, "Getting images list from /opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
+					GUICtrlStatusInput_SetText($status_input, "Please Wait. Getting images list from /opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
 					$result = plink("(cd /opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *-full-cover.jpg)", 2)
 					GUICtrlStatusInput_SetText($status_input, "")
 
@@ -234,26 +243,24 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 
 			_GIF_DeleteGIF($spinner2_gif)
 
-			Local $arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box", "*.jpg;*.png", 1, 0, 1)
+			Local $arr = _FileListToArrayRec($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full", "*-full-cover.jpg", 1, 0, 1)
 			$num_files = 0
 			_GUICtrlListBox_BeginUpdate($scrape_auto_join_art_list)
 
 			for $i = 1 to $arr[0]
 
-				Local $art_name = StringRegExpReplace($arr[$i], "-[0-9]*.(?:jpg|png)", "")
-
-				if _GUICtrlListBox_FindString($scrape_auto_join_art_list, $art_name, True) < 0 Then
-
-					_GUICtrlListBox_InsertString($scrape_auto_join_art_list, $art_name)
-					$num_files = $num_files + 1
-				EndIf
+				Local $art_name = StringReplace($arr[$i], "-full-cover.jpg", "")
+				_GUICtrlListBox_InsertString($scrape_auto_join_art_list, $art_name)
+				$num_files = $num_files + 1
 
 			Next
 
 			_GUICtrlListBox_EndUpdate($scrape_auto_join_art_list)
 			GUICtrlSetData($scrape_auto_join_art_label, "Art (" & $num_files & ")")
 			_GIF_DeleteGIF($spinner1_gif)
-			enable_main_gui()
+			;enable_main_gui()
+;			_GUILock($main_gui, 0)
+			raise_button_and_enable_gui($scrape_auto_join_refresh_button)
 
 
 
@@ -265,7 +272,6 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 
 
 
-			disable_main_gui()
 			$spinner1_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 20, 210, -1, -1, 1)
 			$spinner2_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 240, 210, -1, -1, 1)
 			_GUICtrlListBox_ResetContent($scrape_auto_join_art_list)
@@ -297,7 +303,7 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 			EndIf
 
 			_GIF_DeleteGIF($spinner1_gif)
-			GUICtrlStatusInput_SetText($status_input, "Getting images list from /opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
+			GUICtrlStatusInput_SetText($status_input, "Please Wait. Getting images list from /opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
 			$result = plink("(cd /opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *-full-cover.jpg)", 2)
 
 			if @error <> 0 Then
@@ -307,7 +313,7 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 
 				Local $art_filename_arr = StringSplit($result, @LF, 3)
 				_ArraySort($art_filename_arr)
-				GUICtrlStatusInput_SetText($status_input, "Getting roms list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
+				GUICtrlStatusInput_SetText($status_input, "Please Wait. Getting roms list from /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " ...")
 				$result = plink("(cd /home/pi/RetroPie/roms/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & " && ls *.{bin,zip,lha,a52,a78,j64,lnx,rom,nes,mgw,gba,love,7z,n64,z64,nds,iso,32x,sfc,smc,vec,ws})", 2)
 				_GIF_DeleteGIF($spinner2_gif)
 
@@ -344,9 +350,14 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 
 		Case $scrape_auto_join_upload_button
 
-			GUICtrlSetState($scrape_auto_join_art_list, $GUI_DISABLE)
-			GUICtrlSetState($scrape_auto_join_rom_list, $GUI_DISABLE)
-			GUICtrlSetState($scrape_auto_join_upload_button, $GUI_DISABLE)
+			depress_button_and_disable_gui($scrape_auto_join_upload_button)
+			Local $spinner3_gif = _GUICtrlCreateGIF(@ScriptDir & "\" & $spinner200_gif_filename, "", 100, 500, -1, -1, 1)
+			Local $art_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $art_list_selected_index = ' & $art_list_selected_index & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+;			GUICtrlSetState($scrape_auto_join_art_list, $GUI_DISABLE)
+;			GUICtrlSetState($scrape_auto_join_rom_list, $GUI_DISABLE)
+;			GUICtrlSetState($scrape_auto_join_upload_button, $GUI_DISABLE)
 
 			Local $art_name = _GUICtrlListBox_GetText($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list))
 			Local $rom_name = _GUICtrlListBox_GetText($scrape_auto_join_rom_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_rom_list))
@@ -381,43 +392,43 @@ Func Scrape_Images_with_Auto_Join_tab_event_handler($msg)
 			EndIf
 
 			; upload the joined art to the RetroPie
-			;	it's assumed the WinSCP connection is still open from the Refresh button above
 
-			Local $msg2 = "Copying to the RetroPie - " & $sFileName1 & "-full-cover.jpg ..."
+			Local $msg2 = "Please Wait. Saving to the RetroPie - " & $sFileName1 & "-full-cover.jpg ..."
 			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $msg2 = ' & $msg2 & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 			GUICtrlStatusInput_SetText($status_input, $msg2)
-			ConsoleWrite("Putting file """ & $new_art_path & """ to ""/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg""" & @CRLF)
-			$result = _WinSCP_PutFiles($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
+			pscp_upload($new_art_path, "/opt/retropie/configs/all/emulationstation/downloaded_images/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "/" & $sFileName1 & "-full-cover.jpg")
+			GUICtrlStatusInput_SetText($status_input, "Saved """ & $sFileName1 & "-full-cover.jpg"" to the RetroPie")
 
-			if $result = False Then
 
-				GUICtrlStatusInput_SetText($status_input, $_WinSCP_COM_error_description)
-			Else
+			Local $art_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)
+			Local $rom_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_rom_list)
 
-				Local $art_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list)
-				Local $rom_list_selected_index = _GUICtrlListBox_GetCurSel($scrape_auto_join_rom_list)
+			if GUICtrlRead($scrape_auto_join_exclude_uploaded_art_checkbox) = $GUI_CHECKED Then
 
-				if GUICtrlRead($scrape_auto_join_exclude_uploaded_art_checkbox) = $GUI_CHECKED Then
-
-					_GUICtrlListBox_DeleteString($scrape_auto_join_art_list, $art_list_selected_index)
-				EndIf
-
+				_GUICtrlListBox_DeleteString($scrape_auto_join_art_list, $art_list_selected_index)
 				_GUICtrlListBox_DeleteString($scrape_auto_join_rom_list, $rom_list_selected_index)
-				_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, $art_list_selected_index)
+				GUICtrlSetData($scrape_manual_join_art_label, "Art (" & _GUICtrlListBox_GetCount($scrape_manual_join_art_list) & ")")
+				GUICtrlSetData($scrape_manual_join_rom_label, "Roms (" & _GUICtrlListBox_GetCount($scrape_manual_join_rom_list) & ")")
+				_GUICtrlListBox_SetCurSel($scrape_auto_join_art_list, $art_list_selected_index)
+				_GUICtrlListBox_SetCurSel($scrape_auto_join_rom_list, $rom_list_selected_index)
 
-				if GUICtrlRead($scrape_auto_join_match_roms_to_art_radio) = $GUI_CHECKED Then
+				if GUICtrlRead($scrape_auto_join_match_art_to_roms_radio) = $GUI_CHECKED Then
 
-					GUICtrlSetState($scrape_auto_join_rom_list, $GUI_ENABLE)
-					_GUICtrlListBox_ClickItem($scrape_auto_join_rom_list, $rom_list_selected_index)
+					Scrape_Images_with_Auto_Join_tab_WM_COMMAND_handler(GUICtrlGetHandle($scrape_auto_join_art_list), $LBN_SELCHANGE)
 				EndIf
 
+				if GUICtrlRead($scrape_manual_join_match_roms_to_art_radio) = $GUI_CHECKED Then
 
+					Scrape_Images_with_Auto_Join_tab_WM_COMMAND_handler(GUICtrlGetHandle($scrape_auto_join_rom_list), $LBN_SELCHANGE)
+				EndIf
 			EndIf
 
-			GUICtrlStatusInput_SetText($status_input, "")
-			GUICtrlSetState($scrape_auto_join_art_list, $GUI_ENABLE)
-			GUICtrlSetState($scrape_auto_join_rom_list, $GUI_ENABLE)
-			GUICtrlSetState($scrape_auto_join_upload_button, $GUI_ENABLE)
+
+
+			_GIF_DeleteGIF($spinner3_gif)
+
+			raise_button_and_enable_gui($scrape_auto_join_upload_button)
+
 
 
 		Case $scrape_auto_join_upload_gamelist_button
@@ -646,6 +657,8 @@ Func Scrape_Images_with_Auto_Join_tab_WM_COMMAND_handler($hWndFrom, $iCode)
 						_GUICtrlListBox_SetTopIndex($scrape_auto_join_rom_list, $selected_index - 11)
 
 					EndIf
+
+						ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg" = ' & $download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg" & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
 					if FileExists($download_path & "\" & $download_path_dict.Item(GUICtrlRead($system_combo)) & "\Box_Full\" & $art_name & "-full-cover.jpg") = True Then
 

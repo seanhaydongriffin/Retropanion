@@ -12,6 +12,9 @@
 #include <GDIPlus.au3>
 #Include "_XMLDomWrapper2.au3"
 #include <GuiRichEdit.au3>
+#Include <WinAPIEx.au3>
+#Include <GUIConstantsEx.au3>
+#Include <GUIMenu.au3>
 
 ;#include <AutoItConstants.au3>
 ;#include <GUIConstantsEx.au3>
@@ -154,8 +157,7 @@ Global $tooltip = _GUIToolTip_Create(0) ; default style tooltip
 _GUIToolTip_SetMaxTipWidth($tooltip, 300)
 
 Global $main_gui
-Global $main_gui_first_control
-Global $main_gui_last_control
+Global $main_gui_dummy_control
 Global $system_combo
 Global $system_open_docs_page_button
 Global $system_open_wiki_page_button
@@ -377,8 +379,6 @@ Global $backup_mirror_button
 Global $status_input
 Global $shift_up_dummy
 Global $shift_down_dummy
-Global $spinner1_gif
-Global $spinner2_gif
 Global $spinner200_gif_filename = "Spinner200.gif"
 
 ; Art gui
@@ -1517,7 +1517,10 @@ EndFunc
 Func MainGUICreate(ByRef $tab, $tab_left, $tab_top, $tab_width, $tab_height, $tab_resizing)
 
 	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU))
-	$main_gui_first_control = GUICtrlCreateDummy()
+;	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU), $WS_EX_COMPOSITED)
+;	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, $WS_EX_COMPOSITED)
+;	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, $WS_CLIPCHILDREN)
+	$main_gui_dummy_control = GUICtrlCreateDummy()
 	$tab = GUICtrlCreateTabEx($tab_left, $tab_top, $tab_width, $tab_height, $tab_resizing)
 	$current_gui = $gui
 
@@ -1874,19 +1877,56 @@ Func GUICtrlCreateGroupEx($text, $left, $top, $width, $height)
 
 EndFunc
 
-Func disable_main_gui()
+Func depress_button_and_disable_gui($button, $gui = $main_gui)
 
-	For $i = $main_gui_first_control To $main_gui_last_control
+	GUICtrlSetState($main_gui_dummy_control, $GUI_FOCUS)
+	GUICtrlSetStyle($button, -1, $WS_EX_CLIENTEDGE) ;$WS_EX_STATICEDGE)
+    GUISetCursor(15, 1, $gui)
+	GUISetState(@SW_DISABLE, $gui)
 
-		GUICtrlSetState($i, $GUI_DISABLE)
-	Next
+EndFunc
+
+Func raise_button_and_enable_gui($button, $gui = $main_gui)
+
+	GUICtrlSetStyle($button, -1, $WS_EX_WINDOWEDGE)
+    GUISetCursor(2, 1, $gui)
+	GUISetState(@SW_ENABLE, $gui)
+
 EndFunc
 
 
-Func enable_main_gui()
+Func _GUILock($hWnd, $fLock)
 
-	For $i = $main_gui_first_control To $main_gui_last_control
+    Local $Data, $State
 
-		GUICtrlSetState($i, $GUI_ENABLE)
-	Next
+    If $fLock Then
+        GUISetCursor(15, 1, $hWnd)
+        $State = $GUI_DISABLE
+    Else
+        GUISetCursor(2, 1, $hWnd)
+        $State = $GUI_ENABLE
+    EndIf
+    _GUICtrlMenu_EnableMenuItem(_GUICtrlMenu_GetSystemMenu($hWnd), $SC_CLOSE, $fLock, 0)
+    $Data = _WinAPI_EnumChildWindows($hWnd)
+    If IsArray($Data) Then
+
+    ;_WinAPI_SetWindowLong ($hWnd, $GWL_EXSTYLE, $WS_EX_COMPOSITED)
+	;GUISetStyle(BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU, $WS_EX_COMPOSITED), -1, $hWnd)
+;	GUISetStyle($WS_EX_COMPOSITED, -1, $hWnd)
+
+        For $i = 1 To $Data[0][0]
+            GUICtrlSetState(_WinAPI_GetDlgCtrlID($Data[$i][0]), $State)
+		;_WinAPI_UpdateWindow(_WinAPI_GetDlgCtrlID($Data[$i][0]))
+        Next
+
+	;GUISetStyle(BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU), -1, $hWnd)
+
+    ;_WinAPI_SetWindowLong ($hWnd, $GWL_EXSTYLE, 0)
+
+    EndIf
+EndFunc   ;==>_GUILock
+
+
+Func _ColorFlip($iColor)
+    Return BitAND(BitShift($iColor, -16) + BitAND($iColor, 0xFF00) + BitShift($iColor, 16), 0xFFFFFF)
 EndFunc

@@ -1,12 +1,169 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <title>Configure your RetroPie</title>
   </head>
   <body>
     <h2><i>Configure your RetroPie</i></h2>
+    <hr size="2" width="100%"><br>
+    <h3>Edit the Boot Config of your RetroPie<br>
+    </h3>
+    The boot config of your RetroPie controls many hardware settings
+    including HDMI (display) settings.<br>
+    <br>
+    If you are experiencing issues with your display, or wish to
+    optimise it's configuration, then this feature will help you.<br>
+    <br>
+    The following are some common reasons for editing the boot config:<br>
+    <ul>
+      <li>To fix HDMI audio issues on computer monitors</li>
+      <li>To remove black borders from the picture</li>
+      <li>To force a particular picture resolution / console size</li>
+      <li>To improve / boost HDMI signal detection</li>
+      <li>To improve support on televisions</li>
+      <li>To fix certain issues on 4K UHD televisions<br>
+      </li>
+    </ul>
+    To edit your RetroPie boot config perform the following steps.<br>
+    <br>
+    In the <b>Retropanion - Main </b>window<b> </b>click on the <b>Config</b>
+    tab, and then the <b>Edit the Boot Config </b>button.&nbsp; The
+    Boot Config window will display.<br>
+    <br>
+    In the <b>Retropanion - Boot Config </b>window, view and edit the
+    settings using your mouse and keyboard.&nbsp; See Appendix XXX for
+    details on each setting.<br>
+    <br>
+    Click the <b>Save</b> button to save your changes back to the
+    RetroPie.<br>
+    <br>
+    <br>
+    <hr size="2" width="100%"><br>
+    <h3>Edit the Systems List of your RetroPie</h3>
+    ...<br>
+    <br>
+    In the <b>Retropanion - Main </b>window<b> </b>click on the <b>Config</b>
+    tab, and then the <b>Edit the System List </b>button.&nbsp; The
+    Systems List Config window will display.<br>
+    <br>
+    In the <b>Retropanion - Systems List Config </b>window, view and
+    edit the settings using your mouse and keyboard.<br>
+    <br>
+    Click the <b>Save</b> button to save your changes back to the
+    RetroPie.<br>
+    <br>
+    <hr size="2" width="100%"><br>
+    <h3>Scan the Video Modes for your displays<br>
+    </h3>
+    Video modes are a critical part of the gaming experience on the
+    RetroPie.&nbsp; When the correct video modes are assigned to the
+    emulators on the RetroPie games will perform well.&nbsp; If video
+    modes are not properly assigned then games will perform poorly and
+    can even become unplayable.<br>
+    <br>
+    Unfortunately, every display that you connect to your RetroPie will
+    (most likely) support a different set of video modes.&nbsp; The
+    RetroPie is (currently) only capable of configuring the video modes
+    for one display at a time.&nbsp; Therefore the situation can arise
+    where you configure the RetroPie to play games perfectly on one
+    display (ie. your computer monitor) only to find that when you plug
+    it into another display (ie. your television) the same games fail.<br>
+    <br>
+    Retropanion addresses this issue by capturing the video modes of all
+    your displays, so you can later assign those correctly to the
+    emulators you play.<br>
+    <br>
+    Begin by adding your first display to Retropanion.&nbsp; In the <b>Retropanion
+      - Main </b>window<b> </b>click on the <b>Add a new Display
+      Device </b>button.&nbsp; <br>
+    <br>
+    In the <b>Add a new Display </b>window enter a name to describe
+    this display (ie. "Office Monitor", "Family TV", "Samsung TV" etc)
+    and click the <b>OK </b>button.&nbsp; <br>
+    <br>
+    The name of this display should now appear in the <b>Display </b>field
+    of the <b>Retropanion - Main </b>window.<br>
+    <br>
+    Before proceeding you should ensure this display is connected to
+    your RetroPie, and your RetroPie is fully booted to the main
+    EmulationStation screen.<br>
+    <br>
+    Next, scan the video modes for this display by clicking the <b>Scan
+      all Video Modes </b>button.&nbsp; Retropanion will now scan your
+    display for all of the video modes present.&nbsp; If successful a
+    list of all the Video Modes and Resolutions will display in the same
+    window ...<br>
+    <br>
+    Repeat the steps above for all other displays you use with your
+    RetroPie.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <hr size="2" width="100%"><br>
+    <h3><a name="configure_emulators_games"></a>Configure the Emulator
+      and Game assignments<br>
+    </h3>
+    For best results the games on your RetroPie should be assigned to
+    the emulators that perform the best for each game.&nbsp; <br>
+    <br>
+    Also the emulators themselves should be assigned to the best video
+    mode to suit each emulator.&nbsp; And the video modes themselves can
+    vary depending on which display you have connected to you RetroPie
+    at any time.<br>
+    <br>
+    Maintaining all these variables (games linked to emulators linked to
+    video modes linked to displays) can be extremely difficult and time
+    consuming on the RetroPie itself.&nbsp; Retropanion aims to simplify
+    this process.<br>
+    <br>
+    To check and / or adjust the configuration for emulators, video
+    modes and game combinations, first start by selecting the System you
+    wish to configure in the System field on the <b>Retropanion - Main
+    </b>window...<br>
+    <br>
+    <br>
+    <br>
+    Now select the display that you have connected to your RetroPie in
+    the <b>Display </b>field of the <b>Retropanion - Main </b>window<i>
+      (s</i><i>ee xxx above for steps on how to create displays in
+      Retropanion) ...</i><br>
+    <br>
+    <br>
+    <br>
+    Next, click on the <b>Config</b> tab, and then the <b>Reload from
+      RetroPie </b>button.<br>
+    <br>
+    Retropanion will now retrieve all the configuration from your
+    RetroPie and display, and compare this with the best configurations
+    found on the Wiki.<br>
+    <br>
+    If the video modes detected do not align with the Wiki you will be
+    prompted to fix this as follows ...<br>
+    <br>
+    <br>
+    If you click <b>OK </b>Retropanion will match the (optimal) video
+    modes from the Wiki with your display and save those changes to your
+    RetroPie.&nbsp; The result will be a list of emulators and assigned
+    video modes, plus a list of games and assigned emulators ...<br>
+    <br>
+    <br>
+    <br>
+    If you click <b>Cancel </b>then no changes will be made to your
+    RetroPie, and the existing configuration of emulators, video modes
+    and games will be displayed instead.<br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <hr size="2" width="100%"><br>
+    <h3>Test your Joysticks<br>
+    </h3>
+    <br>
+    <br>
+    <br>
     <hr size="2" width="100%"><br>
     <br>
     <br>

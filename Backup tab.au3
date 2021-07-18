@@ -49,7 +49,7 @@ Func Backup_tab_setup()
 	$backup_path_7_remote_input = 												GUICtrlCreateInput("/etc/emulationstation/themes", 360, $backup_path_7_y, 140)
 	$backup_path_7_filemask_input = 											GUICtrlCreateInput("", 540, $backup_path_7_y, 140)
 	$backup_path_7_include_checkbox = 											GUICtrlCreateCheckboxEx("", 700, $backup_path_7_y, 20, 20, True)
-	$backup_mirror_button = 													GUICtrlCreateButton("WinSCP Mirror", 20, 325, 180)
+	$backup_mirror_button = 													GUICtrlCreateImageButton("retropie to usb.ico", 20, 325, 36, "Backup RetroPie files from the above Remote Path to Local Paths")
 
 EndFunc
 

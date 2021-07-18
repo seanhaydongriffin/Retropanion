@@ -61,7 +61,7 @@ Config_tab_child_gui_setup()
 Backup_tab_child_gui_setup()
 
 
-Enable_Emulators_and_Games($GUI_ENABLE)
+;Enable_Emulators_and_Games($GUI_ENABLE)
 
 $current_gui = $main_gui
 GUISetState(@SW_SHOW, $main_gui)
@@ -69,12 +69,11 @@ GUIRegisterMsg($WM_NOTIFY, "WM_NOTIFY")
 GUIRegisterMsg($WM_COMMAND, "WM_COMMAND")
 _TipDisplayLen(30000)
 
-$rr = IniRead($ini_filename, "Global", "System", "3DO")
-ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $rr = ' & $rr & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
 _GUICtrlComboBox_SelectString($system_combo, IniRead($ini_filename, "Global", "System", "3DO"))
-ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $ini_filename = ' & $ini_filename & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+_GUICtrlComboBox_SelectString($display_device_name_combo, IniRead($ini_filename, "Global", "Display", ""))
 _GUICtrlTab_SetCurFocus($tab, Number(IniRead($ini_filename, "Global", "Tab", 1)))
+RefreshDisplayDeviceVideoModesListView()
 
 
 
@@ -84,36 +83,22 @@ While True
 	; GUI msg loop...
 	$msg = GUIGetMsg()
 
-	Settings_tab_event_handler($msg)
-	ROMs_tab_event_handler($msg)
-	Scrape_Metadata_tab_event_handler($msg)
-	Scrape_Images_with_Auto_Join_tab_event_handler($msg)
-	Scrape_Images_with_Manual_Join_tab_event_handler($msg)
-	Config_tab_event_handler($msg)
-	Backup_tab_event_handler($msg)
-
 	Switch $msg
 
 		Case $GUI_EVENT_CLOSE
 
-
-			GUISetState(@SW_ENABLE, $main_gui)
-			GUISetState(@SW_HIDE, $current_gui)
-
 			if $current_gui = $main_gui Then
 
+				GUISetState(@SW_ENABLE, $main_gui)
+				GUISetState(@SW_HIDE, $current_gui)
 				GUIDelete($current_gui)
 				ExitLoop
-			Else
 
-				$current_gui = $main_gui
+	;			if _GUICtrlTab_GetCurSel($tab) = 1 Then
+
+	;				_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list))
+	;			EndIf
 			EndIf
-
-			if _GUICtrlTab_GetCurSel($tab) = 1 Then
-
-				_GUICtrlListBox_ClickItem($scrape_auto_join_art_list, _GUICtrlListBox_GetCurSel($scrape_auto_join_art_list))
-			EndIf
-
 
 ;		Case $GUI_EVENT_RESIZED
 
@@ -136,8 +121,17 @@ While True
 ;			_GUICtrlListBox_SelItemRange($scrape_manual_join_rom_list, $arr[UBound($arr)-1]+1, $arr[UBound($arr)-1]+1)
 
 
+
+		Case $system_open_wiki_page_button
+
+			depress_button_and_disable_gui($msg, -1, 100)
+			ShellExecute("https://github.com/seanhaydongriffin/" & $app_name & "/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
+			raise_button_and_enable_gui($msg)
+
+
 		Case $display_device_add_button
 
+			depress_button_and_disable_gui($msg)
 			$result = InputBox($app_name, "Enter a name to identify the new device", "", "", 240, 140, Default, Default, 0, $main_gui)
 
 			if StringLen($result) > 0 Then
@@ -147,10 +141,12 @@ While True
 				_GUICtrlComboBox_AddString($display_device_name_combo, $result)
 				_GUICtrlComboBox_SelectString($display_device_name_combo, $result)
 			EndIf
+			raise_button_and_enable_gui($msg)
 
 
 		Case $display_device_delete_button
 
+			depress_button_and_disable_gui($msg, -1, 100)
 			Local $display_device_filename = $app_data_dir & "\display device " & GUICtrlRead($display_device_name_combo) & ".txt"
 
 			if FileExists($display_device_filename) Then
@@ -160,40 +156,61 @@ While True
 
 			_GUICtrlComboBox_DeleteString($display_device_name_combo, _GUICtrlComboBox_GetCurSel($display_device_name_combo))
 			_GUICtrlComboBox_SetCurSel($display_device_name_combo, 0)
+			raise_button_and_enable_gui($msg)
 
 
 		Case $emulationstation_restart_button
 
+			depress_button_and_disable_gui($msg)
 			GUICtrlSetData($status_input, "Restarting EmulationStation ...")
 			plink("sudo touch /tmp/es-restart")
 			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
 			GUICtrlSetData($status_input, "")
+			raise_button_and_enable_gui($msg)
 
 
 		Case $emulationstation_quit_button
 
+			depress_button_and_disable_gui($msg)
 			GUICtrlSetData($status_input, "Quitting EmulationStation ...")
 			plink("sudo pkill -f \""/opt/retropie/supplementary/.*/emulationstation([^.]|$)\""")
 			GUICtrlSetData($status_input, "")
+			raise_button_and_enable_gui($msg)
 
 		Case $retropie_reboot_button
 
+			depress_button_and_disable_gui($msg)
 			GUICtrlSetData($status_input, "Restarting the RetroPie ...")
 			plink("sudo reboot")
 			GUICtrlSetData($status_input, "")
+			raise_button_and_enable_gui($msg)
 
 		Case $retropie_shutdown_button
 
+			depress_button_and_disable_gui($msg)
 			GUICtrlSetData($status_input, "Shutting down the RetroPie ...")
 			plink("sudo shutdown -h now")
 			GUICtrlSetData($status_input, "")
+			raise_button_and_enable_gui($msg)
 
 		Case $help_button
 
+			depress_button_and_disable_gui($msg, -1, 100)
 			Run('"' & @WindowsDir & '\hh.exe" "' & @ScriptDir & '\Retropanion.chm"')
+			raise_button_and_enable_gui($msg)
 
 
 	EndSwitch
+
+	Settings_tab_event_handler($msg)
+	ROMs_tab_event_handler($msg)
+	Scrape_Metadata_tab_event_handler($msg)
+	Scrape_Images_with_Auto_Join_tab_event_handler($msg)
+	Scrape_Images_with_Manual_Join_tab_event_handler($msg)
+	Config_tab_event_handler($msg)
+	Backup_tab_event_handler($msg)
+
+
 WEnd
 
 Retropanion_Shutdown()
@@ -293,10 +310,7 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 
                 Case $CBN_SELCHANGE
 
-					;GUICtrlSetData($config_emulators_games_group, "Emulators && Games (" & GUICtrlRead($system_combo) & ")")
 					IniWrite($ini_filename, "Global", "System", GUICtrlRead($system_combo))
-					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : GUICtrlRead($system_combo) = ' & GUICtrlRead($system_combo) & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $ini_filename = ' & $ini_filename & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
 					; clear all related controls that may already be set to another system
 
@@ -345,7 +359,9 @@ Func WM_COMMAND($hWnd, $iMsg, $wParam, $lParam)
 
                 Case $CBN_SELCHANGE
 
+					IniWrite($ini_filename, "Global", "Display", GUICtrlRead($display_device_name_combo))
 					RefreshDisplayDeviceVideoModesListView()
+					ReloadEmulatorsAndGamesConfig()
 			EndSwitch
 
 

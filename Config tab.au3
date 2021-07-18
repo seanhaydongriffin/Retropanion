@@ -99,6 +99,7 @@ Func Config_tab_child_gui_setup()
 
 	$compare_games_to_wiki_gui = 												ChildGUICreate($app_name & " - Compare Game List to Wiki GUI", 1024, 480, $main_gui)
 	$compare_games_to_wiki_accept_button = 										GUICtrlCreateButton("Accept Wiki page game list (left side)", 10, 5, 200, 40)
+	$compare_games_to_wiki_open_wiki_page_button = 								GUICtrlCreateImageButton("open wiki page.ico", 220, 10, 36, "Open the Wiki page for this system")
 	$compare_games_to_wiki_ie = _IECreateEmbedded()
 	GUICtrlCreateObj($compare_games_to_wiki_ie, 10, 50, 1004, 400)
 	$compare_games_to_wiki_status_input = 										GUICtrlCreateInput("", 10, 480 - 25, 640 - 20, 20, $ES_READONLY, $WS_EX_STATICEDGE)
@@ -116,8 +117,35 @@ Func Config_tab_event_handler($msg)
 
 	Switch $msg
 
+		Case $GUI_EVENT_CLOSE
+
+			if $current_gui = $boot_config_gui Then
+
+				GUISetState(@SW_ENABLE, $main_gui)
+				GUISetState(@SW_HIDE, $current_gui)
+				$current_gui = $main_gui
+				raise_button_and_enable_gui($config_boot_edit_config_button)
+			EndIf
+
+			if $current_gui = $systems_list_gui Then
+
+				GUISetState(@SW_ENABLE, $main_gui)
+				GUISetState(@SW_HIDE, $current_gui)
+				$current_gui = $main_gui
+				raise_button_and_enable_gui($config_edit_systems_list_button)
+			EndIf
+
+			if $current_gui = $compare_games_to_wiki_gui Then
+
+				GUISetState(@SW_ENABLE, $main_gui)
+				GUISetState(@SW_HIDE, $current_gui)
+				$current_gui = $main_gui
+				;raise_button_and_enable_gui($config_edit_systems_list_button)
+			EndIf
+
 		Case $config_boot_edit_config_button
 
+			depress_button_and_disable_gui($msg)
 			GUISetState(@SW_DISABLE, $main_gui)
 			GUISetState(@SW_SHOW, $boot_config_gui)
 			$current_gui = $boot_config_gui
@@ -238,6 +266,16 @@ Func Config_tab_event_handler($msg)
 			$current_gui = $main_gui
 
 
+		Case $compare_games_to_wiki_open_wiki_page_button
+
+			depress_button_and_disable_gui($msg, 100)
+			ShellExecute("https://github.com/seanhaydongriffin/" & $app_name & "/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
+			raise_button_and_enable_gui($msg)
+
+
+
+
+
 		Case $config_wiki_compare_button
 
 			GUISetState(@SW_DISABLE, $main_gui)
@@ -247,8 +285,8 @@ Func Config_tab_event_handler($msg)
 
 			; convert the wiki games data into a RetroPie emulator.cfg formatted file
 
-			GUICtrlSetData($compare_games_to_wiki_status_input, "Reading https://github.com/seanhaydongriffin/" & $app_name & "/wiki/N64-Emulator-Game-Compatibility")
-			Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/' & $app_name & '/wiki/N64-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
+			GUICtrlSetData($compare_games_to_wiki_status_input, "Reading https://github.com/seanhaydongriffin/" & $app_name & "/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
+			Local $iPID = Run('curl.exe -s -k -H "Content-Type: text/html; charset=utf-8" https://github.com/seanhaydongriffin/' & $app_name & '/wiki/' & $roms_path_dict.Item(GUICtrlRead($system_combo)) & '-Emulator-Game-Compatibility', @ScriptDir, @SW_HIDE, $STDOUT_CHILD)
 			ProcessWaitClose($iPID)
 			Local $html = StdoutRead($iPID)
 			GUICtrlSetData($compare_games_to_wiki_status_input, "")
@@ -277,11 +315,22 @@ Func Config_tab_event_handler($msg)
 			Local $searching_for_game_name = False
 			Local $searching_for_game_emulator = False
 			Local $emulator_index = -1
-			Local $wiki_game_emulator_arr[0]
+
+			Local $wiki_game_emulator_arr[0][4]
+			; [n][0] = wiki game name
+			; [n][1] = best matching rom filename
+			; [n][2] = best emulator
+			; [n][3] = the matching accuracy of the best matching rom filename
+
 			Local $game_name = ""
 			Local $emulator_name = ""
 
+			; for every line in the Wiki HTML
+
 			for $i = 0 to (UBound($html_arr) - 1)
+
+				;ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $html_arr[$i] = ' & $html_arr[$i] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
 
 				if StringCompare($html_arr[$i], "<th>Game</th>") = 0 Then
 
@@ -290,27 +339,15 @@ Func Config_tab_event_handler($msg)
 
 				if $found_game_table = True Then
 
-					if StringCompare($html_arr[$i], "<tr>") = 0 Then
-
-						if $searching_for_game_emulator = True Then
-
-							_ArrayAdd($wiki_game_emulator_arr, $game_name & " = """ & $default_emulator & """")
-						EndIf
-
-						$searching_for_game_emulator = False
-						$searching_for_game_name = True
-					EndIf
 
 					Local $arr = StringRegExp($html_arr[$i], "<td>(?U)(.+?)</td>", 3)
 
-					if $searching_for_game_name = True and UBound($arr) > 0 Then
+					if UBound($arr) > 0 Then
 
-						$searching_for_game_name = False
 						$game_name = $arr[0]
-						$searching_for_game_emulator = True
-						$emulator_index = -2
 
-						; convert game name (from the Wiki) to a short rom name
+
+						; convert the game name from the Wiki to a short rom name
 
 						$game_name = $roms_path_dict.Item(GUICtrlRead($system_combo)) & "_" & $game_name
 						$game_name = StringReplace($game_name, " ", "")
@@ -323,81 +360,120 @@ Func Config_tab_event_handler($msg)
 						$game_name = StringReplace($game_name, "!", "")
 						$game_name = StringReplace($game_name, "'", "")
 
-						for $j = StringLen($game_name) to 1 Step -1
+						ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $game_name = ' & $game_name & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-							Local $rom_name_search_text = StringLeft($game_name, $j)
-							Local $game_name_match[0]
-							Local $find_text_from_index = -1
+						$emulator_index = -2
 
-							While True
+						while StringCompare($html_arr[$i], "</tr>") <> 0
 
-								$result = _GUICtrlListView_FindText($config_game_listview, $rom_name_search_text, $find_text_from_index, True, False)
+							$emulator_index = $emulator_index + 1
+							ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $emulator_index = ' & $emulator_index & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+							ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $html_arr[$i] = ' & $html_arr[$i] & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
-								if $result > -1 Then
+							if StringCompare($html_arr[$i], "<td><strong>best</strong></td>") = 0 Then
 
-									_ArrayAdd($game_name_match, _GUICtrlListView_GetItemText($config_game_listview, $result))
-									$find_text_from_index = $result
-								Else
-
-									ExitLoop
-								EndIf
-							WEnd
-
-							; if only a single game name from the Wiki is matching
-
-							if UBound($game_name_match) = 1 Then
-
-								$game_name = $game_name_match[0]
-								ExitLoop
+								_ArrayAdd($wiki_game_emulator_arr, $game_name & "||""" & $wiki_emulator[$emulator_index] & """|")
 							EndIf
 
-							; if multiple game names from the Wiki are matching
-
-							if UBound($game_name_match) > 1 Then
-
-								; find the game name that is the closest match (lowest number of differences)
-
-								Local $least_num_diffs = 9999
-
-								for $k = 0 to (UBound($game_name_match) - 1)
-
-									$num_diffs = _Typos($rom_name_search_text, $game_name_match[$k])
-
-									if $num_diffs < $least_num_diffs Then
-
-										$least_num_diffs = $num_diffs
-										$game_name = $game_name_match[$k]
-										ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $game_name = ' & $game_name & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
-									EndIf
-								Next
-
-								ExitLoop
-							EndIf
-						Next
-					EndIf
-
-					if $searching_for_game_emulator = True Then
-
-						$emulator_index = $emulator_index + 1
-
-						if StringCompare($html_arr[$i], "<td><strong>best</strong></td>") = 0 Then
-
-							_ArrayAdd($wiki_game_emulator_arr, $game_name & " = """ & $wiki_emulator[$emulator_index] & """")
-							$searching_for_game_emulator = False
-						EndIf
+							$i = $i + 1
+						WEnd
 					EndIf
 				EndIf
 			Next
+
+			Local $num_wiki_games = UBound($wiki_game_emulator_arr)
+
+			for $i = 0 to ($num_wiki_games - 1)
+
+				if $i > ($num_wiki_games - 1) Then ExitLoop
+
+				$game_name = $wiki_game_emulator_arr[$i][0]
+
+				; Search for this game name in the game listview (RetroPie gamelist)
+
+				;for $j = StringLen($game_name) to 1 Step -1
+
+					Local $rom_name_search_text = $game_name ; StringLeft($game_name, $j)
+					Local $game_name_match[0]
+					Local $find_text_from_index = -1
+
+					While True
+
+						$result = _GUICtrlListView_FindText($config_game_listview, $rom_name_search_text, $find_text_from_index, True, False)
+
+						if $result > -1 Then
+
+							_ArrayAdd($game_name_match, _GUICtrlListView_GetItemText($config_game_listview, $result))
+							$find_text_from_index = $result
+						Else
+
+							ExitLoop
+						EndIf
+					WEnd
+
+					; if only a single game name from the Wiki is a complete match
+
+					if UBound($game_name_match) = 1 and StringCompare($game_name, $game_name_match[0]) = 0 Then
+
+						;$game_name = $game_name_match[0]
+						$wiki_game_emulator_arr[$i][1] = $game_name_match[0]
+						;$wiki_game_emulator_arr[$i][2] = $game_name_match[0]
+						$wiki_game_emulator_arr[$i][3] = 0
+						;ExitLoop
+					EndIf
+
+					; if multiple game names from the Wiki are matching
+					; find the game name that is the closest match (lowest number of differences)
+
+					Local $least_num_diffs = 9999
+
+					for $k = 0 to (UBound($game_name_match) - 1)
+
+						$num_diffs = _Typos($rom_name_search_text, $game_name_match[$k])
+
+						if $num_diffs < $least_num_diffs Then
+
+							$least_num_diffs = $num_diffs
+;								$game_name = $game_name_match[$k]
+							$wiki_game_emulator_arr[$i][1] = $game_name_match[$k]
+							$wiki_game_emulator_arr[$i][3] = $least_num_diffs
+						EndIf
+					Next
+
+					; if no best matching rom filename was found then remove from the comparison
+
+					if StringLen($wiki_game_emulator_arr[$i][1]) < 1 Then
+
+						_ArrayDelete($wiki_game_emulator_arr, $i)
+						$num_wiki_games = $num_wiki_games - 1
+						$i = $i - 1
+					EndIf
+
+					ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $game_name = ' & $game_name & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+					;ExitLoop
+				;Next
+			Next
+
+
+
+;_ArrayDisplay($wiki_game_emulator_arr)
+
 
 			if FileExists($wiki_emulators_cfg_file_path) = True Then
 
 				FileDelete($wiki_emulators_cfg_file_path)
 			EndIf
 
-			_ArraySort($wiki_game_emulator_arr)
-			FileWrite($wiki_emulators_cfg_file_path, StringStripWS(_ArrayToString($wiki_game_emulator_arr, @CRLF), 3))
 
-			; convert the games list into a RetroPie emulator.cfg formatted file
+;			_ArrayDisplay($wiki_game_emulator_arr)
+			_ArraySort($wiki_game_emulator_arr)
+
+;			$ee = StringStripWS(_ArrayToString($wiki_game_emulator_arr, "|", -1, -1, @CRLF, 1, 2), 3)
+;			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $ee = ' & $ee & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
+
+			FileWrite($wiki_emulators_cfg_file_path, StringStripWS(_ArrayToString($wiki_game_emulator_arr, " = ", -1, -1, @CRLF, 1, 2), 3))
+
+			; convert the Retropie games list into a RetroPie emulator.cfg formatted file
 
 			$gameslist_emulators_str = ""
 
@@ -406,12 +482,15 @@ Func Config_tab_event_handler($msg)
 				Local $game_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 0)
 				Local $emulator_name = _GUICtrlListView_GetItemText($config_game_listview, $i, 1)
 
-				if StringLen($gameslist_emulators_str) > 0 Then
+				if StringCompare($emulator_name, $default_emulator) <> 0 Then
 
-					$gameslist_emulators_str = $gameslist_emulators_str & @CRLF
+					if StringLen($gameslist_emulators_str) > 0 Then
+
+						$gameslist_emulators_str = $gameslist_emulators_str & @CRLF
+					EndIf
+
+					$gameslist_emulators_str = $gameslist_emulators_str & $game_name & " = """ & $emulator_name & """"
 				EndIf
-
-				$gameslist_emulators_str = $gameslist_emulators_str & $game_name & " = """ & $emulator_name & """"
 			Next
 
 			Local $gameslist_emulators_cfg_file_path = $app_data_dir & "\gameslist_emulators.cfg"
@@ -422,6 +501,7 @@ Func Config_tab_event_handler($msg)
 			EndIf
 
 			FileWrite($gameslist_emulators_cfg_file_path, $gameslist_emulators_str)
+			ConsoleWrite('@@ Debug(' & @ScriptLineNumber & ') : $gameslist_emulators_str = ' & $gameslist_emulators_str & @CRLF & '>Error code: ' & @error & @CRLF) ;### Debug Console
 
 			Local $winmerge_output_file_path = $app_data_dir & "\emulators_cfg_diff.html"
 
@@ -465,21 +545,21 @@ Func Config_tab_event_handler($msg)
 
 		Case $config_joystick_0_test_button
 
+			depress_button_and_disable_gui($msg, -1, 100)
 			Run("plink.exe -ssh " & GUICtrlRead($retropie_hostname_input) & " -l " & GUICtrlRead($retropie_username_input) & " -pw " & GUICtrlRead($retropie_password_input) & " -batch jstest /dev/input/js0", @ScriptDir)
+			raise_button_and_enable_gui($msg)
 
 		Case $config_joystick_1_test_button
 
+			depress_button_and_disable_gui($msg, -1, 100)
 			Run("plink.exe -ssh " & GUICtrlRead($retropie_hostname_input) & " -l " & GUICtrlRead($retropie_username_input) & " -pw " & GUICtrlRead($retropie_password_input) & " -batch jstest /dev/input/js1", @ScriptDir)
+			raise_button_and_enable_gui($msg)
 
 
 
 		Case $config_emulators_games_reload_button
 
 			ReloadEmulatorsAndGamesConfig()
-
-		Case $system_open_wiki_page_button
-
-			ShellExecute("https://github.com/seanhaydongriffin/" & $app_name & "/wiki/" & $roms_path_dict.Item(GUICtrlRead($system_combo)) & "-Emulator-Game-Compatibility")
 
 		case $config_games_link_games_to_emulator_and_save_button
 
@@ -630,6 +710,7 @@ Func Config_tab_event_handler($msg)
 
 		case $config_edit_systems_list_button
 
+			depress_button_and_disable_gui($msg)
 			GUISetState(@SW_DISABLE, $main_gui)
 			GUISetState(@SW_SHOW, $systems_list_gui)
 			$current_gui = $systems_list_gui
@@ -1117,3 +1198,13 @@ Func Config_tab_WM_NOTIFY_handler($hWndFrom, $iCode)
 
 EndFunc
 
+
+Func RefreshDisplayDeviceVideoModesListView()
+
+	GUICtrlSetData($display_label, "Video Modes for the """ & GUICtrlRead($display_device_name_combo) & """ display")
+	_GUICtrlListView_DeleteAllItems($display_device_listview)
+	Local $display_device_filename = $app_data_dir & "\display device " & GUICtrlRead($display_device_name_combo) & ".txt"
+	Local $display_device_arr
+	_FileReadToArray($display_device_filename, $display_device_arr, 0, "|")
+	_GUICtrlListView_AddArray($display_device_listview, $display_device_arr)
+EndFunc

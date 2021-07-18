@@ -157,7 +157,6 @@ Global $tooltip = _GUIToolTip_Create(0) ; default style tooltip
 _GUIToolTip_SetMaxTipWidth($tooltip, 300)
 
 Global $main_gui
-Global $main_gui_dummy_control
 Global $system_combo
 Global $system_open_docs_page_button
 Global $system_open_wiki_page_button
@@ -445,6 +444,7 @@ Global $upload_data_to_retropie_dummy
 
 Global $compare_games_to_wiki_gui
 Global $compare_games_to_wiki_accept_button
+Global $compare_games_to_wiki_open_wiki_page_button
 Global $compare_games_to_wiki_ie
 Global $compare_games_to_wiki_status_input
 Global $compare_games_to_wiki_dummy
@@ -1118,16 +1118,6 @@ Func _StringSplit2d($str, $delimiter)
 
 EndFunc   ;==>_DBG_StringSplit2d
 
-Func RefreshDisplayDeviceVideoModesListView()
-
-	GUICtrlSetData($display_label, "Video Modes for the """ & GUICtrlRead($display_device_name_combo) & """ display")
-	_GUICtrlListView_DeleteAllItems($display_device_listview)
-	Local $display_device_filename = $app_data_dir & "\display device " & GUICtrlRead($display_device_name_combo) & ".txt"
-	Local $display_device_arr
-	_FileReadToArray($display_device_filename, $display_device_arr, 0, "|")
-	_GUICtrlListView_AddArray($display_device_listview, $display_device_arr)
-EndFunc
-
 
 Func RefreshMetadataListview($selected_index = -1)
 
@@ -1520,7 +1510,6 @@ Func MainGUICreate(ByRef $tab, $tab_left, $tab_top, $tab_width, $tab_height, $ta
 ;	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, BitOR($WS_MINIMIZEBOX, $WS_MAXIMIZEBOX, $WS_SIZEBOX, $WS_CAPTION, $WS_POPUP, $WS_SYSMENU), $WS_EX_COMPOSITED)
 ;	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, $WS_EX_COMPOSITED)
 ;	Local $gui = GUICreate($app_name & " - Main GUI", $main_gui_width, $main_gui_height, -1, -1, $WS_CLIPCHILDREN)
-	$main_gui_dummy_control = GUICtrlCreateDummy()
 	$tab = GUICtrlCreateTabEx($tab_left, $tab_top, $tab_width, $tab_height, $tab_resizing)
 	$current_gui = $gui
 
@@ -1614,7 +1603,7 @@ EndFunc
 
 Func GUICtrlCreateImageButton($ico_filename, $left, $top, $width_height, $tooltip_text, $resizing = -1, $hide = False)
 
-	local $ctrl = GUICtrlCreateButton("", $left, $top, $width_height, $width_height, $BS_ICON)
+	local $ctrl = GUICtrlCreateButton("", $left, $top, $width_height, $width_height, $BS_ICON, $WS_EX_DLGMODALFRAME)
 	GUICtrlSetImage(-1, @ScriptDir & "\" & $ico_filename)
 	_GUIToolTip_AddTool($tooltip, 0, $tooltip_text, GUICtrlGetHandle(-1))
 
@@ -1877,18 +1866,26 @@ Func GUICtrlCreateGroupEx($text, $left, $top, $width, $height)
 
 EndFunc
 
-Func depress_button_and_disable_gui($button, $gui = $main_gui)
+Func depress_button_and_disable_gui($button, $gui = -1, $delay = 0)
 
-	GUICtrlSetState($main_gui_dummy_control, $GUI_FOCUS)
-	GUICtrlSetStyle($button, -1, $WS_EX_CLIENTEDGE) ;$WS_EX_STATICEDGE)
+	if $gui = -1 Then $gui = $main_gui
+
+	GUICtrlSetStyle($button, -1, $WS_EX_CLIENTEDGE)
     GUISetCursor(15, 1, $gui)
 	GUISetState(@SW_DISABLE, $gui)
+	Local $focus_dummy = GUICtrlCreateDummy()
+	GUICtrlSetState($focus_dummy, $GUI_FOCUS)
+
+	if $delay > 0 Then
+
+		Sleep($delay)
+	EndIf
 
 EndFunc
 
 Func raise_button_and_enable_gui($button, $gui = $main_gui)
 
-	GUICtrlSetStyle($button, -1, $WS_EX_WINDOWEDGE)
+	GUICtrlSetStyle($button, -1, $WS_EX_DLGMODALFRAME)
     GUISetCursor(2, 1, $gui)
 	GUISetState(@SW_ENABLE, $gui)
 

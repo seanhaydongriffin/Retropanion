@@ -1871,7 +1871,7 @@ Func depress_button_and_disable_gui($button, $gui = -1, $delay = 0)
 	if $gui = -1 Then $gui = $main_gui
 
 	GUICtrlSetStyle($button, -1, $WS_EX_CLIENTEDGE)
-    GUISetCursor(15, 1, $gui)
+    GUISetCursor(15, 0, $gui)
 	GUISetState(@SW_DISABLE, $gui)
 	Local $focus_dummy = GUICtrlCreateDummy()
 	GUICtrlSetState($focus_dummy, $GUI_FOCUS)
@@ -1886,7 +1886,7 @@ EndFunc
 Func raise_button_and_enable_gui($button, $gui = $main_gui)
 
 	GUICtrlSetStyle($button, -1, $WS_EX_DLGMODALFRAME)
-    GUISetCursor(2, 1, $gui)
+    GUISetCursor(2, 0, $gui)
 	GUISetState(@SW_ENABLE, $gui)
 
 EndFunc
